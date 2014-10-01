@@ -9,5 +9,7 @@
     <string name="txtSpots">Spots Count: </string>
     <string name="btnFin">Finish the Task</string>
     <string name="btnRes">Start Over</string>
+    <string name="title_activity_imagen">Imagen</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>
