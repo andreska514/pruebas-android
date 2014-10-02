@@ -5,11 +5,15 @@
 <fullyQualifiedTypeName name="java.net.URL"/>
 <fullyQualifiedTypeName name="com.andres.sun4all.R.drawable"/>
 <fullyQualifiedTypeName name="android.widget.TextView"/>
-<fullyQualifiedTypeName name="com.andres.sun4all.R.id"/>
 <fullyQualifiedTypeName name="android.graphics.Matrix"/>
 <fullyQualifiedTypeName name="android.graphics.PointF"/>
 <fullyQualifiedTypeName name="android.graphics.RectF"/>
 <fullyQualifiedTypeName name="android.view.View"/>
 <fullyQualifiedTypeName name="android.view.MotionEvent"/>
 <fullyQualifiedTypeName name="android.util.FloatMath"/>
+<fullyQualifiedTypeName name="com.andres.sun4all.R.id"/>
+<fullyQualifiedTypeName name="android.widget.Button"/>
+<fullyQualifiedTypeName name="com.andres.sun4all.Main"/>
+<fullyQualifiedTypeName name="android.content.Intent"/>
+<fullyQualifiedTypeName name="it.sephiroth.android.library.imagezoom.BuildConfig"/>
 </qualifiedTypeNameHistroy>

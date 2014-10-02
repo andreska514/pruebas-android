@@ -1,106 +1,22 @@
 package com.andres.sun4all;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-
-import android.util.FloatMath;
 import android.util.Log;
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
-import android.graphics.PointF;
-import android.graphics.RectF;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Toast;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 import android.view.View.OnClickListener;
 public class Main extends Activity {
-	/*
-Matrix m = imageView.getImageMatrix();
-RectF drawableRect = new RectF(0, 0, imageWidth, imageHeight);
-RectF viewRect = new RectF(0, 0, imageView.getWidth(), imageView.getHeight());
-m.setRectToRect(drawableRect, viewRect, Matrix.ScaleToFit.CENTER);
-imageView.setImageMatrix(m);
-	 */
-	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	// These matrices will be used to move and zoom image
-	Matrix matrix = new Matrix();
-	Matrix savedMatrix = new Matrix();//creo q es la imagen base
-	
-	private static final float MIN_ZOOM = 1.0f;
-	private static final float MAX_ZOOM = 3f;
 
-	// We can be in one of these 3 states
-	static final int NONE = 0;
-	static final int PULSADO = 1;
-	static final int ZOOM = 2;
-	int mode = NONE;
-
-	// Remember some things for zooming
-	PointF start = new PointF();
-	PointF mid = new PointF();
-	float oldDist = 1f;
-	String savedItemClicked;
-	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	
-	private ImageView img;
 	private int contador = 0;
+	Imagen IM;
 	
-	private void logMatrix(Matrix matrix, ImageView imageView){
-		float[] values = new float[9];
-		matrix.getValues(values);
-		float globalX = values[2];
-        float globalY = values[5];
-        float width = values[0]* imageView.getWidth();
-        float height = values[4] * imageView.getHeight();
-
-        Log.i("Log value", "x: " + globalX 
-        		+ " y: " + globalY + "width: " + width 
-        		+ " height: " + height);
-	}
-	private float getXValueFromMatrix(Matrix matrix) {
-
-        float[] values = new float[9];
-           matrix.getValues(values);
-           float globalX = values[2];
-
-           return globalX;
-    }
-	private float getYValueFromMatrix(Matrix matrix) {
-
-        float[] values = new float[9];
-           matrix.getValues(values);
-           float globalY = values[5];
-
-           return globalY;
-    }
-	private float getWidthFromMatrix(Matrix matrix, ImageView imageview) {
-        float[] values = new float[9];
-           matrix.getValues(values);
-
-           float width = values[0]* imageview.getWidth();
-
-           return width;
-    }
-    private float getHeightFromMatrix(Matrix matrix, ImageView imageview) {
-
-        float[] values = new float[9];
-           matrix.getValues(values);
-
-           float height = values[4] * imageview.getHeight();
-
-           return height;
-    }
+	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -109,10 +25,13 @@ imageView.setImageMatrix(m);
 		Log.i("onCreate", "creando");
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		img = (ImageView) findViewById(R.id.ImgFoto);
-		img.setImageResource(R.drawable.sol);
 		
+		
+		ImageView img = (ImageView) findViewById(R.id.ImgFoto);
+		//img.setImageResource(R.drawable.sol);
 		img.setOnTouchListener(handlerMover);
+		
+		IM = new Imagen(img);
 		
 		TextView txtCont = (TextView) findViewById(R.id.txtCont);
 		txtCont.setText(String.valueOf(contador));
@@ -133,10 +52,10 @@ imageView.setImageMatrix(m);
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
 			//
-			
+			return IM.touch(v, event);
 			//
 			//Log.i("pantalla", String.valueOf(event.getX())+" - "+String.valueOf(event.getY()));
-		    ImageView view = (ImageView) v;
+		    /*ImageView view = (ImageView) v;
 		    dumpEvent(event);
 
 		    // Handle touch events here...
@@ -187,14 +106,14 @@ imageView.setImageMatrix(m);
 
 		    view.setImageMatrix(matrix);
 		    logMatrix(matrix, view);
-		    return true;
+		    return true;*/
 		}
 	};
 	
 
 	
 
-	private void dumpEvent(MotionEvent event) {
+	/*private void dumpEvent(MotionEvent event) {
 	    String names[] = { "DOWN", "UP", "MOVE", "CANCEL", "OUTSIDE",
 	            "POINTER_DOWN", "POINTER_UP", "7?", "8?", "9?" };
 	    StringBuilder sb = new StringBuilder();
@@ -220,19 +139,19 @@ imageView.setImageMatrix(m);
 	    //Log.d(TAG, sb.toString());
 	}
 
-	/** Determine the space between the first two fingers */
+	*//** Determine the space between the first two fingers *//*
 	private float spacing(MotionEvent event) {
 	    float x = event.getX(0) - event.getX(1);
 	    float y = event.getY(0) - event.getY(1);
 	    return FloatMath.sqrt(x * x + y * y);
 	}
 
-	/** Calculate the mid point of the first two fingers */
+	*//** Calculate the mid point of the first two fingers *//*
 	private void midPoint(PointF point, MotionEvent event) {
 	    float x = event.getX(0) + event.getX(1);
 	    float y = event.getY(0) + event.getY(1);
 	    point.set(x / 2, y / 2);
-	}
+	}*/
 
 /*
 	@Override
