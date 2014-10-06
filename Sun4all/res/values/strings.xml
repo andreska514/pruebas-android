@@ -11,5 +11,6 @@
     <string name="btnRes">Start Over</string>
     <string name="title_activity_imagen">Imagen</string>
     <string name="hello_world">Hello world!</string>
+    <string name="title_activity_segunda">Segunda</string>
 
 </resources>

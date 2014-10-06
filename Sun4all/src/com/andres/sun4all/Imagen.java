@@ -26,15 +26,19 @@ import android.view.View.OnClickListener;
 
 public class Imagen {
 
+	//probando
+	int maxW;
+	int maxH;
+	
 	//Matrix para el zoom
 	Matrix matrix = new Matrix();
 	Matrix savedMatrix = new Matrix();
 	Matrix primerMatrix ;
 	
-	float[]valoresIniciales = new float[9];
+	float[]valoresMinimos = new float[9];
 	
 
-	// We can be in one of these 3 states
+	// 3 posibles estados
 	static final int NONE = 0;
 	static final int PULSADO = 1;
 	static final int ZOOM = 2;
@@ -44,58 +48,73 @@ public class Imagen {
 	PointF start = new PointF();
 	PointF mid = new PointF();
 	float oldDist = 1f;
-	String savedItemClicked;
+	//String savedItemClicked;
 	
 	int mode = NONE;
 	
-	Imagen(ImageView imgView)//Constructor
+	ImageView imageView;
+	
+	Imagen(ImageView imView)//Constructor
 	{
-		//imgView = (ImageView) findViewById(R.id.ImgFoto);
 		// 2 5 0 4
-		//imgView.setScaleType(ScaleType.CENTER);
-		imgView.setImageResource(R.drawable.sol);
+		maxW=imView.getWidth();
+		maxH=imView.getHeight();
+		imView.setImageResource(R.drawable.sol);
+		//tocando.... ------------------------------------------------------------------------
+		//imView.setScaleType(ScaleType.CENTER_CROP);
+		imView.setCropToPadding(true);
+		//---------------------------------------------------------------------------------------------------
+		
 		primerMatrix = new Matrix();
-		primerMatrix.getValues(valoresIniciales);
-
-		logMatrix(primerMatrix, imgView);
+		
+		primerMatrix.getValues(valoresMinimos);//matrix --> array
+		
+		logMatrix(primerMatrix, imView);
 		//img.setOnTouchListener(handlerMover);
+		//tocando---------
+		imageView = imView;
+		//----------------
+		
 	}
 	
 	private void logMatrix(Matrix matrix, ImageView imageView){
 		float[] values = new float[9];
 		matrix.getValues(values);
 		
-		Log.i("valores",""+values[0]+"-"+values[1]+"-"
-		+values[2]+"-"+values[3]+"-"+values[4]+"-"
-		+values[5]+"-"+values[6]+"-"
-		+values[7]+"-"+values[8]);
+		Log.i("valores",""+values[0]+"--"+values[1]+"--"
+		+values[2]+"--"+values[3]+"--"+values[4]+"--"
+		+values[5]+"--"+values[6]+"--"
+		+values[7]+"--"+values[8]);
 		
 		float globalX = values[2];
         float globalY = values[5];
         float width = values[0]* imageView.getWidth();
         float height = values[4] * imageView.getHeight();
 
-        Log.i("","x(2):" + globalX 
-        		+ " y(5):" + globalY + " width(0):" + width 
-        		+ " height(4):"+ height);
+        Log.i("globaX[2]",""+values[2]);
+        Log.i("globaY[5]",""+values[5]);
+        Log.i("width[0]",""+width+"("+values[0]+" x "+imageView.getWidth()+")");
+        Log.i("height[4]",""+height+"("+values[4]+" x "+imageView.getHeight()+")");
 	}
 
 	/** Determina el espacio entre los 2 primeros dedos*/
-	private float spacing(MotionEvent event) {
+	private float espacio(MotionEvent event) {
 	    float x = event.getX(0) - event.getX(1);
 	    float y = event.getY(0) - event.getY(1);
 	    return FloatMath.sqrt(x * x + y * y);
 	}
 	/** Calcula el punto medio entre los 2 dedos*/
-	private void midPoint(PointF point, MotionEvent event) {
+	private void puntoMedio(PointF point, MotionEvent event) {
 	    float x = event.getX(0) + event.getX(1);
 	    float y = event.getY(0) + event.getY(1);
 	    point.set(x / 2, y / 2);
 	}
     public boolean touch(View v, MotionEvent event)
     {
-    	ImageView view =(ImageView) v;
-	    
+    	imageView =(ImageView) v;
+    	//tocando.... ------------------------------------------------------------------------
+		imageView.setScaleType(ScaleType.MATRIX);
+		//---------------------------------------------------------------------------------------------------
 	    // Handle touch events here...
 	    switch (event.getAction() & MotionEvent.ACTION_MASK) {
 	
@@ -108,11 +127,11 @@ public class Imagen {
 	        break;
 	    //pulsar 2
 	    case MotionEvent.ACTION_POINTER_DOWN:
-	        oldDist = spacing(event);
+	        oldDist = espacio(event);
 	        Log.d("accion", "oldDist=" + oldDist);
 	        if (oldDist > 10f) {
 	            savedMatrix.set(matrix);
-	            midPoint(mid, event);
+	            puntoMedio(mid, event);
 	            mode = ZOOM;
 	            Log.d("accion", "mode=ZOOM");
 	        }
@@ -131,11 +150,13 @@ public class Imagen {
 	    	//Comprobacion valores minimos
 	    	float[]valores = new float[9];
 	    	matrix.getValues(valores);
-	    	
-            if (valores[0]<valoresIniciales[0]){
+	    	//tocando ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+            if (valores[0]<0.8f){
             	Log.d("mode zoom ","zoom if");
-            	
-            	matrix.setValues(valoresIniciales);
+            	//imgView.setScaleType(ScaleType.CENTER_CROP);
+            	//imageView.setImageMatrix(primerMatrix);
+            	//este funciona 
+            	matrix.setValues(valoresMinimos);
             	break;
             }
             //***********************************
@@ -148,7 +169,7 @@ public class Imagen {
 	        } 
 	        else if (mode == ZOOM) {
 	        	//Log.i("mode","zoom");
-	            float newDist = spacing(event);
+	            float newDist = espacio(event);
                 matrix.set(savedMatrix);
                 float scale = newDist / oldDist;
                 matrix.postScale(scale, scale, mid.x, mid.y);  
@@ -158,8 +179,8 @@ public class Imagen {
 	        break;
 	    }//fin switch
 
-	    view.setImageMatrix(matrix);
-	    logMatrix(matrix, view);
+	    imageView.setImageMatrix(matrix);
+	    logMatrix(matrix, imageView);
 	    return true;
     }//fin touch
     

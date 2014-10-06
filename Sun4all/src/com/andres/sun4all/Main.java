@@ -15,9 +15,11 @@ public class Main extends Activity {
 
 	private int contador = 0;
 	
-	//imagen
+	//variables
 	Imagen imagen;
-	
+	ImageView img;
+	TextView txtCont;
+	Button btnAdd, btnRmv, btnInv, btnFin, btnRes;
 	
 	
 	@Override
@@ -27,24 +29,64 @@ public class Main extends Activity {
 		setContentView(R.layout.activity_main);
 		
 		//imagen
-		ImageView img = (ImageView) findViewById(R.id.ImgFoto);
-		img.setOnTouchListener(handlerMover);
+		img = (ImageView) findViewById(R.id.ImgFoto);
+		img.setOnTouchListener(clickImagen);
 		imagen = new Imagen(img);
 		
-		TextView txtCont = (TextView) findViewById(R.id.txtCont);
+		//el contador
+		txtCont = (TextView) findViewById(R.id.txtCont);
 		txtCont.setText(String.valueOf(contador));
 		
-		final Button btnAdd =(Button)findViewById(R.id.btnAdd);
-		btnAdd.setOnClickListener(new OnClickListener(){
-			@Override
-			public void onClick(View v) {
-				//Intent i = new Intent(Main.this, Imagen.class);
-			}
-			
-		});
+		//Botones
+		btnAdd =(Button)findViewById(R.id.btnAdd);
+		btnRmv =(Button)findViewById(R.id.btnRmv);
+		btnAdd =(Button)findViewById(R.id.btnAdd);
+		btnInv =(Button)findViewById(R.id.btnInv);
+		btnRes =(Button)findViewById(R.id.btnRes);
+		
+		btnAdd.setOnClickListener(clickBoton);
+		btnRmv.setOnClickListener(clickBoton);
+		btnAdd.setOnClickListener(clickBoton);
+		btnInv.setOnClickListener(clickBoton);
+		btnRes.setOnClickListener(clickBoton);
 	}
 	
-	View.OnTouchListener handlerMover = new View.OnTouchListener() {
+	//Clicks en botones
+	View.OnClickListener clickBoton = (new View.OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			switch(v.getId()){
+			case R.id.btnAdd://dibuja un sunspot donde tocas(modo escribir)
+				
+				//prueba new activity(BORRAR) ------------------------
+				Intent i = new Intent(Main.this, Segunda.class);
+				startActivity(i);
+				//----------------------------------------------------
+				break;
+			case R.id.btnRmv://borra un sunspot donde tocas(modo borrar)
+				
+				//prueba contador(BORRAR) ----------------------------
+				contador++;
+				txtCont.setText(String.valueOf(contador));
+				//----------------------------------------------------
+				break;
+			case R.id.btnFin://envia coordenadas de los sunspot y cambia de imagen
+				//envia
+				//descarga nueva imagen
+				//borra imagen anterior del dispositivo
+				break;
+			case R.id.btnInv://coger el negativo de esa imagen
+				break;
+			case R.id.btnRes://reinicia la misma imagen sin sunspots
+				break;
+			}
+		}
+	});
+		
+	
+	//Clicks en imagen
+	View.OnTouchListener clickImagen = new View.OnTouchListener() {
 		
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
