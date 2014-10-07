@@ -13,7 +13,7 @@ import android.widget.TextView;
 import android.view.View.OnClickListener;
 public class Main extends Activity {
 
-	private int contador = 0;
+	static public int contador = 0;
 	
 	//variables
 	Imagen imagen;
@@ -60,15 +60,33 @@ public class Main extends Activity {
 			case R.id.btnAdd://dibuja un sunspot donde tocas(modo escribir)
 				
 				//prueba new activity(BORRAR) ------------------------
-				Intent i = new Intent(Main.this, Segunda.class);
-				startActivity(i);
+				//Intent i = new Intent(Main.this, Segunda.class);
+				//startActivity(i);
 				//----------------------------------------------------
+				//0 y 4 zoom
+				//2 y 5 posicion x y matrix
+				
+				//prueba zoom con botones 1/2
+				/*float[]valores = new float[9];
+				Imagen.matrix.getValues(valores);
+				valores[0]+=0.1;
+				valores[4]+=0.1;
+				Imagen.matrix.setValues(valores);
+				imagen.compruebaValores();*/
 				break;
 			case R.id.btnRmv://borra un sunspot donde tocas(modo borrar)
 				
 				//prueba contador(BORRAR) ----------------------------
 				contador++;
 				txtCont.setText(String.valueOf(contador));
+				
+				//prueba zoom con botones 2/2
+				/*valores = new float[9];
+				Imagen.matrix.getValues(valores);
+				valores[0]-=0.1;
+				valores[4]-=0.1;
+				Imagen.matrix.setValues(valores);
+				imagen.compruebaValores();*/
 				//----------------------------------------------------
 				break;
 			case R.id.btnFin://envia coordenadas de los sunspot y cambia de imagen
@@ -76,9 +94,10 @@ public class Main extends Activity {
 				//descarga nueva imagen
 				//borra imagen anterior del dispositivo
 				break;
-			case R.id.btnInv://coger el negativo de esa imagen
+			case R.id.btnInv://coger el negativo de esa imagen(finish the task)
 				break;
-			case R.id.btnRes://reinicia la misma imagen sin sunspots
+			case R.id.btnRes://reinicia la misma imagen sin sunspots(start over)
+				Imagen.logMatrix(Imagen.matrix, Imagen.imageView);
 				break;
 			}
 		}
