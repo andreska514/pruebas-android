@@ -1,6 +1,5 @@
 package com.andres.sun4all;
 
-//https://github.com/sephiroth74/ImageViewZoom
 import java.io.IOException;
 
 
@@ -26,33 +25,128 @@ import android.view.View.OnClickListener;
 
 public class Imagen {
 	
-	// Matrix para el zoom
-	static Matrix matrix = new Matrix();
-	Matrix savedMatrix = new Matrix();
-	
-	// 3 posibles estados
+//CONSTANTES
+	// zoom
 	static final int NONE = 0;
 	static final int PULSADO = 1;
 	static final int ZOOM = 2;
-	
-	// cosas para el zoom
+	static final float MAX_ZOOM = 1.7f;
+    static final float MIN_ZOOM = 0.9f;
+		
+//VARIABLES y OBJETOS
+    // zoom
+    int mode = NONE;
+    float oldDist = 1f;
+    
+//OBJETOS
+    static ImageView imageView;
+	// zoom
+	static Matrix matrix = new Matrix();
+	static Matrix savedMatrix = new Matrix();
 	PointF start = new PointF();
 	PointF mid = new PointF();
-	float oldDist = 1f;
-	
-	int mode = NONE;
-	
-	static ImageView imageView;
 	float[]valores;
+	//hasta aqui funciona
+	//codigo nuevo!
+	Bitmap bm;
+	boolean flag;
+	float scaledImageOffsetX;
+	float scaledImageOffsetY;
+	float finalScale;
+	
 	
 	Imagen(ImageView imView)//Constructor
-	{
-		// 0 4 zoom actual x y de la imagen(tamaño si lo multiplicas por width/height)
+	{	// 0 4 zoom actual x y de la imagen(tamaño si lo multiplicas por width/height)
 		// 2 5 posiciones x y del matrix (muy raro)
+		
+		//codigo temporal(de momento coge una imagen ya guardada)
 		imView.setImageResource(R.drawable.sol);
+		
+		
 		imView.setCropToPadding(true);
 		
 		imageView = imView;
+		
+		//codigo nuevo!
+		
+	}
+	//metodo que cogera una imagen aleatoria del servidor
+	void cogeImagenAleatoria()
+	{
+		
+	}
+	public boolean setFlag(boolean b) {
+        return flag = b;
+    }
+	public boolean getFlag(){
+		return flag;
+	}
+	public boolean pinta(View v, MotionEvent event){
+		PaintView view = (PaintView) v;
+		view.setScaleType(ImageView.ScaleType.MATRIX);
+		switch (event.getAction() & MotionEvent.ACTION_MASK) {
+		case MotionEvent.ACTION_DOWN:
+			if (flag) {
+				savedMatrix.set(matrix);
+				start.set(event.getX(), event.getY());
+				mode = PULSADO;
+			} else {
+				view.onTouchEvent(event);
+			}
+			break;
+		case MotionEvent.ACTION_POINTER_DOWN:
+			if (flag) {
+				oldDist = espacio(event);
+				if (oldDist > 10f) {
+					start.set(event.getX(), event.getY());
+					savedMatrix.set(matrix);
+					puntoMedio(mid, event);
+					mode = ZOOM;
+				}
+			}
+			break;
+		case MotionEvent.ACTION_UP:
+			if (flag) {
+				mode = NONE;
+				//distanceOffset = minOffset;
+			}
+		case MotionEvent.ACTION_POINTER_UP:
+			if (flag) {
+				mode = NONE;
+				//distanceOffset = minOffset;
+			}
+			break;
+		case MotionEvent.ACTION_MOVE:
+			if (flag) {
+				if (mode == PULSADO) {
+					matrix.set(savedMatrix);
+					matrix.postTranslate(event.getX() - start.x,
+							event.getY() - start.y);
+				} else if (mode == ZOOM) {
+					float newDist = espacio(event);
+					if (newDist > 10f) {
+						matrix.set(savedMatrix);
+						float scale = newDist / oldDist;
+						matrix.postScale(scale, scale, mid.x, mid.y);
+						finalScale = scale;
+					}
+				}
+			} else {
+				view.onTouchEvent(event);
+			}
+			break;
+		}
+
+		compruebaZoom();
+		view.setImageMatrix(matrix);
+
+		//matrixTurning(matrix, view);
+		RectF r = new RectF();
+		matrix.mapRect(r);
+		scaledImageOffsetX = r.left;
+		scaledImageOffsetY = r.top;
+
+		return true;
 	}
     public boolean touch(View v, MotionEvent event)
     {
@@ -66,6 +160,7 @@ public class Imagen {
 		        Log.d("accion", "mode=PULSADO");
 		        mode = PULSADO;
 		        imageView.setImageMatrix(matrix);
+		        //compruebaValores();
 		        break;
     //pulsar 2
 		    case MotionEvent.ACTION_POINTER_DOWN:
@@ -92,7 +187,7 @@ public class Imagen {
 		            matrix.set(savedMatrix);
 		            matrix.postTranslate(event.getX() - start.x, 
 		            		event.getY() - start.y);
-		            compruebaValores();
+		            compruebaZoom();
 		        } 
 		        else if (mode == ZOOM) {
 		        	log("ACTION_MOVE -> zoom");
@@ -100,15 +195,43 @@ public class Imagen {
 	                matrix.set(savedMatrix);
 	                float scale = newDist / oldDist;
 	                matrix.postScale(scale, scale, mid.x, mid.y);  
-	                compruebaValores();
+	                compruebaZoom();
 		        }
 		        imageView.setImageMatrix(matrix);
+		        compruebaZoom();
 		        break;
 	    }//fin switch
 	    return true;
     }//fin touch
     //comprueba el zoom para concretar los límites
-    public void compruebaValores(){
+       
+    //limita el max y min zoom y ejecuta compruebaValores()
+    public void compruebaZoom(){
+    	float[] values = new float[9];
+        matrix.getValues(values);
+        
+        //compruebo el zoom
+        float scaleX = values[Matrix.MSCALE_X];
+        float scaleY = values[Matrix.MSCALE_Y];
+        if(scaleX > MAX_ZOOM) {
+    	scaleX = MAX_ZOOM;
+        } else if(scaleX < MIN_ZOOM) {
+    	scaleX = MIN_ZOOM;
+        }
+
+        if(scaleY > MAX_ZOOM) {
+    	scaleY = MAX_ZOOM;
+        } else if(scaleY < MIN_ZOOM) {
+    	scaleY = MIN_ZOOM;
+        }
+
+        values[Matrix.MSCALE_X] = scaleX;
+        values[Matrix.MSCALE_Y] = scaleY; 
+        matrix.setValues(values);
+        compruebaValores();
+    }
+    //comprueba el zoom actual y envia los bordes de la pantalla a limitaBordes()
+	public void compruebaValores(){
     	//log("compruebaValores");
     	valores = new float[9];
     	matrix.getValues(valores);
@@ -121,28 +244,29 @@ public class Imagen {
         	matrix.setValues(valores);
         	imageView.setImageMatrix(matrix);
         }else if(valores[0]>0.9 && valores[0]<=1){
-        	determinaMax(-86, -40);
+        	limitaBordes(-65, -40);
         }else if(valores[0]>1 && valores[0]<=1.1){
-        	determinaMax(-166, -123);
+        	limitaBordes(-166, -123);
         }else if(valores[0]>1.1 && valores[0]<=1.2){
-        	determinaMax(-246, -201);
+        	limitaBordes(-246, -201);
         }else if(valores[0]>1.2 && valores[0]<=1.3){
-        	determinaMax(-316, -280);
+        	limitaBordes(-316, -280);
         }else if(valores[0]>1.3 && valores[0]<=1.4){
-        	determinaMax(-409, -359);
+        	limitaBordes(-409, -359);
         }else if(valores[0]>1.4 && valores[0]<=1.5){
-        	determinaMax(-484, -435);
+        	limitaBordes(-484, -435);
         }else if(valores[0]>1.5 && valores[0]<=1.6){
-        	determinaMax(-563, -521);
+        	limitaBordes(-563, -521);
         }else if(valores[0]>1.6 && valores[0]<=1.7){
-        	determinaMax(-644, -600);
+        	limitaBordes(-644, -600);
         }else {// (valores[0]>1.7f){
-        	valores[0]=1.7f;
-        	valores[4]=1.7f;
-        	determinaMax(-664, -600);
+        	//valores[0]=1.7f;
+        	//valores[4]=1.7f;
+        	limitaBordes(-664, -600);
         }
     }
-    void determinaMax(float valorX, float valorY){
+    //establece los limites del matrix segun lo recibido de compruebaValores()
+	void limitaBordes(float valorX, float valorY){
     	//log("determinando");
     	//if(x>0)
     	if(valores[2]>0){
@@ -164,7 +288,7 @@ public class Imagen {
     	imageView.setImageMatrix(matrix);
     }
     
-    /** Determina el espacio entre los 2 primeros dedos*/
+	/** Determina el espacio entre los 2 primeros dedos*/
 	private float espacio(MotionEvent event) {
 	    float x = event.getX(0) - event.getX(1);
 	    float y = event.getY(0) - event.getY(1);

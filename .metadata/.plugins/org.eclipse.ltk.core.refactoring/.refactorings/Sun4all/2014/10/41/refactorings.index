@@ -7,3 +7,10 @@
 1412597881828	Rename method 'midPoint'
 1412599628695	Rename field 'valoresIniciales'
 1412685615649	Rename local variable 'y'
+1412753940845	Delete element
+1412753966662	Delete element
+1412756660555	Rename method 'determinaMax'
+1412756740259	Rename method 'compruebaaValores'
+1412756809099	Rename method 'compruebaaZoom'
+1412756839521	Rename method 'compruebaValores'
+1412761396822	Rename field 'falg'
