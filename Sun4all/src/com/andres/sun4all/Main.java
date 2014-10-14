@@ -1,16 +1,30 @@
 package com.andres.sun4all;
 
 import java.io.IOException;
+
+import android.content.Context;
+import android.text.Editable;
+import android.text.Html;
+import android.text.Spannable;
+import android.text.style.StyleSpan;
+import android.util.AttributeSet;
 import android.util.Log;
+import android.util.Xml;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ToggleButton;
+import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 import android.view.View.OnClickListener;
+import android.graphics.Color;
+import android.graphics.Canvas;
+
 public class Main extends Activity {
 
 	static public int contador = 0;
@@ -18,11 +32,23 @@ public class Main extends Activity {
 	//variables
 	Imagen imagen;
 	ImageView img;
-	PaintView pView;
 	TextView txtCont;
-	Button btnAdd, btnRmv, btnInv, btnFin, btnRes;
+	Button btnRmv, btnInv, btnFin, btnRes;
+	ToggleButton btnAdd;
 	
-	//añado
+	LinearLayout layout1;
+	
+	//fuente boton add/move
+	String cadena = "Move image/Add Sunspot";
+	Editable strMove = Editable.Factory.getInstance().newEditable(cadena);
+	Editable strAdd = Editable.Factory.getInstance().newEditable(cadena);
+	
+	//probando..peta de momento
+	/*Vista vista;
+	String tvCoordinates;
+	float mX;
+    float mY;
+    Canvas canvas;*/
 	
 	
 	@Override
@@ -33,28 +59,41 @@ public class Main extends Activity {
 		
 		//imagen(zoom/pintar)
 		img = (ImageView) findViewById(R.id.ImgFoto);
-		//img.setOnTouchListener(clickImagen);
-		//imagen = new Imagen(img);
-			//añado
-			//pView = (PaintView) findViewById(R.id.ImgFoto);
-			//pView.setOnTouchListener(clickPinta);
+		//*************
+		img.setOnTouchListener(clickImagen);
+		imagen = new Imagen(img);
 		
 		//el contador
 		txtCont = (TextView) findViewById(R.id.txtCont);
 		txtCont.setText(String.valueOf(contador));
 		
 		//Botones
-		btnAdd =(Button)findViewById(R.id.btnAdd);
+		btnAdd =(ToggleButton)findViewById(R.id.btnAdd);
 		btnRmv =(Button)findViewById(R.id.btnRmv);
-		btnAdd =(Button)findViewById(R.id.btnAdd);
+		btnFin =(Button)findViewById(R.id.btnFin);
 		btnInv =(Button)findViewById(R.id.btnInv);
 		btnRes =(Button)findViewById(R.id.btnRes);
 		
 		btnAdd.setOnClickListener(clickBoton);
 		btnRmv.setOnClickListener(clickBoton);
-		btnAdd.setOnClickListener(clickBoton);
+		btnFin.setOnClickListener(clickBoton);
 		btnInv.setOnClickListener(clickBoton);
 		btnRes.setOnClickListener(clickBoton);
+		
+		layout1 = (LinearLayout)findViewById(R.id.layout1);
+		layout1.setBackgroundColor(Color.WHITE);
+		
+		//fuente boton add/move
+		strMove.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),0,10,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+		strAdd.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),11,22,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+		btnAdd.setText(strMove);
+		
+		
+		//pruebas
+		/*vista = new Vista(getApplicationContext());
+		//tvCoordinates = (TextView)findViewById(R.id.tv_coordinates);
+		//vista.setTextView(tvCoordinates);
+        vista.setOnTouchListener(clickPinta);*/
 	}
 	
 	//Clicks en botones
@@ -63,9 +102,17 @@ public class Main extends Activity {
 		public void onClick(View v) {
 			switch(v.getId()){
 			case R.id.btnAdd:
-				//prueba new activity
-				Intent i = new Intent(Main.this, Segunda.class);
-				startActivity(i);
+				//comprueba si esta en modo mover o en modo añadir
+				if(btnAdd.isChecked())//add sunspot
+				{
+					btnAdd.setText(strAdd);
+					img.setOnTouchListener(clickPinta);
+				}
+				else//move
+				{
+					btnAdd.setText(strMove);
+					img.setOnTouchListener(clickImagen);
+				}
 				
 				//activa el modo pintar
 				//desactivar trazados, solo puntos
@@ -83,6 +130,9 @@ public class Main extends Activity {
 				
 				break;
 			case R.id.btnFin://envia coordenadas de los sunspot y cambia de imagen
+				//borrar
+				Intent i = new Intent(Main.this, Segunda.class);
+				startActivity(i);
 				//envia
 				//descarga nueva imagen
 				//borra imagen anterior del dispositivo
@@ -105,10 +155,23 @@ public class Main extends Activity {
 	View.OnTouchListener clickPinta = new View.OnTouchListener() {
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
-			return imagen.pinta(v, event);
+			switch(event.getAction()){
+            // When user touches the screen
+            case MotionEvent.ACTION_DOWN:
+                // Getting X coordinate
+                float mX = event.getX();
+                // Getting Y Coordinate
+                float mY = event.getY();
+ 
+                // Setting the coordinates on TextView
+                txtCont.setText("X :" + mX + " , " + "Y :" + mY);
+                
+                //vista.draw(canvas);
+			}
+			return true;
 		}
-	};
 		
+	};
 }
 //PRUEBAS
 

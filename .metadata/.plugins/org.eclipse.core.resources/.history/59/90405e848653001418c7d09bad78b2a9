@@ -1,0 +1,101 @@
+package com.andres.sun4all;
+
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Rect;
+import android.view.MotionEvent;
+import android.view.View;
+import android.graphics.*;
+
+public class Vista extends View {
+	Bitmap mBitmap;
+	Canvas mCanvas;
+	Path mPath;
+	
+	Paint mPaint, mBitmapPaint;
+
+	public Vista(Context c, int w, int h) {
+        super(c);
+        mBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        // Bitmap mBitmap =
+        // Bitmap.createScaledBitmap(originalBitmap,200,200,true);
+        mCanvas = new Canvas(mBitmap);
+        mPath = new Path();
+        mBitmapPaint = new Paint(Paint.DITHER_FLAG);
+        //mBitmapPaint.setColor(Color.YELLOW);
+        //mBitmapPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC));
+    }
+
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        // mBitmap = Bitmap.createBitmap(bw, bh, Bitmap.Config.ARGB_8888);
+        // mCanvas = new Canvas(mBitmap);
+    }
+
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        //canvas.drawColor(customColor);
+        canvas.drawBitmap(mBitmap, 0, 0, mBitmapPaint);
+        canvas.drawPath(mPath, mPaint);
+    }
+
+    // //////************touching evants for painting**************///////
+    private float mX, mY;
+    private static final float TOUCH_TOLERANCE = 5;
+
+    private void touch_start(float x, float y) {
+        //mCanvas.drawCircle(x, y, progress+1, mPaint); 
+
+        mPath.reset();          
+        mPath.moveTo(x, y);
+        //mPaint.setStyle(Paint.Style.FILL);
+        //mPath.addCircle(x, y, (float) (progress+0.15), Direction.CW);  
+        mCanvas.drawPath(mPath, mPaint);
+        mX = x;
+        mY = y;
+        //mPaint.setStyle(Paint.Style.STROKE);
+
+    }
+
+    private void touch_move(float x, float y) {
+        float dx = Math.abs(x - mX);
+        float dy = Math.abs(y - mY);
+        if (dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE) {
+            mPath.quadTo(mX, mY, (x + mX) / 2, (y + mY) / 2);
+            mX = x;
+            mY = y;
+        }
+    }
+
+    private void touch_up() {
+        mPath.lineTo(mX, mY);
+        // commit the path to our offscreen
+        mCanvas.drawPath(mPath, mPaint);
+        // kill this so we don't double draw
+        mPath.reset();
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        float x = event.getX();
+        float y = event.getY();
+        switch (event.getAction()) {
+        case MotionEvent.ACTION_DOWN:
+            touch_start(x, y);
+            invalidate();
+            break;
+        case MotionEvent.ACTION_MOVE:
+            touch_move(x, y);
+            invalidate();
+            break;
+        case MotionEvent.ACTION_UP:
+            touch_up();
+            invalidate();
+            break;
+        }
+        return true;
+    } // end of touch events for image
+}

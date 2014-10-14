@@ -23,7 +23,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.view.View.OnClickListener;
 
-public class Imagen {
+public class Imagen{
 	
 //CONSTANTES
 	// zoom
@@ -47,18 +47,11 @@ public class Imagen {
 	PointF mid = new PointF();
 	float[]valores;
 	//hasta aqui funciona
-	//codigo nuevo!
-	Bitmap bm;
-	boolean flag;
-	float scaledImageOffsetX;
-	float scaledImageOffsetY;
-	float finalScale;
 	
 	
 	Imagen(ImageView imView)//Constructor
 	{	// 0 4 zoom actual x y de la imagen(tamaño si lo multiplicas por width/height)
 		// 2 5 posiciones x y del matrix (muy raro)
-		
 		//codigo temporal(de momento coge una imagen ya guardada)
 		imView.setImageResource(R.drawable.sol);
 		
@@ -75,79 +68,7 @@ public class Imagen {
 	{
 		
 	}
-	public boolean setFlag(boolean b) {
-        return flag = b;
-    }
-	public boolean getFlag(){
-		return flag;
-	}
-	public boolean pinta(View v, MotionEvent event){
-		PaintView view = (PaintView) v;
-		view.setScaleType(ImageView.ScaleType.MATRIX);
-		switch (event.getAction() & MotionEvent.ACTION_MASK) {
-		case MotionEvent.ACTION_DOWN:
-			if (flag) {
-				savedMatrix.set(matrix);
-				start.set(event.getX(), event.getY());
-				mode = PULSADO;
-			} else {
-				view.onTouchEvent(event);
-			}
-			break;
-		case MotionEvent.ACTION_POINTER_DOWN:
-			if (flag) {
-				oldDist = espacio(event);
-				if (oldDist > 10f) {
-					start.set(event.getX(), event.getY());
-					savedMatrix.set(matrix);
-					puntoMedio(mid, event);
-					mode = ZOOM;
-				}
-			}
-			break;
-		case MotionEvent.ACTION_UP:
-			if (flag) {
-				mode = NONE;
-				//distanceOffset = minOffset;
-			}
-		case MotionEvent.ACTION_POINTER_UP:
-			if (flag) {
-				mode = NONE;
-				//distanceOffset = minOffset;
-			}
-			break;
-		case MotionEvent.ACTION_MOVE:
-			if (flag) {
-				if (mode == PULSADO) {
-					matrix.set(savedMatrix);
-					matrix.postTranslate(event.getX() - start.x,
-							event.getY() - start.y);
-				} else if (mode == ZOOM) {
-					float newDist = espacio(event);
-					if (newDist > 10f) {
-						matrix.set(savedMatrix);
-						float scale = newDist / oldDist;
-						matrix.postScale(scale, scale, mid.x, mid.y);
-						finalScale = scale;
-					}
-				}
-			} else {
-				view.onTouchEvent(event);
-			}
-			break;
-		}
 
-		compruebaZoom();
-		view.setImageMatrix(matrix);
-
-		//matrixTurning(matrix, view);
-		RectF r = new RectF();
-		matrix.mapRect(r);
-		scaledImageOffsetX = r.left;
-		scaledImageOffsetY = r.top;
-
-		return true;
-	}
     public boolean touch(View v, MotionEvent event)
     {
     	imageView =(ImageView) v;
@@ -157,7 +78,7 @@ public class Imagen {
 		    case MotionEvent.ACTION_DOWN:
 		        savedMatrix.set(matrix);
 		        start.set(event.getX(), event.getY());
-		        Log.d("accion", "mode=PULSADO");
+		        //Log.d("accion", "mode=PULSADO");
 		        mode = PULSADO;
 		        imageView.setImageMatrix(matrix);
 		        //compruebaValores();
@@ -165,7 +86,7 @@ public class Imagen {
     //pulsar 2
 		    case MotionEvent.ACTION_POINTER_DOWN:
 		        oldDist = espacio(event);
-		        Log.d("accion", "oldDist=" + oldDist);
+		        //Log.d("accion", "oldDist=" + oldDist);
 		        if (oldDist > 10f) {
 		            savedMatrix.set(matrix);
 		            puntoMedio(mid, event);
@@ -177,20 +98,20 @@ public class Imagen {
 		    case MotionEvent.ACTION_UP:
 		    case MotionEvent.ACTION_POINTER_UP:
 		        mode = NONE;
-		        Log.d("accion", "mode=NONE");
+		        //Log.d("accion", "mode=NONE");
 		        imageView.setImageMatrix(matrix);
 		        break;
 	//mover dedos
 		    case MotionEvent.ACTION_MOVE:
 		        if (mode == PULSADO) {
-		        	log("ACTION_MOVE -> pulsado");
+		        	//log("ACTION_MOVE -> pulsado");
 		            matrix.set(savedMatrix);
 		            matrix.postTranslate(event.getX() - start.x, 
 		            		event.getY() - start.y);
 		            compruebaZoom();
 		        } 
 		        else if (mode == ZOOM) {
-		        	log("ACTION_MOVE -> zoom");
+		        	//log("ACTION_MOVE -> zoom");
 		            float newDist = espacio(event);
 	                matrix.set(savedMatrix);
 	                float scale = newDist / oldDist;
