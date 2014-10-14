@@ -32,7 +32,7 @@ public class Main extends Activity {
 	//variables
 	Imagen imagen;
 	ImageView img;
-	TextView txtCont;
+	static TextView txtCont;
 	Button btnRmv, btnInv, btnFin, btnRes;
 	ToggleButton btnAdd;
 	
@@ -49,6 +49,8 @@ public class Main extends Activity {
 	float mX;
     float mY;
     Canvas canvas;*/
+	
+	
 	
 	
 	@Override
@@ -155,20 +157,7 @@ public class Main extends Activity {
 	View.OnTouchListener clickPinta = new View.OnTouchListener() {
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
-			switch(event.getAction()){
-            // When user touches the screen
-            case MotionEvent.ACTION_DOWN:
-                // Getting X coordinate
-                float mX = event.getX();
-                // Getting Y Coordinate
-                float mY = event.getY();
- 
-                // Setting the coordinates on TextView
-                txtCont.setText("X :" + mX + " , " + "Y :" + mY);
-                
-                //vista.draw(canvas);
-			}
-			return true;
+			return imagen.pinta(v, event);
 		}
 		
 	};

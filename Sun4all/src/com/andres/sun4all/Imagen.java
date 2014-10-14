@@ -47,6 +47,8 @@ public class Imagen{
 	PointF mid = new PointF();
 	float[]valores;
 	//hasta aqui funciona
+	int lastTouchX;
+	int lastTouchY;
 	
 	
 	Imagen(ImageView imView)//Constructor
@@ -54,13 +56,8 @@ public class Imagen{
 		// 2 5 posiciones x y del matrix (muy raro)
 		//codigo temporal(de momento coge una imagen ya guardada)
 		imView.setImageResource(R.drawable.sol);
-		
-		
 		imView.setCropToPadding(true);
-		
 		imageView = imView;
-		
-		//codigo nuevo!
 		
 	}
 	//metodo que cogera una imagen aleatoria del servidor
@@ -68,11 +65,24 @@ public class Imagen{
 	{
 		
 	}
-
+	public boolean pinta (View v, MotionEvent event){
+		calculaCoordenadasImagen(event);
+		
+		switch(event.getAction()){
+        // When user touches the screen
+        case MotionEvent.ACTION_DOWN:
+            Main.txtCont.setText("X :"+lastTouchX+" , "+"Y :"+lastTouchY);
+            
+		}
+		return true;
+	}
     public boolean touch(View v, MotionEvent event)
     {
     	imageView =(ImageView) v;
 		imageView.setScaleType(ScaleType.MATRIX);
+		
+		//codigo probando
+		
 	    switch (event.getAction() & MotionEvent.ACTION_MASK) {
     //pulsar 1	    
 		    case MotionEvent.ACTION_DOWN:
@@ -220,6 +230,28 @@ public class Imagen{
 	    float x = event.getX(0) + event.getX(1);
 	    float y = event.getY(0) + event.getY(1);
 	    point.set(x / 2, y / 2);
+	}
+	//calcula las coordenadas de la pantalla
+	void calculaCoordPantalla(MotionEvent e){
+		// Getting X coordinate
+        float mX = e.getX();
+        // Getting Y Coordinate
+        float mY = e.getY();
+        
+        Main.txtCont.setText("X :" + mX + " , " + "Y :" + mY);
+	}
+	//calcula las coordenadas absolutas de la imagen
+	void calculaCoordenadasImagen(MotionEvent e){
+		float []m = new float[9];
+		matrix.getValues(m);
+		float transX = m[Matrix.MTRANS_X] * -1;
+		float transY = m[Matrix.MTRANS_Y] * -1;
+		float scaleX = m[Matrix.MSCALE_X];
+		float scaleY = m[Matrix.MSCALE_Y];
+		lastTouchX = (int) ((e.getX() + transX) / scaleX);
+		lastTouchY = (int) ((e.getY() + transY) / scaleY);
+		lastTouchX = Math.abs(lastTouchX);
+		lastTouchY = Math.abs(lastTouchY);
 	}
 	//logs rapidos, de quita y pon
 	private void log(String s){
