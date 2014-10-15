@@ -1,0 +1,53 @@
+package com.andres.sun4all;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import android.app.Activity;
+import android.app.Activity;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.widget.TextView;
+
+public class Segunda extends Activity {
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_segunda);
+
+	}
+	
+	List <Integer> listaCoordenadas = new ArrayList <Integer>();
+	static int [] par = new int[2];
+	static int envia[][];
+
+	void guardaCoordenadas(int x, int y){
+		listaCoordenadas.add(x);
+		listaCoordenadas.add(y);
+		//probando, las imprime en la app
+		//Main.txtCont.setText("X :"+x+" , "+"Y :"+y);
+		Main.txtCont.setText("X :"+x+" , "+"Y :"+y);
+	}
+	static void enviaCoordenadas(){
+		//preparamos un array a medida para enviar las coordenadas
+		int [] algo;// = new int[2];
+		envia = new int[listaCoordenadas.size()][2];
+		Log.i("imprimiendo coordenadas", "total de coordenadas: "+listaCoordenadas.size());
+		Log.i("","-------------------------------------");
+		for(int x = 0; x<listaCoordenadas.size();x++){
+			algo = listaCoordenadas.get(x);
+			envia[x][0]=algo[0];
+			envia[x][1]=algo[1];
+			algo=null;
+			
+			Log.i("coordenada "+(x+1)+" de "+envia.length,"X :"+envia[x][0]+" , "+"Y :"+envia[x][1]);
+		}
+		//enviamos el array --> (envia)
+		
+		//reseteamos el arraylist		
+		listaCoordenadas.clear();
+	}
+	
+}

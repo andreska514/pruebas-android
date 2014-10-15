@@ -1,15 +1,21 @@
 package com.andres.sun4all;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 import android.util.FloatMath;
 import android.util.Log;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.RectF;
+import android.graphics.drawable.BitmapDrawable;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.widget.Button;
@@ -24,6 +30,10 @@ import android.widget.TextView;
 import android.view.View.OnClickListener;
 
 public class Imagen{
+	
+//
+//canvas.drawColor(0, Mode.CLEAR);
+//overlayBitmap.eraseColor(Color.TRANSPARENT);
 	
 //CONSTANTES
 	// zoom
@@ -46,36 +56,71 @@ public class Imagen{
 	PointF start = new PointF();
 	PointF mid = new PointF();
 	float[]valores;
-	//hasta aqui funciona
 	int lastTouchX;
 	int lastTouchY;
+	//hasta aqui funciona
 	
+	//arrays para el envio de las coordenadas
+	//coordenadas añadiendo -- coordenadas de cada toque -- cordenadas a enviar
+	//static List<int []> listaCoordenadas ;
+	static List<int[]> listaCoordenadas ;
+	static int [] par = new int[2];
+	static int envia[][];
 	
-	Imagen(ImageView imView)//Constructor
+//CONSTRUCTOR --------------------------------------------------------------------------
+	Imagen(ImageView imView)
 	{	// 0 4 zoom actual x y de la imagen(tamaño si lo multiplicas por width/height)
 		// 2 5 posiciones x y del matrix (muy raro)
 		//codigo temporal(de momento coge una imagen ya guardada)
 		imView.setImageResource(R.drawable.sol);
 		imView.setCropToPadding(true);
 		imageView = imView;
+		//coordenadas
+		listaCoordenadas = new ArrayList<int[]>();
+		
 		
 	}
-	//metodo que cogera una imagen aleatoria del servidor
-	void cogeImagenAleatoria()
-	{
-		
+	void guardaCoordenadas(int x, int y){
+		par[0]=x;
+		par[1]=y;
+		listaCoordenadas.add(par);
+		//probando, las imprime en la app
+		//Main.txtCont.setText("X :"+x+" , "+"Y :"+y);
+		Main.txtCont.setText("X :"+par[0]+" , "+"Y :"+par[1]);
 	}
+	static void enviaCoordenadas(){
+		//preparamos un array a medida para enviar las coordenadas
+		int [] algo;// = new int[2];
+		envia = new int[listaCoordenadas.size()][2];
+		Log.i("imprimiendo coordenadas", "total de coordenadas: "+listaCoordenadas.size());
+		Log.i("","-------------------------------------");
+		for(int x = 0; x<listaCoordenadas.size();x++){
+			algo = listaCoordenadas.get(x);
+			envia[x][0]=algo[0];
+			envia[x][1]=algo[1];
+			algo=null;
+			
+			Log.i("coordenada "+(x+1)+" de "+envia.length,"X :"+envia[x][0]+" , "+"Y :"+envia[x][1]);
+		}
+		//enviamos el array --> (envia)
+		
+		//reseteamos el arraylist		
+		listaCoordenadas.clear();
+	}
+	//modo add sunspot activado
 	public boolean pinta (View v, MotionEvent event){
-		calculaCoordenadasImagen(event);
-		
 		switch(event.getAction()){
         // When user touches the screen
         case MotionEvent.ACTION_DOWN:
-            Main.txtCont.setText("X :"+lastTouchX+" , "+"Y :"+lastTouchY);
-            
+        	calculaCoordenadasImagen(event);
+        	guardaCoordenadas(lastTouchX,lastTouchY);
+            //matrix.
+          //hasta aqui funciona
 		}
+		
 		return true;
 	}
+	//modo move image activado
     public boolean touch(View v, MotionEvent event)
     {
     	imageView =(ImageView) v;
@@ -134,8 +179,8 @@ public class Imagen{
 	    }//fin switch
 	    return true;
     }//fin touch
+    
     //comprueba el zoom para concretar los límites
-       
     //limita el max y min zoom y ejecuta compruebaValores()
     public void compruebaZoom(){
     	float[] values = new float[9];
@@ -252,6 +297,7 @@ public class Imagen{
 		lastTouchY = (int) ((e.getY() + transY) / scaleY);
 		lastTouchX = Math.abs(lastTouchX);
 		lastTouchY = Math.abs(lastTouchY);
+		
 	}
 	//logs rapidos, de quita y pon
 	private void log(String s){

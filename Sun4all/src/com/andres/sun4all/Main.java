@@ -42,13 +42,9 @@ public class Main extends Activity {
 	String cadena = "Move image/Add Sunspot";
 	Editable strMove = Editable.Factory.getInstance().newEditable(cadena);
 	Editable strAdd = Editable.Factory.getInstance().newEditable(cadena);
+	//hasta aqui funciona
 	
-	//probando..peta de momento
-	/*Vista vista;
-	String tvCoordinates;
-	float mX;
-    float mY;
-    Canvas canvas;*/
+
 	
 	
 	
@@ -89,13 +85,10 @@ public class Main extends Activity {
 		strMove.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),0,10,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 		strAdd.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),11,22,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 		btnAdd.setText(strMove);
-		
+		//hasta aqui funciona
 		
 		//pruebas
-		/*vista = new Vista(getApplicationContext());
-		//tvCoordinates = (TextView)findViewById(R.id.tv_coordinates);
-		//vista.setTextView(tvCoordinates);
-        vista.setOnTouchListener(clickPinta);*/
+		
 	}
 	
 	//Clicks en botones
@@ -117,7 +110,6 @@ public class Main extends Activity {
 				}
 				
 				//activa el modo pintar
-				//desactivar trazados, solo puntos
 				//dibuja un sunspot donde tocas(modo escribir)
 				//guardar coordenada de cada punto
 				break;
@@ -142,7 +134,9 @@ public class Main extends Activity {
 			case R.id.btnInv://coger el negativo de esa imagen(finish the task)
 				break;
 			case R.id.btnRes://reinicia la misma imagen sin sunspots(start over)
-				Imagen.logMatrix(Imagen.matrix, Imagen.imageView);
+				//Imagen.logMatrix(Imagen.matrix, Imagen.imageView);
+				//Imagen.imprimeCoordenadas();
+				Imagen.enviaCoordenadas();
 				break;
 			}
 		}
