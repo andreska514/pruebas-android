@@ -1,12 +1,12 @@
 package com.andres.sun4all;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-
-
 import android.util.FloatMath;
 import android.util.Log;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -14,6 +14,7 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PointF;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.v7.app.ActionBarActivity;
@@ -22,18 +23,16 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.Toast;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.TextView;
 import android.view.View.OnClickListener;
 
 public class Imagen{
-	
-//
-//canvas.drawColor(0, Mode.CLEAR);
-//overlayBitmap.eraseColor(Color.TRANSPARENT);
 	
 //CONSTANTES
 	// zoom
@@ -67,26 +66,34 @@ public class Imagen{
 	static int [] par = new int[2];
 	static int envia[][];
 	
+	
+	//
+	Context c;
+	
+	
 //CONSTRUCTOR --------------------------------------------------------------------------
-	Imagen(ImageView imView)
+	Imagen(ImageView imView, Context c)
 	{	// 0 4 zoom actual x y de la imagen(tamaño si lo multiplicas por width/height)
 		// 2 5 posiciones x y del matrix (muy raro)
 		//codigo temporal(de momento coge una imagen ya guardada)
+		Log.i("c", "1");
 		imView.setImageResource(R.drawable.sol);
+		Log.i("c", "2");
 		imView.setCropToPadding(true);
+		Log.i("c", "3");
 		imageView = imView;
+		Log.i("c", "4");
 		//coordenadas
 		listaCoordenadas = new ArrayList<int[]>();
-		
-		
+		Log.i("c", "5");
+		this.c = c;
 	}
 	void guardaCoordenadas(int x, int y){
 		par[0]=x;
 		par[1]=y;
 		listaCoordenadas.add(par);
 		//probando, las imprime en la app
-		//Main.txtCont.setText("X :"+x+" , "+"Y :"+y);
-		Main.txtCont.setText("X :"+par[0]+" , "+"Y :"+par[1]);
+		Main.txtCont.setText("X :"+x+" , "+"Y :"+y);
 	}
 	static void enviaCoordenadas(){
 		//preparamos un array a medida para enviar las coordenadas
@@ -205,16 +212,25 @@ public class Imagen{
         values[Matrix.MSCALE_Y] = scaleY; 
         matrix.setValues(values);
         compruebaValores();
+        //limitDrag(matrix);
     }
+    
     //comprueba el zoom actual y envia los bordes de la pantalla a limitaBordes()
 	public void compruebaValores(){
     	//log("compruebaValores");
     	valores = new float[9];
     	matrix.getValues(valores);
     	
-        if (valores[0]<=0.9f){
+        /*
+         * if (valores[0]<=0.9f){
         	valores[0]=0.9f;
         	valores[4]=0.9f;
+        	valores[2]=0;
+        	valores[5]=0;
+         */
+    	if (valores[0]<=MIN_ZOOM){
+        	valores[0]=MIN_ZOOM;
+        	valores[4]=MIN_ZOOM;
         	valores[2]=0;
         	valores[5]=0;
         	matrix.setValues(valores);
@@ -324,3 +340,51 @@ public class Imagen{
 	}
 
 }
+//no funciona
+/*private void limitDrag(Matrix m) {
+String TAG = "touch";
+float[] values = new float[9];
+m.getValues(values);
+float transX = values[Matrix.MTRANS_X];
+float transY = values[Matrix.MTRANS_Y];
+float scaleX = values[Matrix.MSCALE_X];
+float scaleY = values[Matrix.MSCALE_Y];
+//ImageView iv = (ImageView)findViewById(R.id.image);
+Rect bounds = imageView.getDrawable().getBounds();
+Main main= null;
+int viewWidth = c.getResources().getDisplayMetrics().widthPixels;
+int viewHeight = c.getResources().getDisplayMetrics().widthPixels;
+Log.i("vw-vh",viewWidth+"-"+viewHeight);
+
+int width = bounds.right - bounds.left;
+int height = bounds.bottom - bounds.top;
+int offsetX = 20;
+int offsetY = 80;
+float minX = (-width + 20) * scaleX;
+float minY = (-height + 20) * scaleY;
+float maxX = minX+viewWidth+offsetX;
+float maxY = minY+viewHeight-offsetY;
+Log.d(TAG, "minX:"+minX);
+Log.d(TAG, "maxX:"+maxX);
+Log.d(TAG, "minY:"+minY);
+Log.d(TAG, "maxY:"+maxY);
+if(transX > (maxX)) {
+	//transX = viewWidth - 20;
+	Log.d(TAG, "transX >");
+	transX = maxX;
+} else if(transX < minX) {
+	Log.d(TAG, "transX <");
+	transX = minX;
+}
+if(transY > (maxY)) {
+	// transY = viewHeight - 80;
+	Log.d(TAG, "transY >");
+	transY = maxY;
+} else if(transY < minY) {
+	transY = minY;
+	Log.d(TAG, "transY <");
+}
+values[Matrix.MTRANS_X] = transX;
+values[Matrix.MTRANS_Y] = transY;
+m.setValues(values);
+}*/

@@ -42,24 +42,24 @@ public class Main extends Activity {
 	String cadena = "Move image/Add Sunspot";
 	Editable strMove = Editable.Factory.getInstance().newEditable(cadena);
 	Editable strAdd = Editable.Factory.getInstance().newEditable(cadena);
+	
 	//hasta aqui funciona
+	//public int viewWidth ;
+	//public int viewHeight;
 	
 
 	
 	
 	
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
-		//imagen(zoom/pintar)
 		img = (ImageView) findViewById(R.id.ImgFoto);
 		//*************
 		img.setOnTouchListener(clickImagen);
-		imagen = new Imagen(img);
+		imagen = new Imagen(img, getApplicationContext());
 		
 		//el contador
 		txtCont = (TextView) findViewById(R.id.txtCont);
