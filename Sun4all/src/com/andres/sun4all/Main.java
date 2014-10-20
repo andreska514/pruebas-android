@@ -1,15 +1,10 @@
 package com.andres.sun4all;
 
-import java.io.IOException;
 
 import android.content.Context;
 import android.text.Editable;
-import android.text.Html;
 import android.text.Spannable;
 import android.text.style.StyleSpan;
-import android.util.AttributeSet;
-import android.util.Log;
-import android.util.Xml;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,13 +12,12 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ToggleButton;
-import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.TextView;
-import android.view.View.OnClickListener;
 import android.graphics.Color;
-import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 
 public class Main extends Activity {
 
@@ -44,11 +38,15 @@ public class Main extends Activity {
 	Editable strAdd = Editable.Factory.getInstance().newEditable(cadena);
 	
 	//hasta aqui funciona
+	static WindowManager mWinMgr;
+	static int width;
+	static int height;
+	static Drawable d;
+	static int viewWidth;
+    static int viewHeight;
+	
 	//public int viewWidth ;
 	//public int viewHeight;
-	
-
-	
 	
 	
 	@Override
@@ -57,6 +55,7 @@ public class Main extends Activity {
 		setContentView(R.layout.activity_main);
 		
 		img = (ImageView) findViewById(R.id.ImgFoto);
+		
 		//*************
 		img.setOnTouchListener(clickImagen);
 		imagen = new Imagen(img, getApplicationContext());
@@ -86,7 +85,12 @@ public class Main extends Activity {
 		strAdd.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),11,22,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 		btnAdd.setText(strMove);
 		//hasta aqui funciona
-		
+		mWinMgr = (WindowManager)getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
+		int width = mWinMgr.getDefaultDisplay().getWidth();
+        int height = mWinMgr.getDefaultDisplay().getHeight();
+        d= this.getResources().getDrawable(R.drawable.sol);
+        viewWidth = getResources().getDisplayMetrics().widthPixels;
+        viewHeight = getResources().getDisplayMetrics().heightPixels;
 		//pruebas
 		
 	}

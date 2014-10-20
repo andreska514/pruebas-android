@@ -1,0 +1,12 @@
+package com.andres.sun4all;
+
+
+public class Descargar {
+
+
+	/** Constructor*/
+	Descargar(){
+
+	}
+	
+}

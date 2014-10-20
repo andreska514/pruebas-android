@@ -1,54 +1,29 @@
 package com.andres.sun4all;
 
-import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+
 import android.util.FloatMath;
 import android.util.Log;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Matrix;
-import android.graphics.Paint;
 import android.graphics.PointF;
-import android.graphics.Rect;
-import android.graphics.RectF;
-import android.graphics.drawable.BitmapDrawable;
-import android.os.Bundle;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
-import android.widget.Toast;
-import android.view.Display;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
-import android.widget.TextView;
-import android.view.View.OnClickListener;
 
-public class Imagen{
+public class Imagen {
 	
-//CONSTANTES
-	// zoom
 	static final int NONE = 0;
 	static final int PULSADO = 1;
 	static final int ZOOM = 2;
 	static final float MAX_ZOOM = 1.7f;
     static final float MIN_ZOOM = 0.9f;
-		
-//VARIABLES y OBJETOS
-    // zoom
     int mode = NONE;
     float oldDist = 1f;
-    
-//OBJETOS
     static ImageView imageView;
-	// zoom
 	static Matrix matrix = new Matrix();
 	static Matrix savedMatrix = new Matrix();
 	PointF start = new PointF();
@@ -57,6 +32,9 @@ public class Imagen{
 	int lastTouchX;
 	int lastTouchY;
 	//hasta aqui funciona
+	
+	//int width = 
+	
 	
 	//arrays para el envio de las coordenadas
 	//coordenadas añadiendo -- coordenadas de cada toque -- cordenadas a enviar
@@ -68,23 +46,20 @@ public class Imagen{
 	
 	//
 	Context c;
+	Canvas canvas;
 	
 	
 //CONSTRUCTOR --------------------------------------------------------------------------
+	
 	Imagen(ImageView imView, Context c)
 	{	// 0 4 zoom actual x y de la imagen(tamaño si lo multiplicas por width/height)
 		// 2 5 posiciones x y del matrix (muy raro)
 		//codigo temporal(de momento coge una imagen ya guardada)
-		Log.i("c", "1");
 		imView.setImageResource(R.drawable.sol);
-		Log.i("c", "2");
 		imView.setCropToPadding(true);
-		Log.i("c", "3");
 		imageView = imView;
-		Log.i("c", "4");
 		//coordenadas
 		listaCoordenadas = new ArrayList<int[]>();
-		Log.i("c", "5");
 		this.c = c;
 	}
 	void guardaCoordenadas(int x, int y){
@@ -120,7 +95,6 @@ public class Imagen{
         case MotionEvent.ACTION_DOWN:
         	calculaCoordenadasImagen(event);
         	guardaCoordenadas(lastTouchX,lastTouchY);
-            //matrix.
           //hasta aqui funciona
 		}
 		
@@ -131,7 +105,6 @@ public class Imagen{
     {
     	imageView =(ImageView) v;
 		imageView.setScaleType(ScaleType.MATRIX);
-		
 		//codigo probando
 		
 	    switch (event.getAction() & MotionEvent.ACTION_MASK) {
@@ -139,59 +112,49 @@ public class Imagen{
 		    case MotionEvent.ACTION_DOWN:
 		        savedMatrix.set(matrix);
 		        start.set(event.getX(), event.getY());
-		        //Log.d("accion", "mode=PULSADO");
 		        mode = PULSADO;
-		        imageView.setImageMatrix(matrix);
-		        //compruebaValores();
 		        break;
     //pulsar 2
 		    case MotionEvent.ACTION_POINTER_DOWN:
 		        oldDist = espacio(event);
-		        //Log.d("accion", "oldDist=" + oldDist);
 		        if (oldDist > 10f) {
 		            savedMatrix.set(matrix);
 		            puntoMedio(mid, event);
 		            mode = ZOOM;
 		        }
-		        imageView.setImageMatrix(matrix);
 		        break;
 	//soltar
 		    case MotionEvent.ACTION_UP:
 		    case MotionEvent.ACTION_POINTER_UP:
 		        mode = NONE;
-		        //Log.d("accion", "mode=NONE");
-		        imageView.setImageMatrix(matrix);
 		        break;
 	//mover dedos
 		    case MotionEvent.ACTION_MOVE:
 		        if (mode == PULSADO) {
-		        	//log("ACTION_MOVE -> pulsado");
 		            matrix.set(savedMatrix);
 		            matrix.postTranslate(event.getX() - start.x, 
 		            		event.getY() - start.y);
 		            compruebaZoom();
 		        } 
 		        else if (mode == ZOOM) {
-		        	//log("ACTION_MOVE -> zoom");
 		            float newDist = espacio(event);
 	                matrix.set(savedMatrix);
 	                float scale = newDist / oldDist;
 	                matrix.postScale(scale, scale, mid.x, mid.y);  
 	                compruebaZoom();
 		        }
-		        imageView.setImageMatrix(matrix);
 		        compruebaZoom();
 		        break;
 	    }//fin switch
+	    imageView.setImageMatrix(matrix);
 	    return true;
     }//fin touch
-    
     //comprueba el zoom para concretar los límites
-    //limita el max y min zoom y ejecuta compruebaValores()
-    public void compruebaZoom(){
+    //limita el max y min zoom y envia los bordes de la pantalla a limitaBordes()
+   //metodo a mejorar
+ public void compruebaZoom(){
     	float[] values = new float[9];
         matrix.getValues(values);
-        
         //compruebo el zoom
         float scaleX = values[Matrix.MSCALE_X];
         float scaleY = values[Matrix.MSCALE_Y];
@@ -210,30 +173,18 @@ public class Imagen{
         values[Matrix.MSCALE_X] = scaleX;
         values[Matrix.MSCALE_Y] = scaleY; 
         matrix.setValues(values);
-        compruebaValores();
-        //limitDrag(matrix);
-    }
-    
-    //comprueba el zoom actual y envia los bordes de la pantalla a limitaBordes()
-	public void compruebaValores(){
-    	//log("compruebaValores");
-    	valores = new float[9];
+        
+      //Segunda parte: segun el zoom envia unos valores u otros
+		//a limitaBordes(float, float)
+        valores = new float[9];
     	matrix.getValues(valores);
-    	
-        /*
-         * if (valores[0]<=0.9f){
-        	valores[0]=0.9f;
-        	valores[4]=0.9f;
-        	valores[2]=0;
-        	valores[5]=0;
-         */
     	if (valores[0]<=MIN_ZOOM){
         	valores[0]=MIN_ZOOM;
         	valores[4]=MIN_ZOOM;
         	valores[2]=0;
         	valores[5]=0;
         	matrix.setValues(valores);
-        	imageView.setImageMatrix(matrix);
+        	//imageView.setImageMatrix(matrix);
         }else if(valores[0]>0.9 && valores[0]<=1){
         	limitaBordes(-65, -40);
         }else if(valores[0]>1 && valores[0]<=1.1){
@@ -248,18 +199,16 @@ public class Imagen{
         	limitaBordes(-484, -435);
         }else if(valores[0]>1.5 && valores[0]<=1.6){
         	limitaBordes(-563, -521);
-        }else if(valores[0]>1.6 && valores[0]<=1.7){
-        	limitaBordes(-644, -600);
-        }else {// (valores[0]>1.7f){
-        	//valores[0]=1.7f;
-        	//valores[4]=1.7f;
+        }else {// (valores[0]>1.6f)
         	limitaBordes(-664, -600);
         }
     }
-    //establece los limites del matrix segun lo recibido de compruebaValores()
+    //metodo a mejorar
+ 
 	void limitaBordes(float valorX, float valorY){
     	//log("determinando");
     	//if(x>0)
+		
     	if(valores[2]>0){
     		valores[2]=0;
     		matrix.setValues(valores);
@@ -278,6 +227,8 @@ public class Imagen{
     	}
     	imageView.setImageMatrix(matrix);
     }
+	
+	
     
 	/** Determina el espacio entre los 2 primeros dedos*/
 	private float espacio(MotionEvent event) {
@@ -291,7 +242,7 @@ public class Imagen{
 	    float y = event.getY(0) + event.getY(1);
 	    point.set(x / 2, y / 2);
 	}
-	//calcula las coordenadas de la pantalla
+	/** Calcula las coordenadas de la pantalla*/
 	void calculaCoordPantalla(MotionEvent e){
 		// Getting X coordinate
         float mX = e.getX();
@@ -300,7 +251,7 @@ public class Imagen{
         
         Main.txtCont.setText("X :" + mX + " , " + "Y :" + mY);
 	}
-	//calcula las coordenadas absolutas de la imagen
+	/** Calcula las coordenadas absolutas de la imagen*/
 	void calculaCoordenadasImagen(MotionEvent e){
 		float []m = new float[9];
 		matrix.getValues(m);
@@ -312,13 +263,11 @@ public class Imagen{
 		lastTouchY = (int) ((e.getY() + transY) / scaleY);
 		lastTouchX = Math.abs(lastTouchX);
 		lastTouchY = Math.abs(lastTouchY);
-		
 	}
 	//logs rapidos, de quita y pon
 	private void log(String s){
 		Log.i("",s);
 	}
-    
     static void logMatrix(Matrix matrix, ImageView imageView){
 		float[] values = new float[9];
 		Main.contador++;
@@ -339,6 +288,7 @@ public class Imagen{
 	}
 
 }
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 //no funciona
 /*private void limitDrag(Matrix m) {
 String TAG = "touch";
@@ -387,3 +337,120 @@ values[Matrix.MTRANS_X] = transX;
 values[Matrix.MTRANS_Y] = transY;
 m.setValues(values);
 }*/
+//* * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+/*
+ * if (valores[0]<=0.9f){
+	valores[0]=0.9f;
+	valores[4]=0.9f;
+	valores[2]=0;
+	valores[5]=0;
+ */
+//* * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+/*public void compruebaValores(){
+//log("compruebaValores");
+valores = new float[9];
+matrix.getValues(valores);
+
+
+if (valores[0]<=MIN_ZOOM){
+	valores[0]=MIN_ZOOM;
+	valores[4]=MIN_ZOOM;
+	valores[2]=0;
+	valores[5]=0;
+	matrix.setValues(valores);
+	imageView.setImageMatrix(matrix);
+}else if(valores[0]>0.9 && valores[0]<=1){
+	limitaBordes(-65, -40);
+}else if(valores[0]>1 && valores[0]<=1.1){
+	limitaBordes(-166, -123);
+}else if(valores[0]>1.1 && valores[0]<=1.2){
+	limitaBordes(-246, -201);
+}else if(valores[0]>1.2 && valores[0]<=1.3){
+	limitaBordes(-316, -280);
+}else if(valores[0]>1.3 && valores[0]<=1.4){
+	limitaBordes(-409, -359);
+}else if(valores[0]>1.4 && valores[0]<=1.5){
+	limitaBordes(-484, -435);
+}else if(valores[0]>1.5 && valores[0]<=1.6){
+	limitaBordes(-563, -521);
+}else if(valores[0]>1.6 && valores[0]<=1.7){
+	limitaBordes(-644, -600);
+}else {// (valores[0]>1.7f){
+	//valores[0]=1.7f;
+	//valores[4]=1.7f;
+	limitaBordes(-664, -600);
+}
+}*/
+//* * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+//borrado de compruebaValores
+/*}else if(valores[0]>1.6 && valores[0]<=1.7){
+limitaBordes(-644, -600);*/
+
+
+/*private void limitDrag(Matrix m, ImageView view) {
+
+int _y_up=20;
+
+float[] values = new float[9];
+m.getValues(values);
+float transX = values[Matrix.MTRANS_X];
+float transY = values[Matrix.MTRANS_Y];
+float scaleX = values[Matrix.MSCALE_X];
+float scaleY = values[Matrix.MSCALE_Y];
+
+Rect bounds = view.getDrawable().getBounds();
+int viewWidth = Main.viewWidth;
+int viewHeight = Main.viewHeight;
+
+if(viewHeight<=480){
+    _y_up=0;
+}
+if(viewHeight>480&&viewHeight<980)
+{
+    _y_up=140;
+}
+int width = bounds.right - bounds.left;
+int height = bounds.bottom - bounds.top;
+int __width=width;
+int __height=height;
+width = viewWidth / 2;
+height = viewHeight / 2;
+//height = 200 ;
+float minX = (-width) ;//* scaleX;
+float minY = (-height) ;//* scaleY;
+
+if ((transX) > (viewWidth)) {
+    transX = viewWidth;
+} 
+else if (transX < minX) {
+    transX = minX;
+}
+if ((-transX) > (viewWidth)) {
+         // _x_right
+    transX = -(viewWidth);
+} 
+else if (-transX < minX) {
+    transX = -(minX+30);
+}
+if ((transY) > (viewHeight)) {
+//  _y_up
+    transY =( viewHeight);
+} 
+else if (transY < minY) {
+    transY = (minY+_y_up);
+}
+if ((-transY) > (viewHeight)) {
+//  _y_down
+    transY = -(viewHeight);
+} 
+else if (-transY < minY) {
+
+    transY = -(minY+170);
+}
+
+values[Matrix.MTRANS_X] = transX;
+values[Matrix.MTRANS_Y] = transY;
+m.setValues(values);
+}*/
+//* * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+

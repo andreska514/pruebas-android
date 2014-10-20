@@ -13,16 +13,16 @@
 		<item value="false" key="isRegEx"/>
 		<item value="false" key="incremental"/>
 		<item value="false" key="wholeword"/>
-		<item value="" key="selection"/>
+		<item value="imageView.setImageMatrix(matrix);" key="selection"/>
 		<list key="findhistory">
+			<item value="imageView.setImageMatrix(matrix);"/>
+			<item value="imageView"/>
+			<item value="paint"/>
+			<item value="string"/>
+			<item value="stringb"/>
+			<item value="ola hola"/>
+			<item value="canvas"/>
 			<item value="c."/>
-			<item value="c"/>
-			<item value="pinta"/>
-			<item value="view"/>
-			<item value="pview"/>
-			<item value="log"/>
-			<item value="paintview"/>
-			<item value="intent"/>
 		</list>
 		<list key="replacehistory">
 		</list>

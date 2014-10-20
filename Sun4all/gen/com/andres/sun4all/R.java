@@ -1077,12 +1077,14 @@ containing a value of this type.
         public static final int abc_textfield_searchview_holo_light=0x7f020054;
         public static final int abc_textfield_searchview_right_holo_dark=0x7f020055;
         public static final int abc_textfield_searchview_right_holo_light=0x7f020056;
-        public static final int cruz=0x7f020057;
-        public static final int ic_launcher=0x7f020058;
-        public static final int sol=0x7f020059;
+        public static final int canguro=0x7f020057;
+        public static final int cruz=0x7f020058;
+        public static final int ic_launcher=0x7f020059;
+        public static final int sol=0x7f02005a;
     }
     public static final class id {
         public static final int ImgFoto=0x7f05003d;
+        public static final int SurfaceView01=0x7f050045;
         public static final int action_bar=0x7f05001c;
         public static final int action_bar_activity_content=0x7f050015;
         public static final int action_bar_container=0x7f05001b;
@@ -1147,7 +1149,6 @@ containing a value of this type.
         public static final int tabMode=0x7f050002;
         public static final int title=0x7f05002b;
         public static final int top_action_bar=0x7f050020;
-        public static final int tv_coordinates=0x7f050045;
         public static final int txtCont=0x7f050042;
         public static final int txtSpots=0x7f050041;
         public static final int up=0x7f050021;

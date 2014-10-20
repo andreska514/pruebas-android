@@ -1,0 +1,23 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.andres.sun4all.Segunda" >
+    
+	<com.andres.sun4all.Panel 
+	    android:id="@+id/SurfaceView01"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:maxHeight="100dip"/>
+     
+     <!-- 
+     <ImageView 
+        android:id="@+id/ImgFoto2"
+        android:layout_width="fill_parent"
+  		android:layout_height="match_parent"
+  		android:contentDescription="solecito"
+  		android:layout_weight = "1"
+  		android:layout_gravity="center"/>
+ 	-->
+</LinearLayout>

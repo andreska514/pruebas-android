@@ -1,0 +1,13 @@
+package com.andres.sun4all;
+
+import android.graphics.Bitmap;
+
+
+public class Descargar {
+	Bitmap bitmap;
+	/** Constructor*/
+	Bitmap Descargar(String url){
+		return bitmap;
+	}
+	
+}
