@@ -1,16 +1,13 @@
 package com.andres.sun4all;
 //pequeña prueba con activity_segunda
-import java.util.ArrayList;
-
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.FloatMath;
 import android.util.Log;
 import android.view.*;
 import android.widget.ImageView;
-import android.widget.ImageView.ScaleType;
 import android.graphics.*;
-import android.graphics.drawable.BitmapDrawable;
+import android.graphics.Bitmap.Config;
 
 
 public class Panel extends View{
@@ -35,63 +32,98 @@ public class Panel extends View{
 	boolean clickZoom;
 	
 	//probando
-	private Bitmap bitmap;
-	private Bitmap bitmap2;
+	private Bitmap bitmapInicio;
+	private Bitmap bitmap ,bitmap2;
+	private Bitmap bitCruz;
 	private Canvas canvas;
 	private Path path;
-	private Paint paint;
+	private Paint paint= new Paint();
 	private Context context;
+	private AttributeSet attr;
+	
+	//alto y ancho del View
+	int height;
+	int width;
+	//alto y ancho del bitmap
+	int bitHeight;
+	int bitWidth;
+	
+	Config conf=Config.ARGB_8888;;
 
-	
-	
+
 	//Bitmap bitmap = new BitmapFactory().decodeResource(getResources(), R.drawable.sol);;
 	
 	//Constructor
-	public Panel(Context context) {
-		super(context);
+	//I have this
+	//public Panel(Context context){
+	public Panel(Context context, AttributeSet attr) {
+		//super(context);
+		super(context, attr);
+		this.context = context;
+		this.attr = attr;
+		matrix = new Matrix();
+		Log.i("estoy en ","Constructor");
+		bitCruz = BitmapFactory.decodeResource(getResources(), R.drawable.cruz);
+		bitmapInicio = BitmapFactory.decodeResource(getResources(), R.drawable.sol);
+		bitHeight = bitmapInicio.getHeight();
+		bitWidth = bitmapInicio.getWidth();
+		//height = this.getLayoutParams().height;
+		//width = this.getLayoutParams().width;		
+		//if(Main.check){
+		//	this.setOnTouchListener(clickPinta);
+		//}
+		//else{
+		//	this.setOnTouchListener(clickImagen);
+		//}
 		//imageView.setOnTouchListener(clickImagen);
 		//this.setOnTouchListener(clickImagen);
 		String s = "http://i.imgur.com/CQzlM.jpg";
-		bitmap2 = BitmapFactory.decodeResource(getResources(), R.drawable.canguro);
-		Descargar d = new Descargar();
-		bitmap = d.getBitmap();
+		//bitmap2 = BitmapFactory.decodeResource(getResources(), R.drawable.canguro);
 		//probando
-		/*path= new Path();
-		paint = new Paint(Paint.DITHER_FLAG);*/
 		
 		
 	}
 //onDraw
 	@Override
 	public void onDraw(Canvas canvas){
-		//super.draw(canvas);
-		//canvas.save();
-		if(bitmap!=null){
-			Log.i("hola","hola hola");
-			canvas.drawBitmap(bitmap, matrix, new Paint());
-			//canvas.drawPath(path, paint);
-			this.canvas = canvas;
-			super.onDraw(canvas);
-		}
-		else{
-			Log.i("","El bitmap es null");
-			canvas.drawBitmap(bitmap2, matrix, new Paint());
-		}
+		Log.i("estoy en ","onDraw");
+		super.onDraw(canvas);
+		this.canvas = canvas;
+		
+		refresh();
+		//if(Main.check){
+			//this.setOnTouchListener(clickPinta);
+			
+		//}
+		//else{
+		this.setOnTouchListener(clickImagen);
+		//}
 	}//fin onDraw
-	
+	void refresh(){
+		//bitmap = Bitmap.createBitmap(bitWidth, bitHeight, conf);
+		//bitmap.createBitmap(bitmapInicio, 0, 0, bitWidth, bitHeight, matrix, true);
+		//bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.sol);
+		bitmap = bitmapInicio;
+		canvas.drawBitmap(bitmap, matrix, new Paint());
+	}
+	void iniciaPaint(){
+		canvas.drawBitmap(bitmap, matrix, paint);
+	}
 	View.OnTouchListener clickImagen= new View.OnTouchListener() {
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
-
+			Log.i("onTouch","entrada");
 			clickZoom=true;
+			
 	    	//imageView =(ImageView) v;
 			//imageView.setScaleType(ScaleType.MATRIX);
 			//codigo probando
-			Log.i("preparado?","voy a petar");
+			Log.i("onTouch","antes refresh");
+			//refresh();
+			Log.i("onTouch","despues refresh");
 			//canvas.drawBitmap(bitmap, matrix, new Paint());
 			//canvas.getMatrix();
-			canvas.concat(matrix);
-			Log.i("?","ya he petado?");
+			//canvas.concat(matrix);
 			
 		    switch (event.getAction() & MotionEvent.ACTION_MASK) {
 	    //pulsar 1	    
@@ -150,6 +182,7 @@ public class Panel extends View{
 			        compruebaZoom();
 			        break;
 		    }//fin switch
+		    invalidate();
 		    return true;
 		}
 	};
@@ -172,9 +205,9 @@ public class Panel extends View{
 		
 	};
 	
-	// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
-	// * * * * * * * * * * *No tocar a partir de  * * * * * * * * * * * * *
-	// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+	// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+	// * * * * * * * * * * * No tocar a partir de aqui * * * * * * * * * * *
+	// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 	
 	public void compruebaZoom(){
     	float[] values = new float[9];
@@ -341,6 +374,19 @@ public class Panel extends View{
 	
 
 }
+/*
+El codigo es asi:
+Bitmap targetBitmap = Bitmap.createBitmap(targetWidth, targetHeight, config);
+Canvas canvas = new Canvas(targetBitmap);
+Matrix matrix = new Matrix();
+matrix.setRotate(mRotation,source.getWidth()/2,source.getHeight()/2);
+canvas.drawBitmap(source, matrix, new Paint());
+
+
+public static Bitmap createBitmap(Bitmap source, int x, int y, int width, int height,
+        Matrix m, boolean filter)
+ */
+
 //************************************************************
 
 //cosas del onDraw, pruebas

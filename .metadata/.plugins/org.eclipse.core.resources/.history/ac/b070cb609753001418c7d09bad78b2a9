@@ -1,7 +1,0 @@
-package com.andres.sun4all;
-
-import android.widget.ImageView;
-
-public class EnvironmentView extends ImageView {
-
-}

@@ -1084,7 +1084,7 @@ containing a value of this type.
     }
     public static final class id {
         public static final int ImgFoto=0x7f05003d;
-        public static final int SurfaceView01=0x7f050045;
+        public static final int Panelillo=0x7f050045;
         public static final int action_bar=0x7f05001c;
         public static final int action_bar_activity_content=0x7f050015;
         public static final int action_bar_container=0x7f05001b;

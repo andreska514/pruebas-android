@@ -186,26 +186,26 @@ public class Imagen {
         	matrix.setValues(valores);
         	//imageView.setImageMatrix(matrix);
         }else if(valores[0]>0.9 && valores[0]<=1){
-        	limitaBordes(-65, -40);
+        	limitCorners(-65, -40);
         }else if(valores[0]>1 && valores[0]<=1.1){
-        	limitaBordes(-166, -123);
+        	limitCorners(-166, -123);
         }else if(valores[0]>1.1 && valores[0]<=1.2){
-        	limitaBordes(-246, -201);
+        	limitCorners(-246, -201);
         }else if(valores[0]>1.2 && valores[0]<=1.3){
-        	limitaBordes(-316, -280);
+        	limitCorners(-316, -280);
         }else if(valores[0]>1.3 && valores[0]<=1.4){
-        	limitaBordes(-409, -359);
+        	limitCorners(-409, -359);
         }else if(valores[0]>1.4 && valores[0]<=1.5){
-        	limitaBordes(-484, -435);
+        	limitCorners(-484, -435);
         }else if(valores[0]>1.5 && valores[0]<=1.6){
-        	limitaBordes(-563, -521);
+        	limitCorners(-563, -521);
         }else {// (valores[0]>1.6f)
-        	limitaBordes(-664, -600);
+        	limitCorners(-664, -600);
         }
     }
     //metodo a mejorar
  
-	void limitaBordes(float valorX, float valorY){
+	void limitCorners(float valorX, float valorY){
     	//log("determinando");
     	//if(x>0)
 		

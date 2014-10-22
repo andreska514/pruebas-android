@@ -1,0 +1,72 @@
+package com.andres.sun4all;
+
+import java.io.InputStream;
+import java.net.URL;
+import android.app.Activity;
+import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+
+public class Descargar extends AsyncTask<String, void, Bitmap> 
+{
+	ImageView bmImage;
+
+	  //constructor
+	  public Descargar(ImageView bmImage) {
+	      this.bmImage = bmImage;
+	  }
+
+	  // laoding picture and put it into bitmap 
+	  protected Bitmap doInBackground(String... urls) {
+	      String urldisplay = urls[0];
+	      Bitmap mIcon11 = null;
+	      try {
+	        InputStream in = new java.net.URL(urldisplay).openStream();
+	        mIcon11 = BitmapFactory.decodeStream(in);
+	      } catch (Exception e) {
+	          Log.e("Error", e.getMessage());
+	          e.printStackTrace();
+	      }
+	      return mIcon11;
+	  }
+
+	  //after downloading
+	  protected void onPostExecute(Bitmap result) {
+	      bmImage.setImageBitmap(result);
+	  }
+}
+/*Bitmap bitmap;
+URL url;
+String link;*/
+
+/*void Descargar(String link){
+	try{
+		this.link = link;
+		url = new URL(link);
+		InputStream in = url.openStream();
+		BufferedOutputStream  out = new BufferedOutputStream
+				(new FileOutputStream("testImage.png"));
+		int i;
+		while((i=in.read())!= -1){
+			out.write(i);
+		}
+		out.close();
+		in.close();
+		
+		BufferedInputStream buf = new BufferedInputStream(in);
+		bitmap = BitmapFactory.decodeStream(buf);
+		//image.setImageBitmap(bitmap);
+		if (in != null) {
+	        in.close();
+        }
+        if (buf != null) {
+        	buf.close();
+        }
+	}catch (Exception e){
+		Log.e("Error reading file", e.toString());
+	}
+	
+}*/

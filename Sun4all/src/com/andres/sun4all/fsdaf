@@ -1,0 +1,33 @@
+	10-21 12:43:58.191: E/AndroidRuntime(27794): FATAL EXCEPTION: main
+	10-21 12:43:58.191: E/AndroidRuntime(27794): java.lang.RuntimeException: Unable to start activity ComponentInfo{com.andres.sun4all/com.andres.sun4all.Segunda}: android.view.InflateException: Binary XML file line #7: Error inflating class com.andres.sun4all.Panel
+	10-21 12:43:58.191: E/AndroidRuntime(27794): 	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:2100)
+	10-21 12:43:58.191: E/AndroidRuntime(27794): 	at android.app.ActivityThread.handleLaunchActivity(ActivityThread.java:2125)
+	10-21 12:43:58.191: E/AndroidRuntime(27794): 	at android.app.ActivityThread.access$600(ActivityThread.java:140)
+	10-21 12:43:58.191: E/AndroidRuntime(27794): 	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:1227)
+	10-21 12:43:58.191: E/AndroidRuntime(27794): 	at android.os.Handler.dispatchMessage(Handler.java:99)
+	10-21 12:43:58.191: E/AndroidRuntime(27794): 	at android.os.Looper.loop(Looper.java:137)
+	10-21 12:43:58.191: E/AndroidRuntime(27794): 	at android.app.ActivityThread.main(ActivityThread.java:4898)
+	10-21 12:43:58.191: E/AndroidRuntime(27794): 	at java.lang.reflect.Method.invokeNative(Native Method)
+	10-21 12:43:58.191: E/AndroidRuntime(27794): 	at java.lang.reflect.Method.invoke(Method.java:511)
+	10-21 12:43:58.191: E/AndroidRuntime(27794): 	at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:1006)
+	10-21 12:43:58.191: E/AndroidRuntime(27794): 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:773)
+	10-21 12:43:58.191: E/AndroidRuntime(27794): 	at dalvik.system.NativeStart.main(Native Method)
+	10-21 12:43:58.191: E/AndroidRuntime(27794): Caused by: android.view.InflateException: Binary XML file line #7: Error inflating class com.andres.sun4all.Panel
+	10-21 12:43:58.191: E/AndroidRuntime(27794): 	at android.view.LayoutInflater.createView(LayoutInflater.java:596)
+	10-21 12:43:58.191: E/AndroidRuntime(27794): 	at android.view.LayoutInflater.createViewFromTag(LayoutInflater.java:687)
+	10-21 12:43:58.191: E/AndroidRuntime(27794): 	at android.view.LayoutInflater.rInflate(LayoutInflater.java:746)
+	10-21 12:43:58.191: E/AndroidRuntime(27794): 	at android.view.LayoutInflater.inflate(LayoutInflater.java:489)
+	10-21 12:43:58.191: E/AndroidRuntime(27794): 	at android.view.LayoutInflater.inflate(LayoutInflater.java:396)
+	10-21 12:43:58.191: E/AndroidRuntime(27794): 	at android.view.LayoutInflater.inflate(LayoutInflater.java:352)
+	10-21 12:43:58.191: E/AndroidRuntime(27794): 	at com.android.internal.policy.impl.PhoneWindow.setContentView(PhoneWindow.java:308)
+	10-21 12:43:58.191: E/AndroidRuntime(27794): 	at android.app.Activity.setContentView(Activity.java:1924)
+	10-21 12:43:58.191: E/AndroidRuntime(27794): 	at com.andres.sun4all.Segunda.onCreate(Segunda.java:13)
+	10-21 12:43:58.191: E/AndroidRuntime(27794): 	at android.app.Activity.performCreate(Activity.java:5206)
+	10-21 12:43:58.191: E/AndroidRuntime(27794): 	at android.app.Instrumentation.callActivityOnCreate(Instrumentation.java:1083)
+	10-21 12:43:58.191: E/AndroidRuntime(27794): 	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:2064)
+	10-21 12:43:58.191: E/AndroidRuntime(27794): 	... 11 more
+	10-21 12:43:58.191: E/AndroidRuntime(27794): Caused by: java.lang.NoSuchMethodException: <init> [class android.content.Context, interface android.util.AttributeSet]
+	10-21 12:43:58.191: E/AndroidRuntime(27794): 	at java.lang.Class.getConstructorOrMethod(Class.java:460)
+	10-21 12:43:58.191: E/AndroidRuntime(27794): 	at java.lang.Class.getConstructor(Class.java:431)
+	10-21 12:43:58.191: E/AndroidRuntime(27794): 	at android.view.LayoutInflater.createView(LayoutInflater.java:561)
+	10-21 12:43:58.191: E/AndroidRuntime(27794): 	... 22 more

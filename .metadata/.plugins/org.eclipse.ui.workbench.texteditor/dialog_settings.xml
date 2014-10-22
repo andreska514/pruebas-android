@@ -3,26 +3,26 @@
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
 		<item value="302" key="DIALOG_WIDTH"/>
 		<item value="207" key="DIALOG_Y_ORIGIN"/>
-		<item value="1030" key="DIALOG_X_ORIGIN"/>
 		<item value="400" key="DIALOG_HEIGHT"/>
+		<item value="1030" key="DIALOG_X_ORIGIN"/>
 		<item value="1|Sans Serif|9.0|0|GTK|1|" key="DIALOG_FONT_NAME"/>
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="true" key="wrap"/>
-		<item value="false" key="casesensitive"/>
 		<item value="false" key="isRegEx"/>
+		<item value="false" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="false" key="wholeword"/>
-		<item value="imageView.setImageMatrix(matrix);" key="selection"/>
+		<item value="petado" key="selection"/>
 		<list key="findhistory">
+			<item value="petado"/>
+			<item value="petan"/>
+			<item value="va a petar"/>
 			<item value="imageView.setImageMatrix(matrix);"/>
 			<item value="imageView"/>
 			<item value="paint"/>
 			<item value="string"/>
 			<item value="stringb"/>
-			<item value="ola hola"/>
-			<item value="canvas"/>
-			<item value="c."/>
 		</list>
 		<list key="replacehistory">
 		</list>

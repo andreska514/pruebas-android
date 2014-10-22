@@ -1,7 +1,0 @@
-package com.andres.sun4all;
-
-import android.view.View;
-
-public class Vista extends View {
-
-}

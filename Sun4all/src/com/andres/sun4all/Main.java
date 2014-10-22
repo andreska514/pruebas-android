@@ -1,3 +1,6 @@
+//how to use external jars 
+//http://stackoverflow.com/questions/1334802/how-can-i-use-external-jars-in-an-android-project
+
 package com.andres.sun4all;
 
 
@@ -44,6 +47,8 @@ public class Main extends Activity {
 	static Drawable d;
 	static int viewWidth;
     static int viewHeight;
+    
+    static boolean check;
 	
 	//public int viewWidth ;
 	//public int viewHeight;
