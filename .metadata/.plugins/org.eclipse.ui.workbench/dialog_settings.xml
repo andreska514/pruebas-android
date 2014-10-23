@@ -3,44 +3,28 @@
 	<section name="FileSystemImportWizard">
 	</section>
 	<section name="org.eclipse.ui.internal.QuickAccess">
-		<item value="964" key="dialogWidth"/>
-		<item value="526" key="dialogHeight"/>
+		<item value="994" key="dialogWidth"/>
+		<item value="556" key="dialogHeight"/>
 		<list key="orderedProviders">
-			<item value="org.eclipse.ui.editors"/>
-			<item value="org.eclipse.ui.editors"/>
-			<item value="org.eclipse.ui.editors"/>
-			<item value="org.eclipse.ui.editors"/>
 		</list>
 		<list key="textArray">
-			<item value="imag"/>
-			<item value="segun"/>
-			<item value="pane"/>
-			<item value="main"/>
 		</list>
 		<list key="orderedElements">
-			<item value="org.eclipse.jdt.ui.CompilationUnitEditor"/>
-			<item value="com.android.ide.eclipse.editors.CommonXmlEditor"/>
-			<item value="org.eclipse.jdt.ui.CompilationUnitEditor"/>
-			<item value="org.eclipse.jdt.ui.CompilationUnitEditor"/>
 		</list>
 		<list key="textEntries">
-			<item value="1"/>
-			<item value="1"/>
-			<item value="1"/>
-			<item value="1"/>
 		</list>
 	</section>
 	<section name="WorkbenchPreferenceDialogSettings">
 		<item value="72" key="DIALOG_Y_ORIGIN"/>
 		<item value="486" key="DIALOG_X_ORIGIN"/>
 	</section>
+	<section name="ZipFileImportWizard">
+	</section>
 	<section name="NewWizardAction">
 		<item value="com.android.ide.eclipse.editors.wizards.NewActivityWizard" key="NewWizardSelectionPage.STORE_SELECTED_ID"/>
 		<list key="NewWizardSelectionPage.STORE_EXPANDED_CATEGORIES_ID">
 			<item value="com.android.ide.eclipse.wizards.category"/>
 		</list>
-	</section>
-	<section name="ZipFileImportWizard">
 	</section>
 	<section name="ImportExportAction">
 		<item value="com.android.ide.eclipse.adt.project.ImportProjectWizard" key="ImportExportPage.STORE_SELECTED_IMPORT_WIZARD_ID"/>
