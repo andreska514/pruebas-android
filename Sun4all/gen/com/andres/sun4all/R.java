@@ -1084,7 +1084,6 @@ containing a value of this type.
     }
     public static final class id {
         public static final int ImgFoto=0x7f05003d;
-        public static final int Panelillo=0x7f050045;
         public static final int action_bar=0x7f05001c;
         public static final int action_bar_activity_content=0x7f050015;
         public static final int action_bar_container=0x7f05001b;
@@ -1120,6 +1119,7 @@ containing a value of this type.
         public static final int icon=0x7f05002a;
         public static final int ifRoom=0x7f05000a;
         public static final int image=0x7f050027;
+        public static final int imageView2=0x7f050045;
         public static final int layout1=0x7f05003c;
         public static final int listMode=0x7f050001;
         public static final int list_item=0x7f050029;

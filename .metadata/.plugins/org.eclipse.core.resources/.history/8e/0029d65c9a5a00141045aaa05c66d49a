@@ -1,0 +1,21 @@
+package TwoFingerGestureDetector;
+
+import android.view.MotionEvent;
+
+import com.andres.multitouch.BaseGestureDetector;
+
+public class TwoFingerGestureDetector extends BaseGestureDetector {
+
+	@Override
+	protected void handleStartProgressEvent(int actionCode, MotionEvent event) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	protected void handleInProgressEvent(int actionCode, MotionEvent event) {
+		// TODO Auto-generated method stub
+
+	}
+
+}

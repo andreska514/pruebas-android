@@ -40,6 +40,7 @@ public class Panel extends View{
 	private Paint paint= new Paint();
 	private Context context;
 	private AttributeSet attr;
+	private int defStyleAttr;
 	
 	//alto y ancho del View
 	int height;
@@ -55,12 +56,31 @@ public class Panel extends View{
 	
 	//Constructor
 	//I have this
-	//public Panel(Context context){
+	
+	//Constructores -> los 3 llevan a inicializar()
 	public Panel(Context context, AttributeSet attr) {
 		//super(context);
 		super(context, attr);
+		Log.i("estoy en","constructor cont, attr");
 		this.context = context;
 		this.attr = attr;
+		inicializar();
+	}
+	public Panel(Context context, AttributeSet attr, int defStyleAttr){
+		super(context, attr, defStyleAttr);
+		this.context = context;
+		this.attr = attr;
+		this.defStyleAttr=defStyleAttr;
+		Log.i("estoy en","constructor cont, attr, defst");
+		inicializar();
+	}
+	public Panel(Context context){
+		super(context);
+		this.context = context;
+		Log.i("Estoy en","contructor context");
+		inicializar();
+	}
+	public void inicializar(){
 		matrix = new Matrix();
 		Log.i("estoy en ","Constructor");
 		bitCruz = BitmapFactory.decodeResource(getResources(), R.drawable.cruz);
@@ -80,8 +100,6 @@ public class Panel extends View{
 		String s = "http://i.imgur.com/CQzlM.jpg";
 		//bitmap2 = BitmapFactory.decodeResource(getResources(), R.drawable.canguro);
 		//probando
-		
-		
 	}
 //onDraw
 	@Override

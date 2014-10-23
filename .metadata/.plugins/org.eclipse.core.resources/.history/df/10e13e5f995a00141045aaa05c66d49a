@@ -1,0 +1,5 @@
+package com.andres.sun4all;
+
+public abstract class BaseGestureDetector {
+
+}
