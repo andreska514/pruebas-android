@@ -19,6 +19,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 
@@ -62,8 +63,9 @@ public class Main extends Activity {
 		img = (ImageView) findViewById(R.id.ImgFoto);
 		
 		//*************
-		img.setOnTouchListener(clickImagen);
-		imagen = new Imagen(img, getApplicationContext());
+		//img.setOnTouchListener(clickImagen);
+		//imagen = new Imagen(img, getApplicationContext());
+		imagen = new Imagen(this);
 		
 		//el contador
 		txtCont = (TextView) findViewById(R.id.txtCont);
@@ -90,12 +92,12 @@ public class Main extends Activity {
 		strAdd.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),11,22,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 		btnAdd.setText(strMove);
 		//hasta aqui funciona
-		mWinMgr = (WindowManager)getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
+		/*mWinMgr = (WindowManager)getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
 		int width = mWinMgr.getDefaultDisplay().getWidth();
         int height = mWinMgr.getDefaultDisplay().getHeight();
         d= this.getResources().getDrawable(R.drawable.sol);
         viewWidth = getResources().getDisplayMetrics().widthPixels;
-        viewHeight = getResources().getDisplayMetrics().heightPixels;
+        viewHeight = getResources().getDisplayMetrics().heightPixels;*/
 		//pruebas
 		
 	}
@@ -110,12 +112,14 @@ public class Main extends Activity {
 				if(btnAdd.isChecked())//add sunspot
 				{
 					btnAdd.setText(strAdd);
-					img.setOnTouchListener(clickPinta);
+					imagen.pinta = true;
+					//img.setOnTouchListener(clickPinta);
 				}
 				else//move
 				{
 					btnAdd.setText(strMove);
-					img.setOnTouchListener(clickImagen);
+					imagen.pinta = false;
+					//img.setOnTouchListener(clickImagen);
 				}
 				
 				//activa el modo pintar
@@ -150,22 +154,11 @@ public class Main extends Activity {
 			}
 		}
 	});
-	//Clicks en imagen
-	View.OnTouchListener clickImagen = new View.OnTouchListener() {
-		@Override
-		public boolean onTouch(View v, MotionEvent event) {
-			return imagen.touch(v, event);
-		}
-	};
-	View.OnTouchListener clickPinta = new View.OnTouchListener() {
-		@Override
-		public boolean onTouch(View v, MotionEvent event) {
-			return imagen.pinta(v, event);
-		}
-		
-	};
+	
+	
 }
-//PRUEBAS
+
+
 
 //***************************************************
 //prueba new activity

@@ -1,0 +1,7 @@
+ 
+Aquí guardo el archivo funcionando  a dia 27/10/14
+que hay
+* zoom(max y min) funciona
+* limitaBordes mal
+* no pinta
+* no extiende nada ni implementa

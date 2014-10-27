@@ -3,19 +3,23 @@ package com.andres.sun4all;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.util.AttributeSet;
 import android.util.FloatMath;
 import android.util.Log;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.PointF;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.view.MotionEvent;
 import android.view.View;
 
-public class Imagen {
+public class Imagen extends ImageView {
 	
 	static final int NONE = 0;
 	static final int PULSADO = 1;
@@ -24,7 +28,7 @@ public class Imagen {
     static final float MIN_ZOOM = 0.9f;
     int mode = NONE;
     float oldDist = 1f;
-    static ImageView imageView;
+    //static ImageView imageView;
 	static Matrix matrix = new Matrix();
 	static Matrix savedMatrix = new Matrix();
 	PointF start = new PointF();
@@ -34,126 +38,140 @@ public class Imagen {
 	int lastTouchY;
 	//hasta aqui funciona
 	
-	//int width = 
 	
-	
-	//arrays para el envio de las coordenadas
-	//coordenadas añadiendo -- coordenadas de cada toque -- cordenadas a enviar
-	//static List<int []> listaCoordenadas ;
-	static List<int[]> listaCoordenadas ;
-	static int [] par = new int[2];
-	static int envia[][];
-	
+	static boolean pinta = false;
+	//nueva lista de coordenadas con objetos
+	ArrayList <Marking> listaPtos; 
 	
 	//
 	Context c;
-	Canvas canvas;
+	//Canvas canvas= new Canvas();
+	Bitmap bitmap= BitmapFactory.decodeResource(getResources(), R.drawable.sol);
+	Bitmap cruz = BitmapFactory.decodeResource(getResources(), R.drawable.cruz);
+	Paint p;
 	
 	
 //CONSTRUCTOR --------------------------------------------------------------------------
-	
-	Imagen(ImageView imView, Context c)
-	{	// 0 4 zoom actual x y de la imagen(tamaño si lo multiplicas por width/height)
-		// 2 5 posiciones x y del matrix (muy raro)
-		//codigo temporal(de momento coge una imagen ya guardada)
-		imView.setImageResource(R.drawable.sol);
-		imView.setCropToPadding(true);
-		imageView = imView;
-		//coordenadas
-		listaCoordenadas = new ArrayList<int[]>();
-		this.c = c;
+	public Imagen(Context c, AttributeSet attr) {
+		super(c, attr);
+		setImageResource(R.drawable.sol);
+		setCropToPadding(true);
+		setOnTouchListener(clickImagen);
 	}
-	void guardaCoordenadas(int x, int y){
-		par[0]=x;
-		par[1]=y;
-		listaCoordenadas.add(par);
-		//probando, las imprime en la app
-		Main.txtCont.setText("X :"+x+" , "+"Y :"+y);
+	public Imagen(Context c) {
+		super(c);
+		setImageResource(R.drawable.sol);
+		setCropToPadding(true);
+		setOnTouchListener(clickImagen);
 	}
-	static void enviaCoordenadas(){
-		//preparamos un array a medida para enviar las coordenadas
-		int [] algo;// = new int[2];
-		envia = new int[listaCoordenadas.size()][2];
-		Log.i("imprimiendo coordenadas", "total de coordenadas: "+listaCoordenadas.size());
-		Log.i("","-------------------------------------");
-		for(int x = 0; x<listaCoordenadas.size();x++){
-			algo = listaCoordenadas.get(x);
-			envia[x][0]=algo[0];
-			envia[x][1]=algo[1];
-			algo=null;
-			
-			Log.i("coordenada "+(x+1)+" de "+envia.length,"X :"+envia[x][0]+" , "+"Y :"+envia[x][1]);
+
+	@Override
+	protected void onDraw(Canvas c){
+		c.drawBitmap(bitmap, matrix, new Paint());
+		if(listaPtos!=null){
+			for(Marking mark:listaPtos){
+				c.drawBitmap(bitmap, mark.x, mark.y, new Paint());
+				c.drawCircle(mark.x, mark.y, 20, new Paint());
+			}
 		}
-		//enviamos el array --> (envia)
 		
-		//reseteamos el arraylist		
-		listaCoordenadas.clear();
+		if(pinta){
+			setOnTouchListener(clickPinta);
+		}
+		else{
+			setOnTouchListener(clickImagen);
+		}
+	}
+	
+	
+//comprueba distancia antes de borrar
+	void borraCoordenadas(View v, MotionEvent event){
+		//borra de la lista la coordenada si el touch 
+		//esta a menos de 50 pixels de alguna coordenada
+		for (int i=listaPtos.size()-1; i>=0; i--){
+			if (Math.sqrt(
+			Math.pow((event.getX()-listaPtos.get(i).x), 2)
+			+Math.pow((event.getY()-listaPtos.get(i).y), 2)) < 50){
+				listaPtos.remove(i);
+			}
+		}
+	}
+//vacio->debe enviar el arraylist<marking> al servidor
+	static void enviaCoordenadas(){
+		
 	}
 	//modo add sunspot activado
-	public boolean pinta (View v, MotionEvent event){
-		switch(event.getAction()){
-        // When user touches the screen
-        case MotionEvent.ACTION_DOWN:
-        	calculaCoordenadasImagen(event);
-        	guardaCoordenadas(lastTouchX,lastTouchY);
-          //hasta aqui funciona
-		}
-		
-		return true;
-	}
 	//modo move image activado
-    public boolean touch(View v, MotionEvent event)
-    {
-    	imageView =(ImageView) v;
-		imageView.setScaleType(ScaleType.MATRIX);
-		//codigo probando
-		
-	    switch (event.getAction() & MotionEvent.ACTION_MASK) {
-    //pulsar 1	    
-		    case MotionEvent.ACTION_DOWN:
-		        savedMatrix.set(matrix);
-		        start.set(event.getX(), event.getY());
-		        mode = PULSADO;
-		        break;
-    //pulsar 2
-		    case MotionEvent.ACTION_POINTER_DOWN:
-		        oldDist = espacio(event);
-		        if (oldDist > 10f) {
-		            savedMatrix.set(matrix);
-		            puntoMedio(mid, event);
-		            mode = ZOOM;
-		        }
-		        break;
-	//soltar
-		    case MotionEvent.ACTION_UP:
-		    case MotionEvent.ACTION_POINTER_UP:
-		        mode = NONE;
-		        break;
-	//mover dedos
-		    case MotionEvent.ACTION_MOVE:
-		        if (mode == PULSADO) {
-		            matrix.set(savedMatrix);
-		            matrix.postTranslate(event.getX() - start.x, 
-		            		event.getY() - start.y);
-		            compruebaZoom();
-		        } 
-		        else if (mode == ZOOM) {
-		            float newDist = espacio(event);
-	                matrix.set(savedMatrix);
-	                float scale = newDist / oldDist;
-	                matrix.postScale(scale, scale, mid.x, mid.y);  
-	                compruebaZoom();
-		        }
-		        compruebaZoom();
-		        break;
-	    }//fin switch
-	    imageView.setImageMatrix(matrix);
-	    return true;
-    }//fin touch
+	View.OnTouchListener clickImagen = new View.OnTouchListener() {
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
+			
+			//imageView =(ImageView) v;
+			setScaleType(ScaleType.MATRIX);
+			//codigo probando
+			
+		    switch (event.getAction() & MotionEvent.ACTION_MASK) {
+	    //pulsar 1	    
+			    case MotionEvent.ACTION_DOWN:
+			        savedMatrix.set(matrix);
+			        start.set(event.getX(), event.getY());
+			        mode = PULSADO;
+			        break;
+	    //pulsar 2
+			    case MotionEvent.ACTION_POINTER_DOWN:
+			        oldDist = espacio(event);
+			        if (oldDist > 10f) {
+			            savedMatrix.set(matrix);
+			            puntoMedio(mid, event);
+			            mode = ZOOM;
+			        }
+			        break;
+		//soltar
+			    case MotionEvent.ACTION_UP:
+			    case MotionEvent.ACTION_POINTER_UP:
+			        mode = NONE;
+			        break;
+		//mover dedos
+			    case MotionEvent.ACTION_MOVE:
+			        if (mode == PULSADO) {
+			            matrix.set(savedMatrix);
+			            matrix.postTranslate(event.getX() - start.x, 
+			            		event.getY() - start.y);
+			            compruebaZoom();
+			        } 
+			        else if (mode == ZOOM) {
+			            float newDist = espacio(event);
+		                matrix.set(savedMatrix);
+		                float scale = newDist / oldDist;
+		                matrix.postScale(scale, scale, mid.x, mid.y);  
+		                compruebaZoom();
+			        }
+			        compruebaZoom();
+			        break;
+		    }//fin switch
+		    setImageMatrix(matrix);
+		    return true;
+		}//fin OnTouch
+	};//fin touchListener
+	//modo pintar activado
+	View.OnTouchListener clickPinta = new View.OnTouchListener() {
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
+			if(event.getAction()==MotionEvent.ACTION_UP){
+				Log.i("ClickPint","ACTION_UP");
+	        	calculaCoordenadasImagen(event);
+	        	guardaCoordenadas(lastTouchX,lastTouchY);
+	        	return true;
+			}
+			return false;
+		}//fin onTouch
+	};//fin onTouchListener
+	
+    
     //comprueba el zoom para concretar los límites
     //limita el max y min zoom y envia los bordes de la pantalla a limitaBordes()
    //metodo a mejorar
- public void compruebaZoom(){
+    public void compruebaZoom(){
     	float[] values = new float[9];
         matrix.getValues(values);
         //compruebo el zoom
@@ -226,11 +244,9 @@ public class Imagen {
     		valores[5]= valorY;
     		matrix.setValues(valores);
     	}
-    	imageView.setImageMatrix(matrix);
+    	setImageMatrix(matrix);
+    	
     }
-	
-	
-    
 	/** Determina el espacio entre los 2 primeros dedos*/
 	@SuppressLint("FloatMath")
 	private float espacio(MotionEvent event) {
@@ -266,8 +282,13 @@ public class Imagen {
 		lastTouchX = Math.abs(lastTouchX);
 		lastTouchY = Math.abs(lastTouchY);
 	}
-	//logs rapidos, de quita y pon
-	private void log(String s){
+	void guardaCoordenadas(int x, int y){
+		Log.i("guardaCoordenadas","");
+		Marking m = new Marking(x,y);
+		listaPtos.add(m);
+		Log.i("listaPtos0",""+m.x+"-"+m.y);
+	}
+	void log(String s){
 		Log.i("",s);
 	}
     static void logMatrix(Matrix matrix, ImageView imageView){
@@ -289,7 +310,81 @@ public class Imagen {
         Log.i("height[4]",""+height+"("+values[4]+" x "+imageView.getHeight()+")");
 	}
 
+
 }
+//clase que guarda un objeto con coordenadas
+class Marking{
+	int x;
+	int y;
+	Marking(int x, int y){
+		this.x = x;
+		this.y = y;
+	}
+	Marking(){}
+	int getX(){
+		return x;
+	}
+	int getY(){
+		return y;
+	}
+	void setX(int x){
+		this.x = x;
+	}
+	void setY(int y){
+		this.y = y;
+	}
+	
+}
+	
+//PROBAR ESTO!!!
+//https://github.com/MikeOrtiz/TouchImageView/blob/master/src/com/ortiz/touch/TouchImageView.java
+/*
+private void fixTrans() {
+matrix.getValues(m);
+float transX = m[Matrix.MTRANS_X];
+float transY = m[Matrix.MTRANS_Y];
+float fixTransX = getFixTrans(transX, viewWidth, getImageWidth());
+float fixTransY = getFixTrans(transY, viewHeight, getImageHeight());
+if (fixTransX != 0 || fixTransY != 0) {
+matrix.postTranslate(fixTransX, fixTransY);
+}
+}
+
+private void fixScaleTrans() {
+	fixTrans();
+	matrix.getValues(m);
+	if (getImageWidth() < viewWidth) {
+		m[Matrix.MTRANS_X] = (viewWidth - getImageWidth()) / 2;
+	}
+	if (getImageHeight() < viewHeight) {
+		m[Matrix.MTRANS_Y] = (viewHeight - getImageHeight()) / 2;
+	}
+	matrix.setValues(m);
+}
+private float getFixTrans(float trans, float viewSize, float contentSize) {
+	float minTrans, maxTrans;
+	if (contentSize <= viewSize) {
+		minTrans = 0;
+		maxTrans = viewSize - contentSize;
+	} else {
+		minTrans = viewSize - contentSize;
+		maxTrans = 0;
+	}
+	if (trans < minTrans)
+		return -trans + minTrans;
+	if (trans > maxTrans)
+		return -trans + maxTrans;
+	return 0;
+}
+private float getFixDragTrans(float delta, float viewSize, float contentSize) {
+	if (contentSize <= viewSize) {
+		return 0;
+	}
+	return delta;
+}
+ */
+//********************************************************************************************************************
+	
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 //no funciona
 /*private void limitDrag(Matrix m) {
