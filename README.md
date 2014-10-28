@@ -1,3 +1,6 @@
+Directorios sdk:
+/home/andres/Descargas/adt-bundle-linux-x86_64-20140702/sdk
+
 http://daringfireball.net/projects/markdown/syntax
 
 puebas
