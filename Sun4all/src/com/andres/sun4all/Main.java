@@ -8,6 +8,7 @@ import android.content.Context;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.style.StyleSpan;
+import android.util.Log;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 
@@ -78,7 +80,7 @@ public class Main extends Activity {
 		btnInv =(Button)findViewById(R.id.btnInv);
 		btnRes =(Button)findViewById(R.id.btnRes);
 		
-		btnAdd.setOnClickListener(clickBoton);
+		btnAdd.setOnClickListener(clickAdd);
 		btnRmv.setOnClickListener(clickBoton);
 		btnFin.setOnClickListener(clickBoton);
 		btnInv.setOnClickListener(clickBoton);
@@ -91,48 +93,52 @@ public class Main extends Activity {
 		strMove.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),0,10,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 		strAdd.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),11,22,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 		btnAdd.setText(strMove);
-		//hasta aqui funciona
-		/*mWinMgr = (WindowManager)getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
-		int width = mWinMgr.getDefaultDisplay().getWidth();
-        int height = mWinMgr.getDefaultDisplay().getHeight();
-        d= this.getResources().getDrawable(R.drawable.sol);
-        viewWidth = getResources().getDisplayMetrics().widthPixels;
-        viewHeight = getResources().getDisplayMetrics().heightPixels;*/
-		//pruebas
-		
 	}
 	
 	//Clicks en botones
+	View.OnClickListener clickAdd = (new View.OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			imagen.borra=false;
+			if(btnAdd.isChecked())//add sunspot
+			{
+				btnAdd.setText(strAdd);
+				imagen.pinta = true;
+				Log.d("btnAdd.isChecked()",""+Imagen.pinta);
+				//img.setOnTouchListener(clickPinta)
+			}
+			else//move
+			{
+				btnAdd.setText(strMove);
+				imagen.pinta = false;
+				Log.d("btnAdd.isChecked()",""+Imagen.pinta);
+				//img.setOnTouchListener(clickImagen);
+			}
+			
+		}
+	});
 	View.OnClickListener clickBoton = (new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
 			switch(v.getId()){
-			case R.id.btnAdd:
+			/*case R.id.btnAdd:
 				//comprueba si esta en modo mover o en modo añadir
-				if(btnAdd.isChecked())//add sunspot
-				{
-					btnAdd.setText(strAdd);
-					imagen.pinta = true;
-					//img.setOnTouchListener(clickPinta);
-				}
-				else//move
-				{
-					btnAdd.setText(strMove);
-					imagen.pinta = false;
-					//img.setOnTouchListener(clickImagen);
-				}
 				
 				//activa el modo pintar
 				//dibuja un sunspot donde tocas(modo escribir)
 				//guardar coordenada de cada punto
-				break;
+				break;*/
 			case R.id.btnRmv:
 				//desactiva modo pintar
+				Imagen.borra=true;
 				//borra un sunspot donde tocas
 				
 				//prueba contador(BORRAR) ----------------------------
 				contador++;
 				txtCont.setText(String.valueOf(contador));
+				//pongo el boton add en modo mover
+				
 				
 				
 				break;
@@ -149,38 +155,20 @@ public class Main extends Activity {
 			case R.id.btnRes://reinicia la misma imagen sin sunspots(start over)
 				//Imagen.logMatrix(Imagen.matrix, Imagen.imageView);
 				//Imagen.imprimeCoordenadas();
-				Imagen.enviaCoordenadas();
+				Imagen.listaPtos.clear();
+				//refresco imagen
+				//imagen.invalidate();
+				//imagen.onDraw(new Canvas());
+				btnAdd.setChecked(false);
+				btnAdd.setText(strMove);
+				imagen.pinta = false;
+				//imagen.setZoom(1);
+				//imagen.
+				imagen.invalidate();
+				//envio cordenadas
 				break;
 			}
 		}
 	});
 	
-	
 }
-
-
-
-//***************************************************
-//prueba new activity
-//Intent i = new Intent(Main.this, Segunda.class);
-//startActivity(i);
-//***************************************************
-//prueba zoom con botones 1/2
-/*float[]valores = new float[9];
-Imagen.matrix.getValues(valores);
-valores[0]+=0.1;
-valores[4]+=0.1;
-Imagen.matrix.setValues(valores);
-imagen.compruebaValores();*/
-//***************************************************
-//prueba zoom con botones 2/2
-/*valores = new float[9];
-Imagen.matrix.getValues(valores);
-valores[0]-=0.1;
-valores[4]-=0.1;
-Imagen.matrix.setValues(valores);
-imagen.compruebaValores();*/
-//***************************************************
-
-
-
