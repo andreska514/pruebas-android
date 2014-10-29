@@ -29,7 +29,7 @@ public class Imagen extends ImageView {
     static final float MIN_ZOOM = 0.9f;
     int mode = NONE;
     float oldDist = 1f;
-    //static ImageView imageView;
+    
 	static Matrix matrix = new Matrix();
 	static Matrix savedMatrix = new Matrix();
 	PointF start = new PointF();
@@ -40,7 +40,8 @@ public class Imagen extends ImageView {
 	int lastTouchY;//from image
 	int viewWidth = this.getWidth();
 	int viewHeight = this.getHeight();
-	//hasta aqui funciona
+	float screenTouchX;
+	float screenTouchY;
 	
 	static boolean pinta = false;
 	static boolean borra = false;
@@ -62,6 +63,7 @@ public class Imagen extends ImageView {
 		path=new Path();
 		paintFondo = new Paint(Paint.DITHER_FLAG);
 		setOnTouchListener(clickImagen);
+		refresh();
 	}
 	public Imagen(Context c) {
 		super(c);
@@ -70,6 +72,7 @@ public class Imagen extends ImageView {
 		path=new Path();
 		paintFondo = new Paint(Paint.DITHER_FLAG);
 		setOnTouchListener(clickImagen);
+		refresh();
 	}
 //onDraw ***********************************************************************
 	@Override
@@ -100,7 +103,6 @@ public class Imagen extends ImageView {
 	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
 	    super.onSizeChanged(w, h, oldw, oldh);
 	}
-//borra puntos cercanos al touch
 	void borraCoordenadas(View v, MotionEvent event){
 		//borra de la lista la coordenada si el touch 
 		//esta a menos de 50 pixels de alguna coordenada
@@ -112,8 +114,6 @@ public class Imagen extends ImageView {
 			}
 		}
 	}
-	//modo add sunspot activado
-	//modo move image activado
 	View.OnTouchListener clickImagen = new View.OnTouchListener() {
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
@@ -166,7 +166,6 @@ public class Imagen extends ImageView {
 		    return true;
 		}//fin OnTouch
 	};//fin touchListener
-	//modo pintar activado
 	View.OnTouchListener clickPinta = new View.OnTouchListener() {
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
@@ -184,11 +183,15 @@ public class Imagen extends ImageView {
 			return true;
 		}//fin onTouch
 	};//fin onTouchListener
-	
-    
+    void setZoom(float zoom){
+    	float[] values = new float[9];
+        matrix.getValues(values);
+    	values[Matrix.MSCALE_X] = zoom;
+        values[Matrix.MSCALE_Y] = zoom; 
+        matrix.setValues(values);
+    }
     //comprueba el zoom para concretar los límites
-    //limita el max y min zoom y envia los bordes de la pantalla a limitaBordes()
-   //metodo a mejorar
+    //limita zoom y envia los bordes de la pantalla a limitCorners()
     public void compruebaZoom(){
     	float[] values = new float[9];
         matrix.getValues(values);
@@ -201,7 +204,6 @@ public class Imagen extends ImageView {
         else if(scaleX < MIN_ZOOM) {
         	setZoom(MIN_ZOOM);
         }
-        //fixScaleTrans();
       //Segunda parte: segun el zoom envia unos valores u otros
 		//a limitaBordes(float, float)
         valores = new float[9];
@@ -231,15 +233,7 @@ public class Imagen extends ImageView {
         	limitCorners(-664, -600);
         }
     }
-    void setZoom(float zoom){
-    	float[] values = new float[9];
-        matrix.getValues(values);
-    	values[Matrix.MSCALE_X] = zoom;
-        values[Matrix.MSCALE_Y] = zoom; 
-        matrix.setValues(values);
-    }
-    //metodo a mejorar
- 
+   //metodo a mejorar
 	void limitCorners(float valorX, float valorY){
     	//log("determinando");
     	//if(x>0)
@@ -278,12 +272,9 @@ public class Imagen extends ImageView {
 	}
 	/** Calcula las coordenadas de la pantalla*/
 	void calculaCoordPantalla(MotionEvent e){
-		// Getting X coordinate
-        float mX = e.getX();
-        // Getting Y Coordinate
-        float mY = e.getY();
-        
-        Main.txtCont.setText("X :" + mX + " , " + "Y :" + mY);
+        screenTouchX = e.getX();
+        screenTouchY = e.getY();
+        //Main.txtCont.setText("X :" + mX + " , " + "Y :" + mY);
 	}
 	/** Calcula las coordenadas absolutas de la imagen*/
 	void calculaCoordenadasImagen(MotionEvent e){
@@ -298,8 +289,7 @@ public class Imagen extends ImageView {
 		lastTouchX = Math.abs(lastTouchX);
 		lastTouchY = Math.abs(lastTouchY);
 	}
-	/** Guarda las coordenadas pasadas como un objeto
-	 * nuevo (Marking)en listaPtos*/
+	/** Guarda las coordenadas pasadas en listaPtos*/
 	void guardaCoordenadas(int x, int y){
 		Log.i("guardaCoordenadas","");
 		Marking m = new Marking(x,y);
@@ -328,12 +318,20 @@ public class Imagen extends ImageView {
         Log.i("width[0]",""+width+"("+values[0]+" x "+imageView.getWidth()+")");
         Log.i("height[4]",""+height+"("+values[4]+" x "+imageView.getHeight()+")");
 	}
-    
-    int getImageWidth(Bitmap b){
+    int getBitmapWidth(Bitmap b){
     	return b.getWidth();
     }
-    int getImageHeight(Bitmap b){
+    int getBitmapHeight(Bitmap b){
     	return b.getHeight();
+    }
+    public void refresh(){
+
+        new Thread(new Runnable(){
+            @Override
+                public void run() {
+                invalidate();
+            }
+        }).start();
     }
 }
 //clase que guarda un objeto con coordenadas
