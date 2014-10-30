@@ -2,3 +2,7 @@
 1414572808796	Rename method 'getImageHeight'
 1414581862136	Rename type 'DialogoFin'
 1414582177335	Encapsulate field 'boton'
+1414662800369	Rename field 'marcas'
+1414671059928	Rename local variable 'p'
+1414672532106	Copy file
+1414673446339	Delete element

@@ -13,16 +13,16 @@
 		<item value="false" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="false" key="wholeword"/>
-		<item value="" key="selection"/>
+		<item value="valores" key="selection"/>
 		<list key="findhistory">
+			<item value="valores"/>
+			<item value="Mar"/>
+			<item value="guardaCoordenadas"/>
 			<item value="touchEve"/>
 			<item value="imagen"/>
 			<item value="listaPtos"/>
 			<item value="pinta"/>
 			<item value="listaPtos0"/>
-			<item value="clickpinta"/>
-			<item value="btnadd"/>
-			<item value="stradd"/>
 		</list>
 		<list key="replacehistory">
 		</list>

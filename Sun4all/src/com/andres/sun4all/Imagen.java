@@ -47,6 +47,7 @@ public class Imagen extends ImageView {
 	static boolean borra = false;
 	//nueva lista de coordenadas con objetos
 	static ArrayList <Marking> listaPtos = new ArrayList<Marking>(); 
+	static ArrayList <Mark> listaMarcas = new ArrayList<Mark>();
 	
 	//Canvas canvas= new Canvas();
 	Bitmap bitmap= BitmapFactory.decodeResource(getResources(), R.drawable.sol);
@@ -93,9 +94,13 @@ public class Imagen extends ImageView {
 		
 		if(listaPtos!=null){
 			Log.i("pintando",listaPtos.size()+" puntos");
-			for(Marking mark:listaPtos){				
+			/*for(Marking mark:listaPtos){				
 				c.drawBitmap(cruz, mark.x, mark.y, paintPuntos);
 				//c.drawCircle(mark.x, mark.y, 20, new Paint());
+			}*/
+			for(Mark mark:listaMarcas){	
+				//c.drawBitmap(cruz, mark.x, mark.y, paintPuntos);
+				c.drawBitmap(cruz, mark.x, mark.y, new Paint());
 			}
 		}
 	}//fin ondraw() ******************************************************
@@ -103,17 +108,40 @@ public class Imagen extends ImageView {
 	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
 	    super.onSizeChanged(w, h, oldw, oldh);
 	}
+	/** Guarda las coordenadas imagen pasadas en listaPtos*/
+	void guardaCoordenadas(int x, int y){
+		Log.i("guardaCoordenadas","de int");
+		Marking m = new Marking(x,y);
+		listaPtos.add(m);
+		Log.i("listaPtos0",""+m.x+"-"+m.y);
+		//Main.txtCont.setText(x+"-"+y);
+	}
+	//guarda coordenadas matrix
+	void guardaCoordenadas(float x, float y){
+		Log.i("guardaCoordenadas","de float");
+		Mark m = new Mark(x,y);
+		listaMarcas.add(m);
+		Log.i("marca",""+m.x+"-"+m.y);
+		Main.txtCont.setText(x+"-"+y);
+		guardaCoordenadas(lastTouchX,lastTouchY);
+	}
+	/** Borra las coordenadas cercanas al evento touch(a menos de 50px)*/
 	void borraCoordenadas(View v, MotionEvent event){
-		//borra de la lista la coordenada si el touch 
-		//esta a menos de 50 pixels de alguna coordenada
 		for (int i=listaPtos.size()-1; i>=0; i--){
-			if (Math.sqrt(
+			/*if (Math.sqrt(
 			Math.pow((event.getX()-listaPtos.get(i).x), 2)
 			+Math.pow((event.getY()-listaPtos.get(i).y), 2)) < 50){
+				listaPtos.remove(i);
+			*/
+			if(Math.sqrt(
+			Math.pow((event.getX()-listaMarcas.get(i).x), 2)
+			+Math.pow((event.getY()-listaMarcas.get(i).y), 2)) < 50){
+				listaMarcas.remove(i);
 				listaPtos.remove(i);
 			}
 		}
 	}
+	
 	View.OnTouchListener clickImagen = new View.OnTouchListener() {
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
@@ -143,20 +171,24 @@ public class Imagen extends ImageView {
 			    case MotionEvent.ACTION_POINTER_UP:
 			        mode = NONE;
 			        break;
-		//mover dedos
+		//1 dedo-mover / 2 dedos-zoom
 			    case MotionEvent.ACTION_MOVE:
 			        if (mode == PULSADO) {
 			            matrix.set(savedMatrix);
-			            matrix.postTranslate(event.getX() - start.x, 
-			            		event.getY() - start.y);
-			            compruebaZoom();
+			            float matX = event.getX()-start.x;
+			            float matY = event.getY()-start.y;
+			            /*matrix.postTranslate(event.getX() - start.x, 
+			            		event.getY() - start.y);*/
+			            matrix.postTranslate(matX, matY);
+			            mueveCoordenadas(matX,matY);
 			        } 
 			        else if (mode == ZOOM) {
 			            float newDist = espacio(event);
 		                matrix.set(savedMatrix);
 		                float scale = newDist / oldDist;
 		                matrix.postScale(scale, scale, mid.x, mid.y);  
-		                compruebaZoom();
+		                //cambiar el zoom de las marcas
+		                //mueveCoordenadas();
 			        }
 			        compruebaZoom();
 			        break;
@@ -166,6 +198,7 @@ public class Imagen extends ImageView {
 		    return true;
 		}//fin OnTouch
 	};//fin touchListener
+	
 	View.OnTouchListener clickPinta = new View.OnTouchListener() {
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
@@ -173,7 +206,9 @@ public class Imagen extends ImageView {
 				Log.i("ClickPint","ACTION_UP");
 				calculaCoordenadasImagen(event);
 				if(!borra){
-		        	guardaCoordenadas(lastTouchX,lastTouchY);
+		        	//guardaCoordenadas(lastTouchX,lastTouchY);
+					guardaCoordenadas(event.getX(),event.getY());
+					Main.txtCont.setText("getX"+event.getX() +" getX"+event.getY());
 				}
 				else{
 					borraCoordenadas(v, event);
@@ -183,7 +218,8 @@ public class Imagen extends ImageView {
 			return true;
 		}//fin onTouch
 	};//fin onTouchListener
-    void setZoom(float zoom){
+   
+	void setZoom(float zoom){
     	float[] values = new float[9];
         matrix.getValues(values);
     	values[Matrix.MSCALE_X] = zoom;
@@ -289,14 +325,27 @@ public class Imagen extends ImageView {
 		lastTouchX = Math.abs(lastTouchX);
 		lastTouchY = Math.abs(lastTouchY);
 	}
-	/** Guarda las coordenadas pasadas en listaPtos*/
-	void guardaCoordenadas(int x, int y){
-		Log.i("guardaCoordenadas","");
-		Marking m = new Marking(x,y);
-		listaPtos.add(m);
-		Log.i("listaPtos0",""+m.x+"-"+m.y);
-		Main.txtCont.setText(x+"-"+y);
+	/**Cambiara las coordenadas cuando el matrix cambie*/
+	void mueveCoordenadas(float x, float y){
+		if (mode==PULSADO){
+			for (int i=0; i<listaMarcas.size();i++){
+				//cambia la x-y segun el matrix
+				Mark mark = listaMarcas.get(i);
+				float [] coor = new float[2];
+				coor[0]=mark.x;
+				coor[1]=mark.y;
+				matrix.mapPoints(coor);
+				mark.x=coor[0];
+				mark.y=coor[1];
+				listaMarcas.set(i, mark);
+			}
+		}
+		if (mode==ZOOM){
+			
+		}
+		
 	}
+	
 	void log(String s){
 		Log.i("",s);
 	}
@@ -355,7 +404,27 @@ class Marking{
 	void setY(int y){
 		this.y = y;
 	}
-	
+}
+class Mark{
+	float x;
+	float y;
+	Mark(float x, float y){
+		this.x = x;
+		this.y = y;
+	}
+	Mark(){}
+	float getX(){
+		return x;
+	}
+	float getY(){
+		return y;
+	}
+	void setX(int x){
+		this.x = x;
+	}
+	void setY(int y){
+		this.y = y;
+	}
 }
 	
 //PROBAR ESTO!!!
