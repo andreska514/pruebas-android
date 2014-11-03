@@ -117,7 +117,7 @@ public class Imagen extends ImageView {
 		//Main.txtCont.setText(x+"-"+y);
 	}
 	//guarda coordenadas matrix
-	void guardaCoordenadas(float x, float y){
+	void saveCoordinates(float x, float y){
 		Log.i("guardaCoordenadas","de float");
 		Mark m = new Mark(x,y);
 		listaMarcas.add(m);
@@ -207,7 +207,7 @@ public class Imagen extends ImageView {
 				calculaCoordenadasImagen(event);
 				if(!borra){
 		        	//guardaCoordenadas(lastTouchX,lastTouchY);
-					guardaCoordenadas(event.getX(),event.getY());
+					saveCoordinates(event.getX(),event.getY());
 					Main.txtCont.setText("getX"+event.getX() +" getX"+event.getY());
 				}
 				else{

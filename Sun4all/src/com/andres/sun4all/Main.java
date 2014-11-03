@@ -4,31 +4,24 @@
 package com.andres.sun4all;
 
 
+import java.util.Locale;
+
 import android.content.Context;
+import android.content.res.Configuration;
 import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.style.StyleSpan;
 import android.util.Log;
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.FragmentManager;
-import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 import android.widget.ToggleButton;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.TextView;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 
@@ -45,14 +38,22 @@ public class Main extends FragmentActivity {
 	LinearLayout layout1;
 	
 	//fuente boton add/move
+	/*Locale actual = Locale.getDefault();
+	Locale english= Locale.ENGLISH;
+	Locale italian = Locale.ITALIAN;
+	Locale french = Locale.FRANCE;
+	Locale spanish = new Locale("es", "ES");*/
 	
+	
+	//String cadena = getResources().getString(R.string.btnAdd);
 	//String cadena = "Move image/Add Sunspot";
-	String cadena = getResources().getString(R.string.btnAdd);
-	Editable strMove = Editable.Factory.getInstance().newEditable(cadena);
-	Editable strAdd = Editable.Factory.getInstance().newEditable(cadena);
+	String cadena;
+	Editable strMove;
+	Editable strAdd;
+	//Editable strMove = Editable.Factory.getInstance().newEditable(cadena);
+	//Editable strAdd = Editable.Factory.getInstance().newEditable(cadena);
 	
 	//hasta aqui funciona
-	static WindowManager mWinMgr;
 	static int width;
 	static int height;
 	static Drawable d;
@@ -90,13 +91,8 @@ public class Main extends FragmentActivity {
 		
 		layout1 = (LinearLayout)findViewById(R.id.layout1);
 		layout1.setBackgroundColor(Color.WHITE);
-		
-		//Textos boton add/move
-		
-		strMove.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),0,10,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-		strAdd.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),11,22,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-		btnAdd.setText(strMove);
-		
+		/** Change the button add/move depending the language*/
+		idiomas();
 	}
 	//Clicks en botones
 	View.OnClickListener clickAdd = (new View.OnClickListener() {
@@ -137,9 +133,7 @@ public class Main extends FragmentActivity {
 					else
 						imagen.pinta=false;
 				}
-				
 				break;
-				
 			}
 		}
 	});
@@ -205,5 +199,44 @@ public class Main extends FragmentActivity {
 		DialogoOk ok = new DialogoOk();
 		ok.show(getSupportFragmentManager(), "tagAlerta");
 	}
-	
+	/** Set the String and font of btnAdd depending user language*/
+	void idiomas(){
+		
+		Locale current = getResources().getConfiguration().locale;
+		Log.i("getLanguage","-"+current.getLanguage());
+		/** español*/
+		if (current.getLanguage().equals("es")){
+			cadena = "Mover imagen/añadir mancha";
+			strMove = Editable.Factory.getInstance().newEditable(cadena);
+			strAdd = Editable.Factory.getInstance().newEditable(cadena);
+			strMove.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),0,12,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+			strAdd.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),13,26,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+		}
+		/** italiano*/
+		else if(current.getLanguage().equals("it")){
+			cadena = "Spostare l'immagine/Aggiungi macchia solare";
+			strMove = Editable.Factory.getInstance().newEditable(cadena);
+			strAdd = Editable.Factory.getInstance().newEditable(cadena);
+			strMove.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),0,19,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+			strAdd.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),20,43,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+		}
+		/** français*/
+		else if(current.getLanguage().equals("fr")){
+			cadena = "Déplacez l'image/Ajouter taches solaires";
+			strMove = Editable.Factory.getInstance().newEditable(cadena);
+			strAdd = Editable.Factory.getInstance().newEditable(cadena);
+			strMove.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),0,16,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+			strAdd.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),17,39,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+		}
+		/** english(default)*/
+		else{
+			cadena = "Move image/Add Sunspot";
+			strMove = Editable.Factory.getInstance().newEditable(cadena);
+			strAdd = Editable.Factory.getInstance().newEditable(cadena);
+			strMove.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),0,10,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+			strAdd.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),11,22,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+		}
+		btnAdd.setText(strMove);
+		
+	}
 }

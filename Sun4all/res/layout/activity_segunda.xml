@@ -5,14 +5,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
     
-    <!-- com.andres.sun4all.Panel  -->
-    
-    <!--  <com.andres.sun4all.ViewPort
-	    android:id="@+id/Panelillo"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"   />
-    -->
     <ImageView 
         android:id="@+id/imageView2"
         android:layout_width="fill_parent"
@@ -20,13 +12,6 @@
         android:scaleType="matrix"
         android:src="@drawable/sol"
         android:layout_weight = "1" />
-    <!-- <LinearLayout
-     android:layout_width="match_parent"
-     android:layout_height="match_parent"
-     android:orientation="vertical"
-     android:layout_weight = "2"> 
-     </LinearLayout>
-     -->
    		    
     
 </LinearLayout>
