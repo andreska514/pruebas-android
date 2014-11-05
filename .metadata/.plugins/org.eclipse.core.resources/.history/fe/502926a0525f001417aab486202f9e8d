@@ -1,7 +1,0 @@
-package com.andres.sun4all;
-
-import android.support.v4.app.DialogFragment;
-
-public class DialogoFin extends DialogFragment {
-
-}

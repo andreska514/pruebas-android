@@ -40,8 +40,6 @@ public class Imagen extends ImageView {
 	int lastTouchY;//from image
 	int viewWidth = this.getWidth();
 	int viewHeight = this.getHeight();
-	float screenTouchX;
-	float screenTouchY;
 	
 	static boolean pinta = false;
 	static boolean borra = false;
@@ -59,6 +57,9 @@ public class Imagen extends ImageView {
 //CONSTRUCTOR --------------------------------------------------------------------------
 	public Imagen(Context c, AttributeSet attr) {
 		super(c, attr);
+		this.setFocusable(true);
+		//view = new FocusableImageView( activity );
+		setWillNotDraw (false);
 		setImageResource(R.drawable.sol);
 		setCropToPadding(true);
 		path=new Path();
@@ -68,6 +69,8 @@ public class Imagen extends ImageView {
 	}
 	public Imagen(Context c) {
 		super(c);
+		this.setFocusable(true);
+		setWillNotDraw (false);
 		setImageResource(R.drawable.sol);
 		setCropToPadding(true);
 		path=new Path();
@@ -75,31 +78,24 @@ public class Imagen extends ImageView {
 		setOnTouchListener(clickImagen);
 		refresh();
 	}
-//onDraw ***********************************************************************
+	//onDraw ***********************************************************************
 	@Override
 	public void onDraw(Canvas c){
+		setWillNotDraw (false);
 		Log.d("onDraw","pinta="+pinta);
 		c.drawBitmap(bitmap, matrix, paintFondo);
-		c.drawPath(path,new Paint());
 		if(pinta){
 			Log.d("activando","clickPinta");
-			//this.setOnTouchListener(null);
 			this.setOnTouchListener(clickPinta);
 		}
 		else{
 			Log.d("activando","clickImagen");
-			//this.setOnTouchListener(null);
 			this.setOnTouchListener(clickImagen);
 		}
 		
 		if(listaPtos!=null){
 			Log.i("pintando",listaPtos.size()+" puntos");
-			/*for(Marking mark:listaPtos){				
-				c.drawBitmap(cruz, mark.x, mark.y, paintPuntos);
-				//c.drawCircle(mark.x, mark.y, 20, new Paint());
-			}*/
 			for(Mark mark:listaMarcas){	
-				//c.drawBitmap(cruz, mark.x, mark.y, paintPuntos);
 				c.drawBitmap(cruz, mark.x, mark.y, new Paint());
 			}
 		}
@@ -180,7 +176,8 @@ public class Imagen extends ImageView {
 			            /*matrix.postTranslate(event.getX() - start.x, 
 			            		event.getY() - start.y);*/
 			            matrix.postTranslate(matX, matY);
-			            mueveCoordenadas(matX,matY);
+			            //mueveCoordenadas(matX,matY);
+			            mueveCoordenadas(event);
 			        } 
 			        else if (mode == ZOOM) {
 			            float newDist = espacio(event);
@@ -308,9 +305,14 @@ public class Imagen extends ImageView {
 	}
 	/** Calcula las coordenadas de la pantalla*/
 	void calculaCoordPantalla(MotionEvent e){
-        screenTouchX = e.getX();
-        screenTouchY = e.getY();
-        //Main.txtCont.setText("X :" + mX + " , " + "Y :" + mY);
+        float[] values = new float[9];
+        matrix.getValues(values);
+        
+        float scaleX=values[0];
+        float scaleY=values[4];
+        
+        float relativeX = ((e.getX() - values[2])*scaleX) / values[0];
+        float relativeY = ((e.getY() - values[5])*scaleY) / values[4];
 	}
 	/** Calcula las coordenadas absolutas de la imagen*/
 	void calculaCoordenadasImagen(MotionEvent e){
@@ -326,17 +328,28 @@ public class Imagen extends ImageView {
 		lastTouchY = Math.abs(lastTouchY);
 	}
 	/**Cambiara las coordenadas cuando el matrix cambie*/
-	void mueveCoordenadas(float x, float y){
+	void mueveCoordenadas(MotionEvent event){
 		if (mode==PULSADO){
+			//probando
+			float[] values = new float[9];
+			matrix.getValues(values);
+			
+			float scaleX=values[0];
+			float scaleY=values[4];
+			
+			float relativeX = ((event.getX() - values[2])*scaleX) / values[0];
+			float relativeY = ((event.getY() - values[5])*scaleY) / values[4];
+			//fin prueba
+			Log.i("listaMarcas","listaMarcas");
 			for (int i=0; i<listaMarcas.size();i++){
 				//cambia la x-y segun el matrix
 				Mark mark = listaMarcas.get(i);
-				float [] coor = new float[2];
+				float[]coor = new float[2];
 				coor[0]=mark.x;
 				coor[1]=mark.y;
 				matrix.mapPoints(coor);
-				mark.x=coor[0];
-				mark.y=coor[1];
+				mark.setX(coor[0]);
+				mark.setY(coor[1]);
 				listaMarcas.set(i, mark);
 			}
 		}
@@ -347,7 +360,7 @@ public class Imagen extends ImageView {
 	}
 	
 	void log(String s){
-		Log.i("",s);
+		Log.i("log",s);
 	}
     static void logMatrix(Matrix matrix, ImageView imageView){
 		float[] values = new float[9];
@@ -419,10 +432,10 @@ class Mark{
 	float getY(){
 		return y;
 	}
-	void setX(int x){
+	void setX(float x){
 		this.x = x;
 	}
-	void setY(int y){
+	void setY(float y){
 		this.y = y;
 	}
 }

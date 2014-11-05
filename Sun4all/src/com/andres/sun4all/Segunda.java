@@ -18,6 +18,7 @@ public class Segunda extends Activity implements OnTouchListener{
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_segunda);
+		//this.finish();
 	}
 
 	@Override
