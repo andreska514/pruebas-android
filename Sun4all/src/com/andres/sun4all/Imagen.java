@@ -47,6 +47,9 @@ public class Imagen extends ImageView {
 	static ArrayList <Marking> listaPtos = new ArrayList<Marking>(); 
 	static ArrayList <Mark> listaMarcas = new ArrayList<Mark>();
 	
+	MotionEvent lastEvent;
+	Context context;
+	
 	//Canvas canvas= new Canvas();
 	Bitmap bitmap= BitmapFactory.decodeResource(getResources(), R.drawable.sol);
 	Bitmap cruz = BitmapFactory.decodeResource(getResources(), R.drawable.cruz);
@@ -54,10 +57,12 @@ public class Imagen extends ImageView {
 	Canvas canvas;
 	Path path;
 	
+	
 //CONSTRUCTOR --------------------------------------------------------------------------
 	public Imagen(Context c, AttributeSet attr) {
 		super(c, attr);
 		this.setFocusable(true);
+		context=c;
 		//view = new FocusableImageView( activity );
 		setWillNotDraw (false);
 		setImageResource(R.drawable.sol);
@@ -65,40 +70,46 @@ public class Imagen extends ImageView {
 		path=new Path();
 		paintFondo = new Paint(Paint.DITHER_FLAG);
 		setOnTouchListener(clickImagen);
-		refresh();
 	}
 	public Imagen(Context c) {
 		super(c);
 		this.setFocusable(true);
+		context=c;
 		setWillNotDraw (false);
 		setImageResource(R.drawable.sol);
 		setCropToPadding(true);
 		path=new Path();
 		paintFondo = new Paint(Paint.DITHER_FLAG);
 		setOnTouchListener(clickImagen);
-		refresh();
 	}
 	//onDraw ***********************************************************************
 	@Override
 	public void onDraw(Canvas c){
 		setWillNotDraw (false);
-		Log.d("onDraw","pinta="+pinta);
+		String s = getResources().getString(R.string.sunspot);
 		c.drawBitmap(bitmap, matrix, paintFondo);
+		Main.txtCont.setText(s+listaMarcas.size());
 		if(pinta){
-			Log.d("activando","clickPinta");
 			this.setOnTouchListener(clickPinta);
 		}
 		else{
-			Log.d("activando","clickImagen");
 			this.setOnTouchListener(clickImagen);
 		}
 		
 		if(listaPtos!=null){
-			Log.i("pintando",listaPtos.size()+" puntos");
+			//Log.i("pintando",listaPtos.size()+" puntos");
 			for(Mark mark:listaMarcas){	
 				c.drawBitmap(cruz, mark.x, mark.y, new Paint());
 			}
 		}
+		//refresca la pantalla
+		((Main) context).runOnUiThread(new Runnable() {
+		       @Override
+		       public void run() {
+		           Imagen.this.invalidate();
+
+		       }
+		 });
 	}//fin ondraw() ******************************************************
 	@Override
 	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
@@ -141,7 +152,7 @@ public class Imagen extends ImageView {
 	View.OnTouchListener clickImagen = new View.OnTouchListener() {
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
-			
+			lastEvent = event;
 			//imageView =(ImageView) v;
 			setScaleType(ScaleType.MATRIX);
 			//codigo probando
@@ -211,11 +222,11 @@ public class Imagen extends ImageView {
 					borraCoordenadas(v, event);
 				}
 			}
+			path = new Path();
 			invalidate();
 			return true;
 		}//fin onTouch
 	};//fin onTouchListener
-   
 	void setZoom(float zoom){
     	float[] values = new float[9];
         matrix.getValues(values);
@@ -386,15 +397,7 @@ public class Imagen extends ImageView {
     int getBitmapHeight(Bitmap b){
     	return b.getHeight();
     }
-    public void refresh(){
-
-        new Thread(new Runnable(){
-            @Override
-                public void run() {
-                invalidate();
-            }
-        }).start();
-    }
+   
 }
 //clase que guarda un objeto con coordenadas
 class Marking{
@@ -493,5 +496,15 @@ private float getFixDragTrans(float delta, float viewSize, float contentSize) {
 	return delta;
 }
 */
+/*
+ *  public void refresh(){
 
- 
+        new Thread(new Runnable(){
+            @Override
+                public void run() {
+                invalidate();
+            }
+        }).start();
+    }
+ */
+

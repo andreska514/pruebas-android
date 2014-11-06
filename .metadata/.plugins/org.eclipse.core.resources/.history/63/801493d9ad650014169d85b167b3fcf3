@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Sun4all</string>
+    <string name="action_settings">Settings</string>
+    <string name="btnAdd">Move image/Add Sunspot</string>
+    <string name="btnRmv">Borrar Mancha</string>
+    <string name="btnInv">Invertir Image</string>
+    <string name="txtSpots">Contador: </string>
+    <string name="btnFin">Finalizar tarea</string>
+    <string name="btnRes">Reiniciar</string>
+    <string name="title_activity_imagen">Imagen</string>
+    <string name="title_activity_segunda">Segunda</string>
+
+    <string name="coordinates">Touch at some point in the canvas</string>
+</resources>
+<!-- Español -->

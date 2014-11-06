@@ -5,42 +5,27 @@ package com.andres.sun4all;
 
 
 import java.util.Locale;
+
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.style.StyleSpan;
 import android.util.Log;
-import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
-import android.view.View;
-import android.widget.TextView;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-//de imagen
-import java.util.ArrayList;
-import java.util.List;
-
-import android.util.AttributeSet;
-import android.util.FloatMath;
-import android.util.Log;
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.PointF;
-import android.widget.ImageView;
-import android.widget.ImageView.ScaleType;
-import android.view.MotionEvent;
-import android.view.View;
 
 public class Main extends FragmentActivity {
 
@@ -94,7 +79,7 @@ public class Main extends FragmentActivity {
 		btnRes.setOnClickListener(clickBoton);
 
 		layout1 = (LinearLayout)findViewById(R.id.layout1);
-		layout1.setBackgroundColor(Color.WHITE);
+		layout1.setBackgroundColor(Color.TRANSPARENT);
 		/** Change the button add/move depending the language*/
 		idiomas();
 	}
@@ -146,42 +131,25 @@ public class Main extends FragmentActivity {
 		public void onClick(View v) {
 			switch(v.getId()){
 			case R.id.btnFin:
-				//muestra mensaje de confirmacion
-
 				Dialogo dialogo = new Dialogo();
 				dialogo.show(getSupportFragmentManager(), "tagAlerta");
-				//acepta y envia coordenadas y descarga nueva imagen
-				if(dialogo.getBoton()){
-					//envia coordenadas de los sunspot
-					//descarga nueva imagen
-					//borra imagen anterior del dispositivo
-				}
-				else{//cancela el envio, continua con el task actual
-					//vacio?
-				}
-				
 				break;
 			case R.id.btnInv://coger el negativo de esa imagen(finish the task)
+				//probatina(new activity)
+				Intent i = new Intent(Main.this, Segunda.class);
+				startActivity(i);
 				break;
-			case R.id.btnRes://reinicia la misma imagen sin sunspots(start over)
-				imagen.listaPtos.clear();//vacio listaPtos
-				imagen.listaMarcas.clear();
-				cambiaAdd(false);//paso el boton add a move
-				//refresco imagen(NO VA)
-				//imagen.postInvalidate();
-				//imagen.postInvalidate(0, 0, 1000, 1000);
-				//imagen.refreshDrawableState();
-				//imagen.onDraw(new Canvas());
-				//toast("all the sunspots deleted",2000);
-				//imagen.onTouchEvent(null);
-				//ok();
-				imagen.onTouchEvent(null);
-				imagen.onDraw(new Canvas());
-				
+			case R.id.btnRes://reinicia imagen sin sunspots(start over)
+				vaciaCoordenadas();
 				break;
 			}
 		}
 	});
+	void vaciaCoordenadas(){
+		imagen.listaPtos.clear();//vacio listaPtos
+		imagen.listaMarcas.clear();
+		cambiaAdd(false);//paso el boton add a move
+	}
 	void cambiaAdd(boolean b){
 		btnAdd.setChecked(b);
 		imagen.pinta=b;
@@ -206,7 +174,6 @@ public class Main extends FragmentActivity {
 	}
 	/** Set the String and font of btnAdd depending user language*/
 	void idiomas(){
-
 		Locale current = getResources().getConfiguration().locale;
 		Log.i("getLanguage","-"+current.getLanguage());
 		/** español*/
@@ -242,11 +209,79 @@ public class Main extends FragmentActivity {
 			strAdd.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),11,22,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 		}
 		btnAdd.setText(strMove);
-
 	}
-
+	class Dialogo extends DialogFragment {
+		@Override
+		public Dialog onCreateDialog(Bundle savedInstanceState){
+			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+			builder.setMessage("Did you finish this task and want start another?")
+			.setTitle("Finish the task")
+			.setPositiveButton("yes", new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int id) {
+					Log.i("Confirmacion","Aceptada");
+					//envia listaMarcas()+id Imagen
+					
+					//borra ptos y pasa a modo mover
+					vaciaCoordenadas();
+					//descarga nueva imagen
+					//borra imagen anterior del dispositivo
+					dialog.cancel();
+				}
+			})
+			.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int id) {
+					Log.i("Confirmacion","Rechazada");
+					dialog.cancel();	
+					
+				}
+			});
+			return builder.create();
+		}
+	}
+	class DialogoOk extends DialogFragment {
+		private boolean boton=false;
+		@Override
+		public Dialog onCreateDialog(Bundle savedInstanceState){
+			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+			builder.setMessage("Done")
+			.setTitle("Accept")
+			.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int id) {
+					
+					dialog.cancel();
+				}
+			});
+			return builder.create();
+		}
+		public boolean getBoton() {
+			return boton;
+		}
+		public void setBoton(boolean boton) {
+			this.boton = boton;
+		}
+	}
 }
 
 //Intent i = new Intent(Main.this, Segunda.class);
 //startActivity(i);
+
+//pruebas refresco imagen
+//refresco imagen(NO VA)
+//imagen.postInvalidate();
+//imagen.postInvalidate(0, 0, 1000, 1000);
+//imagen.refreshDrawableState();
+//imagen.onDraw(new Canvas());
+//toast("all the sunspots deleted",2000);
+//imagen.onTouchEvent(null);
+//ok();
+/*Imagen touchView = (Imagen) findViewById(R.id.ImgFoto);
+touchView.clear();
+(imagen.clickImagen).clear();*/
+//imagen.onTouchEvent(imagen.lastEvent);
 
