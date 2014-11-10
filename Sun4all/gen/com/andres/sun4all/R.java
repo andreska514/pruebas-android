@@ -1261,14 +1261,15 @@ containing a value of this type.
         public static final int btnAdd=0x7f0a0010;
         public static final int btnAdd2=0x7f0a0011;
         public static final int btnFin=0x7f0a0015;
+        public static final int btnFin2=0x7f0a0016;
         public static final int btnInv=0x7f0a0013;
-        public static final int btnRes=0x7f0a0016;
+        public static final int btnRes=0x7f0a0017;
         public static final int btnRmv=0x7f0a0012;
-        public static final int coordinates=0x7f0a001a;
-        public static final int hello_world=0x7f0a0018;
+        public static final int coordinates=0x7f0a001b;
+        public static final int hello_world=0x7f0a0019;
         public static final int sunspot=0x7f0a000f;
-        public static final int title_activity_imagen=0x7f0a0017;
-        public static final int title_activity_segunda=0x7f0a0019;
+        public static final int title_activity_imagen=0x7f0a0018;
+        public static final int title_activity_segunda=0x7f0a001a;
         public static final int txtSpots=0x7f0a0014;
     }
     public static final class style {

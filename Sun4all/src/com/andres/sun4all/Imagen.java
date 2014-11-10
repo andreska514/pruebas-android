@@ -1,6 +1,11 @@
 package com.andres.sun4all;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
+
+import android.os.StrictMode;
 import android.util.AttributeSet;
 import android.util.FloatMath;
 import android.util.Log;
@@ -46,8 +51,9 @@ public class Imagen extends ImageView {
 	
 	MotionEvent lastEvent;
 	Context context;
-	
-	Bitmap bitmap= BitmapFactory.decodeResource(getResources(), R.drawable.sol);
+	Bitmap inicial = BitmapFactory.decodeResource(getResources(), R.drawable.sol);
+	Bitmap bitmap = inicial;
+	//Bitmap bitmap= BitmapFactory.decodeResource(getResources(), R.drawable.sol);
 	Bitmap cruz = BitmapFactory.decodeResource(getResources(), R.drawable.cruz);
 	Paint paintFondo,paintPuntos;
 	Canvas canvas;
@@ -291,7 +297,6 @@ public class Imagen extends ImageView {
 	}
 	/** Move the relative coordinates when the image was moved*/
 	void mueveCoordenadas(MotionEvent event){
-		Log.i("listaMarcas","listaMarcas");
 		for (int i=0; i<listaPtos.size();i++){
 			Marking pto = listaPtos.get(i);
 			Mark mark = listaMarcas.get(i);
@@ -308,6 +313,7 @@ public class Imagen extends ImageView {
 	void changeBitmap(Bitmap b){
 		bitmap = b;
 	}
+	
 }
 //clase que guarda un objeto con coordenadas
 class Marking{

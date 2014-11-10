@@ -9,6 +9,7 @@
     <string name="btnInv">Invertir Image</string>
     <string name="txtSpots">Contador: </string>
     <string name="btnFin">Finalizar tarea</string>
+    <string name="btnFin2">Empezar tarea</string>
     <string name="btnRes">Reiniciar</string>
     <string name="title_activity_imagen">Imagen</string>
     <string name="title_activity_segunda">Segunda</string>

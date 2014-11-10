@@ -9,6 +9,7 @@
     <string name="btnInv">Immagine Inverti</string>
     <string name="txtSpots">Spots Count: </string>
     <string name="btnFin">Finire il compito</string>
+    <string name="btnFin2">nuova attività</string>
     <string name="btnRes">ricominciare</string>
     <string name="title_activity_imagen">Imagen</string>
     <string name="hello_world">Hello world!</string>

@@ -3,17 +3,22 @@
 
 package com.andres.sun4all;
 
-//https://pybossa.socientize.eu/sun4all/sunimages/
-//https://pybossa.socientize.eu/sun4all/sunimages/inv/
 
+
+
+import java.io.IOException;
+import java.net.URL;
 import java.util.Locale;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
@@ -29,7 +34,15 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 public class Main extends FragmentActivity {
+	
+	static boolean imagenReady = false;
+	static boolean inicio = true;
+	Bitmap bitmapBase, bitmapBaseNeg;
 
+	
+	static String urlBase = "https://pybossa.socientize.eu/sun4all/sunimages/";
+	static String urlBaseNeg="https://pybossa.socientize.eu/sun4all/sunimages/inv/";
+	
 	static public int contador = 0;
 	static TextView txtCont;
 	//variables
@@ -57,7 +70,7 @@ public class Main extends FragmentActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-
+		inicio=true;
 		img = (ImageView) findViewById(R.id.ImgFoto);
 
 		imagen = new Imagen(this);
@@ -73,8 +86,8 @@ public class Main extends FragmentActivity {
 		btnInv =(Button)findViewById(R.id.btnInv);
 		btnRes =(Button)findViewById(R.id.btnRes);
 
-		btnAdd.setOnClickListener(clickAdd);
-		btnRmv.setOnClickListener(clickAdd);
+		btnAdd.setOnClickListener(clickToggle);
+		btnRmv.setOnClickListener(clickToggle);
 		btnFin.setOnClickListener(clickBoton);
 		btnInv.setOnClickListener(clickBoton);
 		btnRes.setOnClickListener(clickBoton);
@@ -83,9 +96,11 @@ public class Main extends FragmentActivity {
 		layout1.setBackgroundColor(Color.TRANSPARENT);
 		/** Change the button add/move depending the language*/
 		idiomas();
+		activaBotonesInicio(false);
 	}
+	
 	//Clicks en botones
-	View.OnClickListener clickAdd = (new View.OnClickListener() {
+	View.OnClickListener clickToggle = (new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
 			switch(v.getId()){
@@ -109,14 +124,14 @@ public class Main extends FragmentActivity {
 				if(btnRmv.isChecked())
 				{
 					btnRmv.setText("OK");
-					activaBotones(false);
+					activaBotonesBorrar(false);
 					imagen.borra=true;
 					imagen.pinta = true;
 				}
 				else
 				{
 					btnRmv.setText("Remove Sunspot");
-					activaBotones(true);
+					activaBotonesBorrar(true);
 					imagen.borra=false;
 					if(btnAdd.isChecked())
 						imagen.pinta=true;
@@ -132,11 +147,28 @@ public class Main extends FragmentActivity {
 		public void onClick(View v) {
 			switch(v.getId()){
 			case R.id.btnFin:
-				Dialogo dialogo = new Dialogo();
-				dialogo.show(getSupportFragmentManager(), "tagAlerta");
+				if(inicio){
+					//try{
+						//new Download().execute(params);
+						imagenReady=false;
+						new Download().execute(getRandomUrl());
+						while(!imagenReady){}
+						bitmapBase=Download.base;
+						bitmapBaseNeg=Download.nega;
+						imagen.changeBitmap(bitmapBase);
+						//imagen.changeBitmap("k1v_01_07_00_09h_35.jpg");
+					/*}catch(IOException e){
+						toast(e.getStackTrace().toString(), 3000);
+					}*/
+					btnFin.setText(R.string.btnFin);
+					activaBotonesInicio(true);
+					inicio=false;
+				}else{
+					Dialogo dialogo = new Dialogo();
+					dialogo.show(getSupportFragmentManager(), "tagAlerta");
+				}
 				break;
-			case R.id.btnInv://coger el negativo de esa imagen(finish the task)
-				//probatina(new activity)
+			case R.id.btnInv://cambiar bitmap a negativo
 				Intent i = new Intent(Main.this, Segunda.class);
 				startActivity(i);
 				break;
@@ -160,12 +192,19 @@ public class Main extends FragmentActivity {
 			btnAdd.setText(strMove);
 		Log.d("btnAdd.isChecked()",""+imagen.pinta);
 	}
-	void activaBotones(boolean b){
+	void activaBotonesBorrar(boolean b){
 		btnAdd.setEnabled(b);
 		btnInv.setEnabled(b);
 		btnFin.setEnabled(b);
 		btnRes.setEnabled(b);
 	}
+	void activaBotonesInicio(boolean b){
+		btnAdd.setEnabled(b);
+		btnRmv.setEnabled(b);
+		btnInv.setEnabled(b);
+		btnRes.setEnabled(b);
+	}
+
 	void toast(String s, int ms){
 		Toast.makeText(getApplicationContext(), s, ms).show();
 	}
@@ -218,7 +257,6 @@ public class Main extends FragmentActivity {
 			builder.setMessage("Did you finish this task and want start another?")
 			.setTitle("Finish the task")
 			.setPositiveButton("yes", new DialogInterface.OnClickListener() {
-				
 				@Override
 				public void onClick(DialogInterface dialog, int id) {
 					Log.i("Confirmacion","Aceptada");
@@ -226,6 +264,9 @@ public class Main extends FragmentActivity {
 					
 					//borra ptos y pasa a modo mover
 					vaciaCoordenadas();
+					btnFin.setText(R.string.btnFin2);
+					activaBotonesInicio(false);
+					inicio=true;
 					//descarga nueva imagen
 					//borra imagen anterior del dispositivo
 					dialog.cancel();
@@ -240,6 +281,9 @@ public class Main extends FragmentActivity {
 					
 				}
 			});
+			/*btnFin.setText(R.string.btnFin);
+					activaBotonesInicio(true);
+					inicio=false;*/
 			return builder.create();
 		}
 	}
@@ -266,6 +310,24 @@ public class Main extends FragmentActivity {
 		public void setBoton(boolean boton) {
 			this.boton = boton;
 		}
+	}
+	String[] getRandomUrl(){
+		String cad[] = new String[2];
+		//Imagenes para probar
+		//k1v_01_07_00_09h_35.jpg
+		//k1v_01_07_03_12h_40_E_C.jpg
+		//k1v_01_07_85_09h_34_E_C.jpg
+		//k1v_01_07_90_08h_02_E_C.jpg
+		//k1v_01_07_91_09h_05_E_C.jpg
+		//k1v_01_07_95_08h_31_E_C.jpg
+		//k1v_01_07_96_08h_28_E_C.jpg
+		//k1v_01_08_01_09h_25.jpg
+		//k1v_01_08_02_08h_27_E_C.jpg
+		//k1v_01_08_03_09h_30_E_C.jpg
+		String s = "k1v_01_08_03_09h_30_E_C.jpg";
+		cad[0]=urlBase.concat(s);
+		cad[0]=urlBaseNeg.concat(s);
+		return cad;
 	}
 }
 
