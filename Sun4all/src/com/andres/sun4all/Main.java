@@ -3,9 +3,10 @@
 
 package com.andres.sun4all;
 
+//https://pybossa.socientize.eu/sun4all/sunimages/
+//https://pybossa.socientize.eu/sun4all/sunimages/inv/
 
 import java.util.Locale;
-
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;

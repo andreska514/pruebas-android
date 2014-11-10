@@ -1,8 +1,6 @@
 package com.andres.sun4all;
 
 import java.util.ArrayList;
-import java.util.List;
-
 import android.util.AttributeSet;
 import android.util.FloatMath;
 import android.util.Log;
@@ -16,7 +14,6 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
 import android.widget.ImageView;
-import android.widget.ImageView.ScaleType;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -36,34 +33,30 @@ public class Imagen extends ImageView {
 	PointF mid = new PointF();
 	float[]valores;
 	
-	int lastTouchX;//from image
-	int lastTouchY;//from image
+	int lastTouchX;
+	int lastTouchY;
 	int viewWidth = this.getWidth();
 	int viewHeight = this.getHeight();
 	
 	static boolean pinta = false;
 	static boolean borra = false;
-	//nueva lista de coordenadas con objetos
+	/** absolute and relative coordinates*/
 	static ArrayList <Marking> listaPtos = new ArrayList<Marking>(); 
 	static ArrayList <Mark> listaMarcas = new ArrayList<Mark>();
 	
 	MotionEvent lastEvent;
 	Context context;
 	
-	//Canvas canvas= new Canvas();
 	Bitmap bitmap= BitmapFactory.decodeResource(getResources(), R.drawable.sol);
 	Bitmap cruz = BitmapFactory.decodeResource(getResources(), R.drawable.cruz);
 	Paint paintFondo,paintPuntos;
 	Canvas canvas;
 	Path path;
 	
-	
-//CONSTRUCTOR --------------------------------------------------------------------------
 	public Imagen(Context c, AttributeSet attr) {
 		super(c, attr);
 		this.setFocusable(true);
 		context=c;
-		//view = new FocusableImageView( activity );
 		setWillNotDraw (false);
 		setImageResource(R.drawable.sol);
 		setCropToPadding(true);
@@ -82,7 +75,6 @@ public class Imagen extends ImageView {
 		paintFondo = new Paint(Paint.DITHER_FLAG);
 		setOnTouchListener(clickImagen);
 	}
-	//onDraw ***********************************************************************
 	@Override
 	public void onDraw(Canvas c){
 		setWillNotDraw (false);
@@ -95,27 +87,23 @@ public class Imagen extends ImageView {
 		else{
 			this.setOnTouchListener(clickImagen);
 		}
-		
 		if(listaPtos!=null){
-			//Log.i("pintando",listaPtos.size()+" puntos");
 			for(Mark mark:listaMarcas){	
 				c.drawBitmap(cruz, mark.x, mark.y, new Paint());
 			}
 		}
-		//refresca la pantalla
 		((Main) context).runOnUiThread(new Runnable() {
 		       @Override
 		       public void run() {
 		           Imagen.this.invalidate();
-
 		       }
 		 });
-	}//fin ondraw() ******************************************************
+	}
 	@Override
 	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
 	    super.onSizeChanged(w, h, oldw, oldh);
 	}
-	/** Guarda las coordenadas imagen pasadas en listaPtos*/
+	/** Save absolute coordinates in listaPtos*/
 	void guardaCoordenadas(int x, int y){
 		Log.i("guardaCoordenadas","de int");
 		Marking m = new Marking(x,y);
@@ -123,7 +111,7 @@ public class Imagen extends ImageView {
 		Log.i("listaPtos0",""+m.x+"-"+m.y);
 		//Main.txtCont.setText(x+"-"+y);
 	}
-	//guarda coordenadas matrix
+	/** Save relative coordinates in listaMarcas*/
 	void saveCoordinates(float x, float y){
 		Log.i("guardaCoordenadas","de float");
 		Mark m = new Mark(x,y);
@@ -132,14 +120,9 @@ public class Imagen extends ImageView {
 		Main.txtCont.setText(x+"-"+y);
 		guardaCoordenadas(lastTouchX,lastTouchY);
 	}
-	/** Borra las coordenadas cercanas al evento touch(a menos de 50px)*/
+	/** Delete coordinates near touch event(less than 50px)*/
 	void borraCoordenadas(View v, MotionEvent event){
 		for (int i=listaPtos.size()-1; i>=0; i--){
-			/*if (Math.sqrt(
-			Math.pow((event.getX()-listaPtos.get(i).x), 2)
-			+Math.pow((event.getY()-listaPtos.get(i).y), 2)) < 50){
-				listaPtos.remove(i);
-			*/
 			if(Math.sqrt(
 			Math.pow((event.getX()-listaMarcas.get(i).x), 2)
 			+Math.pow((event.getY()-listaMarcas.get(i).y), 2)) < 50){
@@ -153,18 +136,13 @@ public class Imagen extends ImageView {
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
 			lastEvent = event;
-			//imageView =(ImageView) v;
 			setScaleType(ScaleType.MATRIX);
-			//codigo probando
-			
 		    switch (event.getAction() & MotionEvent.ACTION_MASK) {
-	    //pulsar 1	    
 			    case MotionEvent.ACTION_DOWN:
 			        savedMatrix.set(matrix);
 			        start.set(event.getX(), event.getY());
 			        mode = PULSADO;
 			        break;
-	    //pulsar 2
 			    case MotionEvent.ACTION_POINTER_DOWN:
 			        oldDist = espacio(event);
 			        if (oldDist > 10f) {
@@ -173,48 +151,39 @@ public class Imagen extends ImageView {
 			            mode = ZOOM;
 			        }
 			        break;
-		//soltar
 			    case MotionEvent.ACTION_UP:
 			    case MotionEvent.ACTION_POINTER_UP:
 			        mode = NONE;
 			        break;
-		//1 dedo-mover / 2 dedos-zoom
 			    case MotionEvent.ACTION_MOVE:
 			        if (mode == PULSADO) {
 			            matrix.set(savedMatrix);
 			            float matX = event.getX()-start.x;
 			            float matY = event.getY()-start.y;
-			            /*matrix.postTranslate(event.getX() - start.x, 
-			            		event.getY() - start.y);*/
 			            matrix.postTranslate(matX, matY);
-			            //mueveCoordenadas(matX,matY);
-			            mueveCoordenadas(event);
 			        } 
 			        else if (mode == ZOOM) {
 			            float newDist = espacio(event);
 		                matrix.set(savedMatrix);
 		                float scale = newDist / oldDist;
 		                matrix.postScale(scale, scale, mid.x, mid.y);  
-		                //cambiar el zoom de las marcas
-		                //mueveCoordenadas();
 			        }
-			        compruebaZoom();
+			        checkZoom();
 			        break;
-		    }//fin switch
+		    }//end switch
+		    mueveCoordenadas(event);
 		    setImageMatrix(matrix);
 		    invalidate();
 		    return true;
-		}//fin OnTouch
-	};//fin touchListener
+		}//end OnTouch
+	};//end touchListener
 	
 	View.OnTouchListener clickPinta = new View.OnTouchListener() {
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
 			if(event.getAction()==MotionEvent.ACTION_UP){
-				Log.i("ClickPint","ACTION_UP");
 				calculaCoordenadasImagen(event);
 				if(!borra){
-		        	//guardaCoordenadas(lastTouchX,lastTouchY);
 					saveCoordinates(event.getX(),event.getY());
 					Main.txtCont.setText("getX"+event.getX() +" getX"+event.getY());
 				}
@@ -225,8 +194,8 @@ public class Imagen extends ImageView {
 			path = new Path();
 			invalidate();
 			return true;
-		}//fin onTouch
-	};//fin onTouchListener
+		}//end onTouch
+	};//end onTouchListener
 	void setZoom(float zoom){
     	float[] values = new float[9];
         matrix.getValues(values);
@@ -234,22 +203,19 @@ public class Imagen extends ImageView {
         values[Matrix.MSCALE_Y] = zoom; 
         matrix.setValues(values);
     }
-    //comprueba el zoom para concretar los límites
-    //limita zoom y envia los bordes de la pantalla a limitCorners()
-    public void compruebaZoom(){
+   	/** Chech the zoom for narrow limits
+	 * limit zoom and send the edges of the screen to limitCorners ()*/
+    public void checkZoom(){
     	float[] values = new float[9];
         matrix.getValues(values);
-        //compruebo el zoom
         float scaleX = values[Matrix.MSCALE_X];
-        float scaleY = values[Matrix.MSCALE_Y];
         if(scaleX > MAX_ZOOM) {
         	setZoom(MAX_ZOOM);
         } 
         else if(scaleX < MIN_ZOOM) {
         	setZoom(MIN_ZOOM);
         }
-      //Segunda parte: segun el zoom envia unos valores u otros
-		//a limitaBordes(float, float)
+
         valores = new float[9];
     	matrix.getValues(valores);
     	if (valores[0]<=MIN_ZOOM){
@@ -258,7 +224,6 @@ public class Imagen extends ImageView {
         	valores[2]=0;
         	valores[5]=0;
         	matrix.setValues(valores);
-        	//imageView.setImageMatrix(matrix);
         }else if(valores[0]>0.9 && valores[0]<=1){
         	limitCorners(-65, -40);
         }else if(valores[0]>1 && valores[0]<=1.1){
@@ -273,15 +238,12 @@ public class Imagen extends ImageView {
         	limitCorners(-484, -435);
         }else if(valores[0]>1.5 && valores[0]<=1.6){
         	limitCorners(-563, -521);
-        }else {// (valores[0]>1.6f)
+        }else {
         	limitCorners(-664, -600);
         }
     }
    //metodo a mejorar
 	void limitCorners(float valorX, float valorY){
-    	//log("determinando");
-    	//if(x>0)
-		
     	if(valores[2]>0){
     		valores[2]=0;
     		matrix.setValues(valores);
@@ -301,31 +263,20 @@ public class Imagen extends ImageView {
     	setImageMatrix(matrix);
     	
     }
-	/** Determina el espacio entre los 2 primeros dedos*/
+	/** Determine the space between the 2 fingers*/
 	@SuppressLint("FloatMath")
 	private float espacio(MotionEvent event) {
 	    float x = event.getX(0) - event.getX(1);
 	    float y = event.getY(0) - event.getY(1);
 	    return FloatMath.sqrt(x * x + y * y);
 	}
-	/** Calcula el punto medio entre los 2 dedos*/
+	/** calculates the midpoint between the 2 fingers*/
 	private void puntoMedio(PointF point, MotionEvent event) {
 	    float x = event.getX(0) + event.getX(1);
 	    float y = event.getY(0) + event.getY(1);
 	    point.set(x / 2, y / 2);
 	}
-	/** Calcula las coordenadas de la pantalla*/
-	void calculaCoordPantalla(MotionEvent e){
-        float[] values = new float[9];
-        matrix.getValues(values);
-        
-        float scaleX=values[0];
-        float scaleY=values[4];
-        
-        float relativeX = ((e.getX() - values[2])*scaleX) / values[0];
-        float relativeY = ((e.getY() - values[5])*scaleY) / values[4];
-	}
-	/** Calcula las coordenadas absolutas de la imagen*/
+	/** Calculate the absolute coordinates of the image*/
 	void calculaCoordenadasImagen(MotionEvent e){
 		float []m = new float[9];
 		matrix.getValues(m);
@@ -338,66 +289,25 @@ public class Imagen extends ImageView {
 		lastTouchX = Math.abs(lastTouchX);
 		lastTouchY = Math.abs(lastTouchY);
 	}
-	/**Cambiara las coordenadas cuando el matrix cambie*/
+	/** Move the relative coordinates when the image was moved*/
 	void mueveCoordenadas(MotionEvent event){
-		if (mode==PULSADO){
-			//probando
-			float[] values = new float[9];
-			matrix.getValues(values);
-			
-			float scaleX=values[0];
-			float scaleY=values[4];
-			
-			float relativeX = ((event.getX() - values[2])*scaleX) / values[0];
-			float relativeY = ((event.getY() - values[5])*scaleY) / values[4];
-			//fin prueba
-			Log.i("listaMarcas","listaMarcas");
-			for (int i=0; i<listaMarcas.size();i++){
-				//cambia la x-y segun el matrix
-				Mark mark = listaMarcas.get(i);
-				float[]coor = new float[2];
-				coor[0]=mark.x;
-				coor[1]=mark.y;
-				matrix.mapPoints(coor);
-				mark.setX(coor[0]);
-				mark.setY(coor[1]);
-				listaMarcas.set(i, mark);
-			}
+		Log.i("listaMarcas","listaMarcas");
+		for (int i=0; i<listaPtos.size();i++){
+			Marking pto = listaPtos.get(i);
+			Mark mark = listaMarcas.get(i);
+			float[]coor = new float[2];
+			coor[0]=pto.x;
+			coor[1]=pto.y;
+			matrix.mapPoints(coor);
+			mark.setX(coor[0]);
+			mark.setY(coor[1]);
+			listaMarcas.set(i, mark);
 		}
-		if (mode==ZOOM){
-			
-		}
-		
 	}
-	
-	void log(String s){
-		Log.i("log",s);
-	}
-    static void logMatrix(Matrix matrix, ImageView imageView){
-		float[] values = new float[9];
-		Main.contador++;
-		matrix.getValues(values);
-		Log.i("  ",Main.contador+"-----------veces---------------- ");
-		Log.i("valores",""+values[0]+"/"+values[1]+"/"
-		+values[2]+"/"+values[3]+"/"+values[4]+"/"
-		+values[5]+"/"+values[6]+"/"
-		+values[7]+"/"+values[8]);
-		
-        float width = values[0]* imageView.getWidth();
-        float height = values[4] * imageView.getHeight();
 
-        Log.i("globalX[2]",""+values[2]);
-        Log.i("globalY[5]",""+values[5]);
-        Log.i("width[0]",""+width+"("+values[0]+" x "+imageView.getWidth()+")");
-        Log.i("height[4]",""+height+"("+values[4]+" x "+imageView.getHeight()+")");
+	void changeBitmap(Bitmap b){
+		bitmap = b;
 	}
-    int getBitmapWidth(Bitmap b){
-    	return b.getWidth();
-    }
-    int getBitmapHeight(Bitmap b){
-    	return b.getHeight();
-    }
-   
 }
 //clase que guarda un objeto con coordenadas
 class Marking{
@@ -496,15 +406,46 @@ private float getFixDragTrans(float delta, float viewSize, float contentSize) {
 	return delta;
 }
 */
-/*
- *  public void refresh(){
 
-        new Thread(new Runnable(){
-            @Override
-                public void run() {
-                invalidate();
-            }
-        }).start();
+//Methods used but not necesary now
+/*
+ * 
+ *  int getBitmapWidth(Bitmap b){
+    	return b.getWidth();
     }
+    int getBitmapHeight(Bitmap b){
+    	return b.getHeight();
+    }
+    static void logMatrix(Matrix matrix, ImageView imageView){
+		float[] values = new float[9];
+		Main.contador++;
+		matrix.getValues(values);
+		Log.i("  ",Main.contador+"-----------veces---------------- ");
+		Log.i("valores",""+values[0]+"/"+values[1]+"/"
+		+values[2]+"/"+values[3]+"/"+values[4]+"/"
+		+values[5]+"/"+values[6]+"/"
+		+values[7]+"/"+values[8]);
+		
+        float width = values[0]* imageView.getWidth();
+        float height = values[4] * imageView.getHeight();
+
+        Log.i("globalX[2]",""+values[2]);
+        Log.i("globalY[5]",""+values[5]);
+        Log.i("width[0]",""+width+"("+values[0]+" x "+imageView.getWidth()+")");
+        Log.i("height[4]",""+height+"("+values[4]+" x "+imageView.getHeight()+")");
+	}
+	
+	*/
+/*
+ * void calculaCoordPantalla(MotionEvent e){
+        float[] values = new float[9];
+        matrix.getValues(values);
+        
+        float scaleX=values[0];
+        float scaleY=values[4];
+        
+        float relativeX = ((e.getX() - values[2])*scaleX) / values[0];
+        float relativeY = ((e.getY() - values[5])*scaleY) / values[4];
+	}
  */
 
