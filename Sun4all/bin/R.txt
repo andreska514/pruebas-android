@@ -363,8 +363,9 @@ int string btnFin2 0x7f0a0016
 int string btnInv 0x7f0a0013
 int string btnRes 0x7f0a0017
 int string btnRmv 0x7f0a0012
-int string coordinates 0x7f0a001b
+int string coordinates 0x7f0a001c
 int string hello_world 0x7f0a0019
+int string progressBar 0x7f0a001b
 int string sunspot 0x7f0a000f
 int string title_activity_imagen 0x7f0a0018
 int string title_activity_segunda 0x7f0a001a

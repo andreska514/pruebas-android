@@ -1,15 +1,19 @@
 package com.andres.sun4all;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
+
+import android.os.AsyncTask;
 import android.os.StrictMode;
 import android.util.AttributeSet;
 import android.util.FloatMath;
 import android.util.Log;
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -19,6 +23,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
 import android.widget.ImageView;
+import android.widget.Toast;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -53,11 +58,13 @@ public class Imagen extends ImageView {
 	Context context;
 	Bitmap inicial = BitmapFactory.decodeResource(getResources(), R.drawable.sol);
 	Bitmap bitmap = inicial;
-	//Bitmap bitmap= BitmapFactory.decodeResource(getResources(), R.drawable.sol);
+	Bitmap negativo;
 	Bitmap cruz = BitmapFactory.decodeResource(getResources(), R.drawable.cruz);
 	Paint paintFondo,paintPuntos;
 	Canvas canvas;
 	Path path;
+	
+	ProgressDialog pDialog;
 	
 	public Imagen(Context c, AttributeSet attr) {
 		super(c, attr);
@@ -313,51 +320,97 @@ public class Imagen extends ImageView {
 	void changeBitmap(Bitmap b){
 		bitmap = b;
 	}
+	void changeBitmap(String[] s){
+		//new LoadImage().execute(s);
+		new LoadImage().execute("https://pybossa.socientize.eu/sun4all/sunimages/k1v_01_08_03_09h_30_E_C.jpg");
+	}
 	
+	private class LoadImage extends AsyncTask<String, String, Bitmap> {
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			pDialog = new ProgressDialog(context);
+			pDialog.setMessage("Loading Image ....");
+			pDialog.show();
+		}
+		protected Bitmap doInBackground(String... args) {
+			//1 url
+			if(args.length == 1){
+				Log.i("doInBack","length = 1 ");
+				try {
+					bitmap = BitmapFactory.decodeStream((InputStream)new URL(args[0]).getContent());
+					
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			//2 url
+			else{
+				Log.i("doInBack","length = 2 ");
+				try {
+					bitmap = BitmapFactory.decodeStream((InputStream)new URL(args[0]).getContent());
+					negativo = BitmapFactory.decodeStream((InputStream)new URL(args[1]).getContent());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			return bitmap;
+		}
+		protected void onPostExecute(Bitmap image) {
+			if(image != null){
+				bitmap=image;
+				pDialog.dismiss();
+			}else{
+				pDialog.dismiss();
+				Toast.makeText(context, "Image Does Not exist or Network Error", Toast.LENGTH_SHORT).show();
+			}
+		}
+	}
+	//clase que guarda un objeto con coordenadas
+	class Marking{
+		int x;
+		int y;
+		Marking(int x, int y){
+			this.x = x;
+			this.y = y;
+		}
+		Marking(){}
+		int getX(){
+			return x;
+		}
+		int getY(){
+			return y;
+		}
+		void setX(int x){
+			this.x = x;
+		}
+		void setY(int y){
+			this.y = y;
+		}
+	}
+	class Mark{
+		float x;
+		float y;
+		Mark(float x, float y){
+			this.x = x;
+			this.y = y;
+		}
+		Mark(){}
+		float getX(){
+			return x;
+		}
+		float getY(){
+			return y;
+		}
+		void setX(float x){
+			this.x = x;
+		}
+		void setY(float y){
+			this.y = y;
+		}
+	}
 }
-//clase que guarda un objeto con coordenadas
-class Marking{
-	int x;
-	int y;
-	Marking(int x, int y){
-		this.x = x;
-		this.y = y;
-	}
-	Marking(){}
-	int getX(){
-		return x;
-	}
-	int getY(){
-		return y;
-	}
-	void setX(int x){
-		this.x = x;
-	}
-	void setY(int y){
-		this.y = y;
-	}
-}
-class Mark{
-	float x;
-	float y;
-	Mark(float x, float y){
-		this.x = x;
-		this.y = y;
-	}
-	Mark(){}
-	float getX(){
-		return x;
-	}
-	float getY(){
-		return y;
-	}
-	void setX(float x){
-		this.x = x;
-	}
-	void setY(float y){
-		this.y = y;
-	}
-}
+
 	
 //PROBAR ESTO!!!
 //https://github.com/MikeOrtiz/TouchImageView/blob/master/src/com/ortiz/touch/TouchImageView.java

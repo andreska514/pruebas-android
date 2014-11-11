@@ -13,6 +13,7 @@
     <string name="btnRes">Reiniciar</string>
     <string name="title_activity_imagen">Imagen</string>
     <string name="title_activity_segunda">Segunda</string>
+    <string name="progressBar">Descargando imagen</string>
 
     <string name="coordinates">Touch at some point in the canvas</string>
 </resources>

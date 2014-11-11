@@ -4,3 +4,8 @@
 1415624456294	Rename field 'clickAdd'
 1415627549612	Rename field 'imgInvBase'
 1415627563625	Rename field 'irlBaseNeg'
+1415695835475	Delete element
+1415697339945	Rename field 'negaUrl'
+1415697352814	Rename field 'normalUrl'
+1415705581284	Rename local variable 'imageDownloaderBtn'
+1415707223853	Rename field 'load_img'

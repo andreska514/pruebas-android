@@ -1,24 +1,21 @@
-//how to use external jars 
-//http://stackoverflow.com/questions/1334802/how-can-i-use-external-jars-in-an-android-project
-
 package com.andres.sun4all;
 
-
-
-
-import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Locale;
+
+
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
@@ -35,7 +32,6 @@ import android.widget.ToggleButton;
 
 public class Main extends FragmentActivity {
 	
-	static boolean imagenReady = false;
 	static boolean inicio = true;
 	Bitmap bitmapBase, bitmapBaseNeg;
 
@@ -65,11 +61,17 @@ public class Main extends FragmentActivity {
 
 	static boolean check;
 	static boolean finish;
+	Bitmap base;
+	Bitmap nega;
+	ProgressDialog mProgressDialog;
+	URL urlNormal;
+	URL urlNega;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		
 		inicio=true;
 		img = (ImageView) findViewById(R.id.ImgFoto);
 
@@ -148,18 +150,11 @@ public class Main extends FragmentActivity {
 			switch(v.getId()){
 			case R.id.btnFin:
 				if(inicio){
-					//try{
-						//new Download().execute(params);
-						imagenReady=false;
-						new Download().execute(getRandomUrl());
-						while(!imagenReady){}
-						bitmapBase=Download.base;
-						bitmapBaseNeg=Download.nega;
-						imagen.changeBitmap(bitmapBase);
-						//imagen.changeBitmap("k1v_01_07_00_09h_35.jpg");
-					/*}catch(IOException e){
-						toast(e.getStackTrace().toString(), 3000);
-					}*/
+					String [] cadenas = getRandomUrl();
+					imagen.changeBitmap(cadenas);
+					//new LoadImage().execute(cadenas[0]);
+					
+					
 					btnFin.setText(R.string.btnFin);
 					activaBotonesInicio(true);
 					inicio=false;
@@ -312,7 +307,6 @@ public class Main extends FragmentActivity {
 		}
 	}
 	String[] getRandomUrl(){
-		String cad[] = new String[2];
 		//Imagenes para probar
 		//k1v_01_07_00_09h_35.jpg
 		//k1v_01_07_03_12h_40_E_C.jpg
@@ -325,10 +319,101 @@ public class Main extends FragmentActivity {
 		//k1v_01_08_02_08h_27_E_C.jpg
 		//k1v_01_08_03_09h_30_E_C.jpg
 		String s = "k1v_01_08_03_09h_30_E_C.jpg";
-		cad[0]=urlBase.concat(s);
-		cad[0]=urlBaseNeg.concat(s);
-		return cad;
+		String[] cadenas = new String[2];
+		String uno = urlBase.concat(s);
+		String dos = urlBaseNeg.concat(s);
+		cadenas[0]= uno;
+		cadenas[1]=dos;
+		return cadenas;
 	}
+	
+	
+	/*public class Download extends AsyncTask<String, Integer, Bitmap[]>{
+		Context context;
+		PowerManager.WakeLock mWakeLock;
+	    public Download(Context context) {
+	    	this.context = context;
+		}
+	    @Override
+	    protected void onProgressUpdate(Integer... progress){
+	    	mProgressDialog = ProgressDialog.show(context, "Wait", "Downloading...");
+	    	//setProgressPercent(progress[0]);
+	    	Log.d("Download","onProgressUpdate");
+	    }
+		@Override
+	    protected Bitmap[] doInBackground(String... urls) {
+			Bitmap[]base = new Bitmap[2];
+			InputStream input = null;
+    		try {
+    			URL url_base = new URL(urls[0]);
+    			URLConnection conection = url_base.openConnection();
+    			conection.connect();
+    			input = new BufferedInputStream(url_base.openStream(),8192);
+    			base[0] = BitmapFactory.decodeStream(input);
+    			input.close();
+    			
+    			
+    			URL url_inv = new URL(urls[1]);
+    			conection = url_inv.openConnection();
+    			conection.connect();
+    			input=null;
+    			input = new BufferedInputStream(url_inv.openStream(),8192);
+    			base[1] = BitmapFactory.decodeStream(input);
+    			input.close();
+    			Log.d("Download","intentando descargar ok");
+    		} catch (IOException e) {
+    			Log.d("Download,background","catch 1");
+    		}
+    		return base;
+	    }
+	    @Override
+	    protected void onPostExecute(Bitmap[] result) {
+	    	Log.d("Download","onPostExecute");
+	    	bitmapBase=result[0];
+			bitmapBaseNeg=result[1];
+			imagen.changeBitmap(bitmapBase);
+	    }
+	    
+	}*/
+	private class LoadImage extends AsyncTask<String, String, Bitmap> {
+	    @Override
+	        protected void onPreExecute() {
+	            super.onPreExecute();
+	            mProgressDialog = new ProgressDialog(Main.this);
+	            mProgressDialog.setMessage("Loading Image ....");
+	            mProgressDialog.show();
+	    }
+	       protected Bitmap doInBackground(String... args) {
+	         try {
+	               base = BitmapFactory.decodeStream((InputStream)new URL(args[0]).getContent());
+	        } catch (Exception e) {
+	              e.printStackTrace();
+	        }
+	      return base;
+	       }
+	       protected void onPostExecute(Bitmap image) {
+	         if(image != null){
+	           //imagen.setImageBitmap(image);
+	        	 imagen.changeBitmap(image);
+	           mProgressDialog.dismiss();
+	         }else{
+	           mProgressDialog.dismiss();
+	           Toast.makeText(Main.this, "Image Does Not exist or Network Error", Toast.LENGTH_SHORT).show();
+	         }
+	       }
+	   }
+
+	//Imagenes para probar
+	//k1v_01_07_00_09h_35.jpg
+	//k1v_01_07_03_12h_40_E_C.jpg
+	//k1v_01_07_85_09h_34_E_C.jpg
+	//k1v_01_07_90_08h_02_E_C.jpg
+	//k1v_01_07_91_09h_05_E_C.jpg
+	//k1v_01_07_95_08h_31_E_C.jpg
+	//k1v_01_07_96_08h_28_E_C.jpg
+	//k1v_01_08_01_09h_25.jpg
+	//k1v_01_08_02_08h_27_E_C.jpg
+	//k1v_01_08_03_09h_30_E_C.jpg
 }
 
 //Intent i = new Intent(Main.this, Segunda.class);

@@ -12,7 +12,7 @@
     <string name="btnRes">recommencer</string>
     <string name="title_activity_imagen">Imagen</string>
     <string name="title_activity_segunda">Segunda</string>
-
+    <string name="progressBar">télécharge l\'image</string>
     <string name="coordinates">Touch at some point in the canvas</string>
 </resources>
 <!-- Français -->
