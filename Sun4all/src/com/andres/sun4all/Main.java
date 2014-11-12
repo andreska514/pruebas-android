@@ -43,7 +43,6 @@ public class Main extends FragmentActivity {
 	static TextView txtCont;
 	//variables
 	Imagen imagen;
-	ImageView img;
 	Button btnInv, btnFin, btnRes;
 	ToggleButton btnAdd, btnRmv;
 
@@ -71,10 +70,7 @@ public class Main extends FragmentActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		
 		inicio=true;
-		img = (ImageView) findViewById(R.id.ImgFoto);
-
 		imagen = new Imagen(this);
 
 		//el contador
@@ -375,45 +371,7 @@ public class Main extends FragmentActivity {
 	    }
 	    
 	}*/
-	private class LoadImage extends AsyncTask<String, String, Bitmap> {
-	    @Override
-	        protected void onPreExecute() {
-	            super.onPreExecute();
-	            mProgressDialog = new ProgressDialog(Main.this);
-	            mProgressDialog.setMessage("Loading Image ....");
-	            mProgressDialog.show();
-	    }
-	       protected Bitmap doInBackground(String... args) {
-	         try {
-	               base = BitmapFactory.decodeStream((InputStream)new URL(args[0]).getContent());
-	        } catch (Exception e) {
-	              e.printStackTrace();
-	        }
-	      return base;
-	       }
-	       protected void onPostExecute(Bitmap image) {
-	         if(image != null){
-	           //imagen.setImageBitmap(image);
-	        	 imagen.changeBitmap(image);
-	           mProgressDialog.dismiss();
-	         }else{
-	           mProgressDialog.dismiss();
-	           Toast.makeText(Main.this, "Image Does Not exist or Network Error", Toast.LENGTH_SHORT).show();
-	         }
-	       }
-	   }
-
-	//Imagenes para probar
-	//k1v_01_07_00_09h_35.jpg
-	//k1v_01_07_03_12h_40_E_C.jpg
-	//k1v_01_07_85_09h_34_E_C.jpg
-	//k1v_01_07_90_08h_02_E_C.jpg
-	//k1v_01_07_91_09h_05_E_C.jpg
-	//k1v_01_07_95_08h_31_E_C.jpg
-	//k1v_01_07_96_08h_28_E_C.jpg
-	//k1v_01_08_01_09h_25.jpg
-	//k1v_01_08_02_08h_27_E_C.jpg
-	//k1v_01_08_03_09h_30_E_C.jpg
+	
 }
 
 //Intent i = new Intent(Main.this, Segunda.class);

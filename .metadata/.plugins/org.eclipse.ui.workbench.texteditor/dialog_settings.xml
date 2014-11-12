@@ -2,8 +2,8 @@
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
 		<item value="302" key="DIALOG_WIDTH"/>
-		<item value="404" key="DIALOG_Y_ORIGIN"/>
-		<item value="35" key="DIALOG_X_ORIGIN"/>
+		<item value="244" key="DIALOG_Y_ORIGIN"/>
+		<item value="868" key="DIALOG_X_ORIGIN"/>
 		<item value="400" key="DIALOG_HEIGHT"/>
 		<item value="1|Sans Serif|9.0|0|GTK|1|" key="DIALOG_FONT_NAME"/>
 	</section>
@@ -13,16 +13,16 @@
 		<item value="false" key="isRegEx"/>
 		<item value="false" key="incremental"/>
 		<item value="false" key="wholeword"/>
-		<item value="" key="selection"/>
+		<item value="setImageMatrix" key="selection"/>
 		<list key="findhistory">
+			<item value="setImageMatrix"/>
+			<item value="img"/>
+			<item value="imagen"/>
+			<item value="setImageBitmap"/>
 			<item value="zSun"/>
 			<item value="R.string"/>
 			<item value="System.out"/>
 			<item value="System.outç"/>
-			<item value="Not a "/>
-			<item value="not a drm"/>
-			<item value="start"/>
-			<item value="mueveCoor"/>
 		</list>
 		<list key="replacehistory">
 		</list>
