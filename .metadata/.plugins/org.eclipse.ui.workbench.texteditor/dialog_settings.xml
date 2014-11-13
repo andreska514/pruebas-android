@@ -2,27 +2,27 @@
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
 		<item value="302" key="DIALOG_WIDTH"/>
-		<item value="244" key="DIALOG_Y_ORIGIN"/>
-		<item value="868" key="DIALOG_X_ORIGIN"/>
-		<item value="400" key="DIALOG_HEIGHT"/>
+		<item value="326" key="DIALOG_Y_ORIGIN"/>
+		<item value="402" key="DIALOG_HEIGHT"/>
+		<item value="1002" key="DIALOG_X_ORIGIN"/>
 		<item value="1|Sans Serif|9.0|0|GTK|1|" key="DIALOG_FONT_NAME"/>
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="true" key="wrap"/>
-		<item value="true" key="casesensitive"/>
 		<item value="false" key="isRegEx"/>
+		<item value="true" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="false" key="wholeword"/>
-		<item value="setImageMatrix" key="selection"/>
+		<item value="inverte" key="selection"/>
 		<list key="findhistory">
+			<item value="inverte"/>
+			<item value="imagen"/>
+			<item value="change"/>
+			<item value="bitmap"/>
+			<item value="canvas"/>
 			<item value="setImageMatrix"/>
 			<item value="img"/>
-			<item value="imagen"/>
 			<item value="setImageBitmap"/>
-			<item value="zSun"/>
-			<item value="R.string"/>
-			<item value="System.out"/>
-			<item value="System.outç"/>
 		</list>
 		<list key="replacehistory">
 		</list>

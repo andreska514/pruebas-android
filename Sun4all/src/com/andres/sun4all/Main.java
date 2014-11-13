@@ -1,20 +1,14 @@
 package com.andres.sun4all;
 
-import java.io.InputStream;
 import java.net.URL;
 import java.util.Locale;
-
-
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
@@ -24,7 +18,6 @@ import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -71,7 +64,8 @@ public class Main extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		inicio=true;
-		imagen = new Imagen(this);
+		imagen = (Imagen) findViewById(R.id.ImgFoto);
+		//imagen = new Imagen(this);
 
 		//el contador
 		txtCont = (TextView) findViewById(R.id.txtCont);
@@ -147,7 +141,8 @@ public class Main extends FragmentActivity {
 			case R.id.btnFin:
 				if(inicio){
 					String [] cadenas = getRandomUrl();
-					imagen.changeBitmap(cadenas);
+					imagen.preparaDescarga(cadenas);
+					imagen.postInvalidate();
 					//new LoadImage().execute(cadenas[0]);
 					
 					
@@ -159,14 +154,21 @@ public class Main extends FragmentActivity {
 					dialogo.show(getSupportFragmentManager(), "tagAlerta");
 				}
 				break;
-			case R.id.btnInv://cambiar bitmap a negativo
-				Intent i = new Intent(Main.this, Segunda.class);
-				startActivity(i);
+				/** invert image*/
+			case R.id.btnInv:
+				imagen.invertBitmap();
+				if(imagen.inverted){
+					imagen.inverted=false;
+				}else{
+					imagen.inverted=true;
+				}
+				//Intent i = new Intent(Main.this, Segunda.class);
+				//startActivity(i);
 				break;
 			case R.id.btnRes://reinicia imagen sin sunspots(start over)
 				vaciaCoordenadas();
-				break;
 			}
+			imagen.postInvalidate();
 		}
 	});
 	void vaciaCoordenadas(){
