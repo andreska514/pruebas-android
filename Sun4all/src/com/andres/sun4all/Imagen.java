@@ -364,22 +364,6 @@ public class Imagen extends ImageView {
 			if(image != null){
 				bitmap = image;
 				invalidate();
-				//new ImageView(Imagen.this);
-				//Bitmap bit = BitmapFactory.decodeResource(getResources(), R.drawable.canguro);
-				//setImageBitmap(bit);
-				//Log.d("bitmap",""+bitmap.getWidth());
-				//_this.bitmap=bit;
-				//Log.d("bitmap",""+bitmap.getWidth());
-				
-				//canvas = new Canvas();
-				//canvas.setBitmap(bit);
-				//bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.canguro);
-				//setBackground(new BitmapDrawable(context.getResources(), bitmap));
-				//matrix = new Matrix();
-				//bitmap = null;
-				//bitmap = image.copy(image.getConfig(), true);
-				//invalidate();
-				//postInvalidate();
 				
 				pDialog.dismiss();
 				Toast.makeText(context, "Image Downloaded correctly", Toast.LENGTH_SHORT).show();

@@ -1,28 +1,15 @@
-//how to use external jars 
-//http://stackoverflow.com/questions/1334802/how-can-i-use-external-jars-in-an-android-project
-
 package com.andres.sun4all;
 
-
-
-
-import java.io.IOException;
 import java.net.URL;
 import java.util.Locale;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.PowerManager;
-import android.os.StrictMode;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
@@ -30,9 +17,7 @@ import android.text.Spannable;
 import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,7 +36,6 @@ public class Main extends FragmentActivity {
 	static TextView txtCont;
 	//variables
 	Imagen imagen;
-	ImageView img;
 	Button btnInv, btnFin, btnRes;
 	ToggleButton btnAdd, btnRmv;
 
@@ -69,7 +53,6 @@ public class Main extends FragmentActivity {
 
 	static boolean check;
 	static boolean finish;
-	
 	Bitmap base;
 	Bitmap nega;
 	ProgressDialog mProgressDialog;
@@ -80,16 +63,9 @@ public class Main extends FragmentActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		mProgressDialog = new ProgressDialog(this);
-		mProgressDialog.setMessage(getResources().getString(R.string.progressBar));
-		mProgressDialog.setIndeterminate(true);
-		mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-		mProgressDialog.setCancelable(true);
-		
 		inicio=true;
-		img = (ImageView) findViewById(R.id.ImgFoto);
-
-		imagen = new Imagen(this);
+		imagen = (Imagen) findViewById(R.id.ImgFoto);
+		//imagen = new Imagen(this);
 
 		//el contador
 		txtCont = (TextView) findViewById(R.id.txtCont);
@@ -165,15 +141,11 @@ public class Main extends FragmentActivity {
 			case R.id.btnFin:
 				if(inicio){
 					String [] cadenas = getRandomUrl();
-					final Download download = new Download(getApplicationContext());
-					download.execute(cadenas[0],cadenas[1]);
-					mProgressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-						@Override
-						public void onCancel(DialogInterface dialog) {
-							// TODO Auto-generated method stub
-							download.cancel(true);
-						}
-					});
+					imagen.preparaDescarga(cadenas);
+					imagen.postInvalidate();
+					//new LoadImage().execute(cadenas[0]);
+					
+					
 					btnFin.setText(R.string.btnFin);
 					activaBotonesInicio(true);
 					inicio=false;
@@ -182,14 +154,21 @@ public class Main extends FragmentActivity {
 					dialogo.show(getSupportFragmentManager(), "tagAlerta");
 				}
 				break;
-			case R.id.btnInv://cambiar bitmap a negativo
-				Intent i = new Intent(Main.this, Segunda.class);
-				startActivity(i);
+				/** invert image*/
+			case R.id.btnInv:
+				imagen.invertBitmap();
+				if(imagen.inverted){
+					imagen.inverted=false;
+				}else{
+					imagen.inverted=true;
+				}
+				//Intent i = new Intent(Main.this, Segunda.class);
+				//startActivity(i);
 				break;
 			case R.id.btnRes://reinicia imagen sin sunspots(start over)
 				vaciaCoordenadas();
-				break;
 			}
+			imagen.postInvalidate();
 		}
 	});
 	void vaciaCoordenadas(){
@@ -347,33 +326,43 @@ public class Main extends FragmentActivity {
 	}
 	
 	
-	public class Download extends AsyncTask<String, Integer, Bitmap[]>{
+	/*public class Download extends AsyncTask<String, Integer, Bitmap[]>{
 		Context context;
 		PowerManager.WakeLock mWakeLock;
 	    public Download(Context context) {
 	    	this.context = context;
 		}
-		@Override
-	    protected Bitmap[] doInBackground(String... urls) {
-			Bitmap[]base = new Bitmap[2];
-    		try {
-    			URL url_base = new URL(urls[0]);
-    			base[0] = BitmapFactory.decodeStream(url_base.openConnection().getInputStream());
-    			URL url_inv = new URL(urls[1]);
-    			base[1] = BitmapFactory.decodeStream(url_inv.openConnection().getInputStream());
-    			Log.d("Download","intentando descargar ok");
-    			Log.d("Download.link 1",""+url_base.getPath());
-    			Log.d("Download.link 2",""+url_inv.getPath());
-    		} catch (IOException e) {
-    			Log.d("Download,background","catch 1");
-    		}
-    		return base;
-	    }
 	    @Override
 	    protected void onProgressUpdate(Integer... progress){
 	    	mProgressDialog = ProgressDialog.show(context, "Wait", "Downloading...");
 	    	//setProgressPercent(progress[0]);
 	    	Log.d("Download","onProgressUpdate");
+	    }
+		@Override
+	    protected Bitmap[] doInBackground(String... urls) {
+			Bitmap[]base = new Bitmap[2];
+			InputStream input = null;
+    		try {
+    			URL url_base = new URL(urls[0]);
+    			URLConnection conection = url_base.openConnection();
+    			conection.connect();
+    			input = new BufferedInputStream(url_base.openStream(),8192);
+    			base[0] = BitmapFactory.decodeStream(input);
+    			input.close();
+    			
+    			
+    			URL url_inv = new URL(urls[1]);
+    			conection = url_inv.openConnection();
+    			conection.connect();
+    			input=null;
+    			input = new BufferedInputStream(url_inv.openStream(),8192);
+    			base[1] = BitmapFactory.decodeStream(input);
+    			input.close();
+    			Log.d("Download","intentando descargar ok");
+    		} catch (IOException e) {
+    			Log.d("Download,background","catch 1");
+    		}
+    		return base;
 	    }
 	    @Override
 	    protected void onPostExecute(Bitmap[] result) {
@@ -383,19 +372,8 @@ public class Main extends FragmentActivity {
 			imagen.changeBitmap(bitmapBase);
 	    }
 	    
-	}
-
-	//Imagenes para probar
-	//k1v_01_07_00_09h_35.jpg
-	//k1v_01_07_03_12h_40_E_C.jpg
-	//k1v_01_07_85_09h_34_E_C.jpg
-	//k1v_01_07_90_08h_02_E_C.jpg
-	//k1v_01_07_91_09h_05_E_C.jpg
-	//k1v_01_07_95_08h_31_E_C.jpg
-	//k1v_01_07_96_08h_28_E_C.jpg
-	//k1v_01_08_01_09h_25.jpg
-	//k1v_01_08_02_08h_27_E_C.jpg
-	//k1v_01_08_03_09h_30_E_C.jpg
+	}*/
+	
 }
 
 //Intent i = new Intent(Main.this, Segunda.class);
