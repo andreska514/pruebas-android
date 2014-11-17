@@ -3,6 +3,10 @@ package com.andres.sun4all;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.os.AsyncTask;
 import android.util.AttributeSet;
 import android.util.FloatMath;
@@ -64,7 +68,6 @@ public class Imagen extends ImageView {
 		inicial = BitmapFactory.decodeResource(getResources(), R.drawable.sol);
 		bitmap= inicial;
 		Log.d("entrada","1");
-		//setCropToPadding(true);
 		setOnTouchListener(clickImagen);
 	}
 	public Imagen(Context c, AttributeSet attr) {
@@ -77,19 +80,10 @@ public class Imagen extends ImageView {
 		context=c;
 		init();
 	}
-	/*Bitmap getBitmap(){
-		return bitmap;
-	}*/
 	@Override
 	public void onDraw(Canvas c){
 		String s = getResources().getString(R.string.sunspot);
-		//invalidate();
-		//setDrawingCacheEnabled(true);
-		//Bitmap b = bitmap.getBitmap();
-		//c.drawBitmap(b, matrix, new Paint());
 		c.drawBitmap(bitmap, matrix, new Paint());
-		//c.drawBitmap(bitmap, 0, 0, new Paint());->esto demuestra que no es culpa del matrix
-		//c.drawBitmap(_this.bitmap, matrix, new Paint());
 		Main.txtCont.setText(s+listaMarcas.size());
 		if(pinta){
 			this.setOnTouchListener(clickPinta);
@@ -102,13 +96,6 @@ public class Imagen extends ImageView {
 				c.drawBitmap(cruz, mark.x, mark.y, new Paint());
 			}
 		}
-		/*((Main) context).runOnUiThread(new Runnable() {
-		       @Override
-		       public void run() {
-		           Imagen.this.invalidate();
-		       }
-		 });*/
-		//setDrawingCacheEnabled(false);
 	}
 	@Override
 	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
@@ -116,17 +103,13 @@ public class Imagen extends ImageView {
 	}
 	/** Save absolute coordinates in listaPtos*/
 	void guardaCoordenadas(int x, int y){
-		//Log.i("guardaCoordenadas","de int");
 		Marking m = new Marking(x,y);
 		listaPtos.add(m);
-		//Log.i("listaPtos0",""+m.x+"-"+m.y);
 	}
 	/** Save relative coordinates in listaMarcas*/
 	void saveCoordinates(float x, float y){
-		//Log.i("guardaCoordenadas","de float");
 		Mark m = new Mark(x,y);
 		listaMarcas.add(m);
-		//Log.i("marca",""+m.x+"-"+m.y);
 		Main.txtCont.setText(x+"-"+y);
 		guardaCoordenadas(lastTouchX,lastTouchY);
 	}
@@ -146,7 +129,6 @@ public class Imagen extends ImageView {
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
 			lastEvent = event;
-			//setScaleType(ScaleType.MATRIX);
 		    switch (event.getAction() & MotionEvent.ACTION_MASK) {
 			    case MotionEvent.ACTION_DOWN:
 			        savedMatrix.set(matrix);
@@ -386,7 +368,21 @@ public class Imagen extends ImageView {
 		//k1v_01_08_02_08h_27_E_C.jpg
 		//k1v_01_08_03_09h_30_E_C.jpg
 	}
-	//clase que guarda un objeto con coordenadas
+	
+	void creaJson(){
+		JSONObject json = new JSONObject();
+		JSONObject mJson = new JSONObject();
+		try {
+			mJson.put("name", "Jorge");
+			mJson.put("username", "myUser");
+			mJson.put("age", "54");
+			json.put("man",mJson);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	//clase que guarda las coordenadas de un objeto
 	class Marking{
 		int x;
 		int y;

@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+
 public class Segunda extends Activity{
 	Button btnLoad;
 	ImageView img;
