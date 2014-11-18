@@ -45,12 +45,13 @@ public class Main extends FragmentActivity {
 	
 	static public int contador = 0;
 	static TextView txtCont;
+	TextView txtSpots;
 	//variables
 	Imagen imagen;
 	Button btnInv, btnFin, btnRes;
 	ToggleButton btnAdd, btnRmv;
 
-	LinearLayout layout1;
+	LinearLayout layout1, layout2;
 	String cadena;
 	Editable strMove;
 	Editable strAdd;
@@ -62,7 +63,7 @@ public class Main extends FragmentActivity {
 	static int viewWidth;
 	static int viewHeight;
 
-	static boolean check;
+	//static boolean check;
 	static boolean finish;
 	Bitmap base;
 	Bitmap nega;
@@ -76,13 +77,12 @@ public class Main extends FragmentActivity {
 		//doc.loadFrom("../../../imagenes_sol.ods");
 		File file=null;
 		String cadena=null;
-		String path = getClass().getClassLoader().getResource("imagenes_sol.ods").getPath();
+		//String path = getClass().getClassLoader().getResource("imagenes_sol.ods").getPath();
 		//String path = getClass().getClassLoader().getResource(".").getPath();
 		try {
-			Log.i("intentando abrir path: ",""+path);
-			file = new File(path);
+			//Log.i("intentando abrir path: ",""+path);
+			file = new File("imagenes_sol.ods");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		//String path = getClass().getClassLoader().getResource(".").getPath();
@@ -125,6 +125,8 @@ public class Main extends FragmentActivity {
 		//el contador
 		txtCont = (TextView) findViewById(R.id.txtCont);
 		txtCont.setText(String.valueOf(contador));
+		txtSpots = (TextView) findViewById(R.id.txtSpots);
+		
 
 		//Botones
 		btnAdd =(ToggleButton)findViewById(R.id.btnAdd);
@@ -140,12 +142,58 @@ public class Main extends FragmentActivity {
 		btnRes.setOnClickListener(clickBoton);
 
 		layout1 = (LinearLayout)findViewById(R.id.layout1);
-		layout1.setBackgroundColor(Color.TRANSPARENT);
+		layout2 = (LinearLayout)findViewById(R.id.layour2);
+		
 		/** Change the button add/move depending the language*/
 		idiomas();
 		activaBotonesInicio(false);
+		changeColors();
 	}
-	
+	/** Change to white if true/ black if false*/
+	void changeColors(){
+		Log.i("changeColors","imagen.inverted = "+imagen.inverted);
+		if(!imagen.inverted){
+			layout1.setBackgroundColor(Color.WHITE);
+			layout2.setBackgroundColor(Color.WHITE);
+			btnAdd.setTextColor(Color.BLACK);
+			btnRmv.setTextColor(Color.BLACK);
+			btnInv.setTextColor(Color.BLACK);
+			btnFin.setTextColor(Color.BLACK);
+			btnRes.setTextColor(Color.BLACK);
+			txtCont.setTextColor(Color.BLACK);
+			txtSpots.setTextColor(Color.BLACK);
+			
+		}
+		else
+		{
+			layout1.setBackgroundColor(Color.BLACK);
+			layout2.setBackgroundColor(Color.BLACK);
+			
+			btnAdd.setTextColor(Color.WHITE);
+			btnRmv.setTextColor(Color.WHITE);
+			btnInv.setTextColor(Color.WHITE);
+			btnFin.setTextColor(Color.WHITE);
+			btnRes.setTextColor(Color.WHITE);
+			txtCont.setTextColor(Color.WHITE);
+			txtSpots.setTextColor(Color.WHITE);
+		}
+		if(!btnAdd.isEnabled()){
+			btnAdd.setTextColor(Color.GRAY);
+		}
+		if(!btnRmv.isEnabled()){
+			btnRmv.setTextColor(Color.GRAY);
+		}
+		if(!btnInv.isEnabled()){
+			btnInv.setTextColor(Color.GRAY);
+		}
+		if(!btnFin.isEnabled()){
+			btnFin.setTextColor(Color.GRAY);
+		}
+		if(!btnRes.isEnabled()){
+			btnRes.setTextColor(Color.GRAY);
+		}
+	}
+
 	//Clicks en botones
 	View.OnClickListener clickToggle = (new View.OnClickListener() {
 		@Override
@@ -187,6 +235,7 @@ public class Main extends FragmentActivity {
 				}
 				break;
 			}
+			changeColors();
 		}
 	});
 	View.OnClickListener clickBoton = (new View.OnClickListener() {
@@ -209,20 +258,15 @@ public class Main extends FragmentActivity {
 					dialogo.show(getSupportFragmentManager(), "tagAlerta");
 				}
 				break;
-				/** invert image*/
+			/** invert image*/
 			case R.id.btnInv:
 				imagen.invertBitmap();
-				if(imagen.inverted){
-					imagen.inverted=false;
-				}else{
-					imagen.inverted=true;
-				}
-				//Intent i = new Intent(Main.this, Segunda.class);
-				//startActivity(i);
 				break;
 			case R.id.btnRes://reinicia imagen sin sunspots(start over)
 				vaciaCoordenadas();
 			}
+			changeColors();
+			Log.i("Main,clickBoton","Enviando postInvalidate");
 			imagen.postInvalidate();
 		}
 	});

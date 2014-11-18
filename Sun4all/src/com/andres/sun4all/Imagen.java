@@ -30,7 +30,7 @@ public class Imagen extends ImageView {
 	static final int NONE = 0;
 	static final int PULSADO = 1;
 	static final int ZOOM = 2;
-	static final float MAX_ZOOM = 1.7f;
+	static final float MAX_ZOOM = 2f;
     static final float MIN_ZOOM = 0.9f;
     int mode = NONE;
     float oldDist = 1f;
@@ -43,8 +43,8 @@ public class Imagen extends ImageView {
 	
 	int lastTouchX;
 	int lastTouchY;
-	//int viewWidth = this.getWidth();
-	//int viewHeight = this.getHeight();
+	
+	int viewWidth, viewHeight;//drag
 	
 	boolean inverted = false;
 	boolean pinta = false;
@@ -124,7 +124,7 @@ public class Imagen extends ImageView {
 			}
 		}
 	}
-	
+	/** Enable move mode when touch the imageView*/
 	View.OnTouchListener clickImagen = new View.OnTouchListener() {
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
@@ -155,12 +155,14 @@ public class Imagen extends ImageView {
 			            matrix.postTranslate(matX, matY);
 			        } 
 			        else if (mode == ZOOM) {
+			        	
 			            float newDist = espacio(event);
 		                matrix.set(savedMatrix);
 		                float scale = newDist / oldDist;
 		                matrix.postScale(scale, scale, mid.x, mid.y);  
 			        }
 			        checkZoom();
+			        limitCorners();
 			        break;
 		    }//end switch
 		    mueveCoordenadas(event);
@@ -168,7 +170,7 @@ public class Imagen extends ImageView {
 		    return true;
 		}//end OnTouch
 	};//end touchListener
-	
+	/** Enable paint mode when touch the imageview*/
 	View.OnTouchListener clickPinta = new View.OnTouchListener() {
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
@@ -186,6 +188,7 @@ public class Imagen extends ImageView {
 			return true;
 		}//end onTouch
 	};//end onTouchListener
+	/** Set the new zoom of matrix*/
 	void setZoom(float zoom){
     	float[] values = new float[9];
         matrix.getValues(values);
@@ -193,8 +196,7 @@ public class Imagen extends ImageView {
         values[Matrix.MSCALE_Y] = zoom; 
         matrix.setValues(values);
     }
-   	/** Chech the zoom for narrow limits
-	 * limit zoom and send the edges of the screen to limitCorners ()*/
+	/**Chech the zoom for narrow limits, it starts limitCorners ()*/
     public void checkZoom(){
     	float[] values = new float[9];
         matrix.getValues(values);
@@ -205,61 +207,64 @@ public class Imagen extends ImageView {
         else if(scaleX < MIN_ZOOM) {
         	setZoom(MIN_ZOOM);
         }
-
-        valores = new float[9];
-    	matrix.getValues(valores);
-    	if (valores[0]<=MIN_ZOOM){
-        	valores[0]=MIN_ZOOM;
-        	valores[4]=MIN_ZOOM;
-        	valores[2]=0;
-        	valores[5]=0;
-        	matrix.setValues(valores);
-        }else if(valores[0]>0.9 && valores[0]<=1){
-        	limitCorners(-65, -40);
-        }else if(valores[0]>1 && valores[0]<=1.1){
-        	limitCorners(-166, -123);
-        }else if(valores[0]>1.1 && valores[0]<=1.2){
-        	limitCorners(-246, -201);
-        }else if(valores[0]>1.2 && valores[0]<=1.3){
-        	limitCorners(-316, -280);
-        }else if(valores[0]>1.3 && valores[0]<=1.4){
-        	limitCorners(-409, -359);
-        }else if(valores[0]>1.4 && valores[0]<=1.5){
-        	limitCorners(-484, -435);
-        }else if(valores[0]>1.5 && valores[0]<=1.6){
-        	limitCorners(-563, -521);
-        }else {
-        	limitCorners(-664, -600);
-        }
     }
-   //metodo a mejorar
-	void limitCorners(float valorX, float valorY){
-    	if(valores[2]>0){
-    		valores[2]=0;
-    		matrix.setValues(valores);
-    	}//if(y>0)
-    	if(valores[5]>0){
-    		valores[5]=0;
-    		matrix.setValues(valores);
-    	}//if(x<valorX)
-    	if(valores[2]< valorX){
-    		valores[2]= valorX;
-    		matrix.setValues(valores);
-    	}//if(y<valorY)
-    	if(valores[5]< valorY){
-    		valores[5]= valorY;
-    		matrix.setValues(valores);
-    	}
-    	
-    }
-	/** Determine the space between the 2 fingers*/
+    /** Limit the corners, it holds the image inside the imageView*/
+    private void limitCorners() {
+    	viewWidth = this.getWidth();
+		viewHeight = this.getHeight();
+		float []m = new float[9];
+		matrix.getValues(m);
+		float transX = m[Matrix.MTRANS_X];
+		float transY = m[Matrix.MTRANS_Y];
+		float fixTransX = getFixTrans(transX, viewWidth, getImageWidth());
+		float fixTransY = getFixTrans(transY, viewHeight, getImageHeight());
+		if (fixTransX != 0 || fixTransY != 0) {
+			matrix.postTranslate(fixTransX, fixTransY);
+		}
+		matrix.getValues(m);
+		if (getImageWidth() < viewWidth) {
+			m[Matrix.MTRANS_X] = (viewWidth - getImageWidth()) / 2;
+		}
+		if (getImageHeight() < viewHeight) {
+			m[Matrix.MTRANS_Y] = (viewHeight - getImageHeight()) / 2;
+		}
+		matrix.setValues(m);
+	}
+	/** Used within limitCorners*/
+	private float getFixTrans(float trans, float viewSize, float contentSize) {
+		float minTrans, maxTrans;
+		if (contentSize <= viewSize) {
+			minTrans = 0;
+			maxTrans = viewSize - contentSize;
+		} else {
+			minTrans = viewSize - contentSize;
+			maxTrans = 0;
+		}
+		if (trans < minTrans)
+			return -trans + minTrans;
+		if (trans > maxTrans)
+			return -trans + maxTrans;
+		return 0;
+	}
+	/** Get the width of image (bitmapWidth*Zoom)*/
+	float getImageWidth(){
+		float []m = new float[9];
+		matrix.getValues(m);
+		return m[Matrix.MSCALE_X]*bitmap.getWidth();
+	}
+	/** Get the Height of image (bitmapHeight*Zoom)*/
+	float getImageHeight(){
+		float []m = new float[9];
+		matrix.getValues(m);
+		return m[Matrix.MSCALE_X]*bitmap.getHeight();
+	}/** return the space between the 2 fingers*/
 	@SuppressLint("FloatMath")
 	private float espacio(MotionEvent event) {
 	    float x = event.getX(0) - event.getX(1);
 	    float y = event.getY(0) - event.getY(1);
 	    return FloatMath.sqrt(x * x + y * y);
 	}
-	/** calculates the midpoint between the 2 fingers*/
+	/** return the midpoint between the 2 fingers*/
 	private void puntoMedio(PointF point, MotionEvent event) {
 	    float x = event.getX(0) + event.getX(1);
 	    float y = event.getY(0) + event.getY(1);
@@ -273,10 +278,8 @@ public class Imagen extends ImageView {
 		float transY = m[Matrix.MTRANS_Y] * -1;
 		float scaleX = m[Matrix.MSCALE_X];
 		float scaleY = m[Matrix.MSCALE_Y];
-		lastTouchX = (int) ((e.getX() + transX) / scaleX);
-		lastTouchY = (int) ((e.getY() + transY) / scaleY);
-		lastTouchX = Math.abs(lastTouchX);
-		lastTouchY = Math.abs(lastTouchY);
+		lastTouchX = Math.abs((int) ((e.getX() + transX) / scaleX));
+		lastTouchY = Math.abs((int) ((e.getY() + transY) / scaleY));
 	}
 	/** Move the relative coordinates when the image was moved*/
 	void mueveCoordenadas(MotionEvent event){
@@ -292,23 +295,28 @@ public class Imagen extends ImageView {
 			listaMarcas.set(i, mark);
 		}
 	}
-
+	/** Change the bitmap(take the source)*/
 	void changeBitmap(Bitmap b){
 		bitmap = b;
 		invalidate();
 	}
+	/** Execute new LoadImage with the String passed */
 	void preparaDescarga(String[] s){
 		new LoadImage().execute(s);
 		//new LoadImage().execute("https://pybossa.socientize.eu/sun4all/sunimages/k1v_01_08_03_09h_30_E_C.jpg");
 	}
+	/** Invert the image(black-white)*/
 	void invertBitmap(){
 		if(inverted){
-			bitmap=negativo;
-		}else{
 			bitmap=positivo;
+			inverted=false;
+		}else{
+			bitmap=negativo;
+			inverted=true;
 		}
 		invalidate();
 	}
+	/** Download de 2 images passed*/
 	private class LoadImage extends AsyncTask<String, String, Bitmap> {
 		
 		@Override
@@ -321,7 +329,6 @@ public class Imagen extends ImageView {
 		protected Bitmap doInBackground(String... args) {
 			//1 url
 			if(args.length == 1){
-				Log.i("doInBack 1","length = 1 ");
 				try {
 					positivo = BitmapFactory.decodeStream((InputStream)new URL(args[0]).getContent());
 					
@@ -331,7 +338,6 @@ public class Imagen extends ImageView {
 			}
 			//2 url
 			else{
-				Log.i("doInBack 2","length = 2 ");
 				try {
 					positivo = BitmapFactory.decodeStream((InputStream)new URL(args[0]).getContent());
 					negativo = BitmapFactory.decodeStream((InputStream)new URL(args[1]).getContent());
@@ -368,7 +374,9 @@ public class Imagen extends ImageView {
 		//k1v_01_08_02_08h_27_E_C.jpg
 		//k1v_01_08_03_09h_30_E_C.jpg
 	}
-	
+	//************************************************************
+	//************ PROBANDO COSAS A PARTIR DE AQUI ***************
+	//************************************************************
 	void creaJson(){
 		JSONObject json = new JSONObject();
 		JSONObject mJson = new JSONObject();
@@ -382,7 +390,14 @@ public class Imagen extends ImageView {
 			e.printStackTrace();
 		}
 	}
-	//clase que guarda las coordenadas de un objeto
+	
+	
+		
+	
+	//************************************************************
+	//************************************************************
+	//************************************************************
+	/** this clases save coordinates(relatives and absolutes)*/
 	class Marking{
 		int x;
 		int y;
@@ -481,6 +496,74 @@ private float getFixDragTrans(float delta, float viewSize, float contentSize) {
 	return delta;
 }
 */
+//esto funciona
+/*
+public void checkZoom(){
+	float[] values = new float[9];
+    matrix.getValues(values);
+    float scaleX = values[Matrix.MSCALE_X];
+    if(scaleX > MAX_ZOOM) {
+    	setZoom(MAX_ZOOM);
+    } 
+    else if(scaleX < MIN_ZOOM) {
+    	setZoom(MIN_ZOOM);
+    }
+    fixScaleTrans();
+}
+private void fixScaleTrans() {
+	float []m = new float[9];
+	matrix.getValues(m);
+	fixTrans();
+	matrix.getValues(m);
+	if (getImageWidth() < viewWidth) {
+		m[Matrix.MTRANS_X] = (viewWidth - getImageWidth()) / 2;
+	}
+	if (getImageHeight() < viewHeight) {
+		m[Matrix.MTRANS_Y] = (viewHeight - getImageHeight()) / 2;
+	}
+	matrix.setValues(m);
+}
+
+private void fixTrans() {
+	viewWidth = this.getWidth();
+	viewHeight = this.getHeight();
+	float []m = new float[9];
+	matrix.getValues(m);
+	float transX = m[Matrix.MTRANS_X];
+	float transY = m[Matrix.MTRANS_Y];
+	float fixTransX = getFixTrans(transX, viewWidth, getImageWidth());
+	float fixTransY = getFixTrans(transY, viewHeight, getImageHeight());
+	if (fixTransX != 0 || fixTransY != 0) {
+		matrix.postTranslate(fixTransX, fixTransY);
+	}
+}
+private float getFixTrans(float trans, float viewSize, float contentSize) {
+	float minTrans, maxTrans;
+	if (contentSize <= viewSize) {
+		minTrans = 0;
+		maxTrans = viewSize - contentSize;
+	} else {
+		minTrans = viewSize - contentSize;
+		maxTrans = 0;
+	}
+	if (trans < minTrans)
+		return -trans + minTrans;
+	if (trans > maxTrans)
+		return -trans + maxTrans;
+	return 0;
+}*/
+/** Get the width of image (bitmapWidth*Zoom)*/
+/*float getImageWidth(){
+	float []m = new float[9];
+	matrix.getValues(m);
+	return m[Matrix.MSCALE_X]*bitmap.getWidth();
+}*/
+/** Get the Height of image (bitmapHeight*Zoom)*/
+/*float getImageHeight(){
+	float []m = new float[9];
+	matrix.getValues(m);
+	return m[Matrix.MSCALE_X]*bitmap.getHeight();
+}*/
 
 //Methods used but not necesary now
 /*

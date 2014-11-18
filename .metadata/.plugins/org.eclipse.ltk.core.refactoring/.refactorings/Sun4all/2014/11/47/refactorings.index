@@ -4,3 +4,6 @@
 1416218632154	Rename local variable 'rows'
 1416227352269	Rename local variable 'manJson'
 1416227362361	Rename local variable 'miJson'
+1416305799565	Rename method 'fixScaleTrans'
+1416312725413	Rename method 'changeLayoutColor'
+1416315228353	Move file
