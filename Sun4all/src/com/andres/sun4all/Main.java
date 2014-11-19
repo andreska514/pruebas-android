@@ -1,16 +1,27 @@
 package com.andres.sun4all;
 
-import java.io.File;
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.URL;
+import java.util.Iterator;
 import java.util.Locale;
+import java.util.Map;
 
-import org.jopendocument.dom.spreadsheet.MutableCell;
-import org.jopendocument.dom.spreadsheet.Sheet;
-import org.jopendocument.dom.spreadsheet.SpreadSheet;
-import org.jopendocument.model.OpenDocument;
+import org.apache.http.HeaderElement;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.protocol.HTTP;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -19,8 +30,8 @@ import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.net.ParseException;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
@@ -53,6 +64,7 @@ public class Main extends FragmentActivity {
 
 	LinearLayout layout1, layout2;
 	String cadena;
+	static String cadUrl;
 	Editable strMove;
 	Editable strAdd;
 
@@ -70,65 +82,66 @@ public class Main extends FragmentActivity {
 	ProgressDialog mProgressDialog;
 	URL urlNormal;
 	URL urlNega;
-
-	//final OpenDocument doc = new OpenDocument();
 	
+	/** Return an array of 2 random Strings(url) (2 images), normal and inverted*/
 	String[] getRandomUrl(){
-		//doc.loadFrom("../../../imagenes_sol.ods");
-		File file=null;
-		String cadena=null;
-		//String path = getClass().getClassLoader().getResource("imagenes_sol.ods").getPath();
-		//String path = getClass().getClassLoader().getResource(".").getPath();
-		try {
-			//Log.i("intentando abrir path: ",""+path);
-			file = new File("imagenes_sol.ods");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		//String path = getClass().getClassLoader().getResource(".").getPath();
-		//File file = new File(path.concat("/src/imagenes_sol.ods"));
-		if(file!=null){
-			cadena = readODS(file);
-		}
-		else
-			Log.i("cadena = null","cadena = null");
-		Log.i("getRandomUrl",""+cadena);
-        //readODS(file);
-		//Imagenes para probar 1-3495 (pos0-pos3494)
-		//k1v_01_07_00_09h_35.jpg
-		//k1v_01_07_03_12h_40_E_C.jpg
-		//k1v_01_07_85_09h_34_E_C.jpg
-		//k1v_01_07_90_08h_02_E_C.jpg
-		//k1v_01_07_91_09h_05_E_C.jpg
-		//k1v_01_07_95_08h_31_E_C.jpg
-		//k1v_01_07_96_08h_28_E_C.jpg
-		//k1v_01_08_01_09h_25.jpg
-		//k1v_01_08_02_08h_27_E_C.jpg
-		//k1v_01_08_03_09h_30_E_C.jpg
-		String s = "k1v_01_08_03_09h_30_E_C.jpg";
+		
+		int aleatorio = (int) Math.floor(Math.random()*3494-1);
+		cadUrl = getCadena(aleatorio);
 		String[] cadenas = new String[2];
-		String uno = urlBase.concat(s);
-		String dos = urlBaseNeg.concat(s);
+		String uno = urlBase.concat(cadUrl);
+		String dos = urlBaseNeg.concat(cadUrl);
 		cadenas[0]= uno;
 		cadenas[1]=dos;
 		return cadenas;
 	}
-	
+	/** Return the String(url) in the line X from res/raw/imagenes_sol */
+	String getCadena(int x){
+		int resId = getResources().getIdentifier("imagenes_sol","raw", getPackageName());
+		InputStream ins = getResources().openRawResource(resId);
+		BufferedReader buf = new BufferedReader(new InputStreamReader(ins));
+		
+		for(int j=0;j<x+1;j++){
+			try {
+				buf.readLine();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		String cad = null;
+		try {
+			cad = buf.readLine();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		if(ins!=null){
+			try {
+				ins.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		if(buf!=null){
+			try {
+				buf.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return cad;
+	}
+	/** onCreate*/
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		inicio=true;
 		imagen = (Imagen) findViewById(R.id.ImgFoto);
-		//imagen = new Imagen(this);
-
-		//el contador
+		
 		txtCont = (TextView) findViewById(R.id.txtCont);
 		txtCont.setText(String.valueOf(contador));
 		txtSpots = (TextView) findViewById(R.id.txtSpots);
 		
-
-		//Botones
 		btnAdd =(ToggleButton)findViewById(R.id.btnAdd);
 		btnRmv =(ToggleButton)findViewById(R.id.btnRmv);
 		btnFin =(Button)findViewById(R.id.btnFin);
@@ -145,7 +158,7 @@ public class Main extends FragmentActivity {
 		layout2 = (LinearLayout)findViewById(R.id.layour2);
 		
 		/** Change the button add/move depending the language*/
-		idiomas();
+		setLanguageAdd();
 		activaBotonesInicio(false);
 		changeColors();
 	}
@@ -194,7 +207,7 @@ public class Main extends FragmentActivity {
 		}
 	}
 
-	//Clicks en botones
+	/**Clicks on toggleButtons(add, Rmv*/
 	View.OnClickListener clickToggle = (new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
@@ -238,6 +251,7 @@ public class Main extends FragmentActivity {
 			changeColors();
 		}
 	});
+	/** Clicks on Buttons(Fin, Inv, Res)*/
 	View.OnClickListener clickBoton = (new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
@@ -247,9 +261,6 @@ public class Main extends FragmentActivity {
 					String [] cadenas = getRandomUrl();
 					imagen.preparaDescarga(cadenas);
 					imagen.postInvalidate();
-					//new LoadImage().execute(cadenas[0]);
-					
-					
 					btnFin.setText(R.string.btnFin);
 					activaBotonesInicio(true);
 					inicio=false;
@@ -275,6 +286,7 @@ public class Main extends FragmentActivity {
 		imagen.listaMarcas.clear();
 		cambiaAdd(false);//paso el boton add a move
 	}
+	/** change the string of add Button*/
 	void cambiaAdd(boolean b){
 		btnAdd.setChecked(b);
 		imagen.pinta=b;
@@ -284,28 +296,26 @@ public class Main extends FragmentActivity {
 			btnAdd.setText(strMove);
 		Log.d("btnAdd.isChecked()",""+imagen.pinta);
 	}
+	/** Enable or disable buttons depending delete Button*/
 	void activaBotonesBorrar(boolean b){
 		btnAdd.setEnabled(b);
 		btnInv.setEnabled(b);
 		btnFin.setEnabled(b);
 		btnRes.setEnabled(b);
 	}
+	/** Enable or disable buttons depending if the task is started*/
 	void activaBotonesInicio(boolean b){
 		btnAdd.setEnabled(b);
 		btnRmv.setEnabled(b);
 		btnInv.setEnabled(b);
 		btnRes.setEnabled(b);
 	}
-
+	/** Show a toast with the message passed on 's' and 'ms' milliseconds*/
 	void toast(String s, int ms){
 		Toast.makeText(getApplicationContext(), s, ms).show();
 	}
-	void ok(){
-		DialogoOk ok = new DialogoOk();
-		ok.show(getSupportFragmentManager(), "tagAlerta");
-	}
 	/** Set the String and font of btnAdd depending user language*/
-	void idiomas(){
+	void setLanguageAdd(){
 		Locale current = getResources().getConfiguration().locale;
 		Log.i("getLanguage","-"+current.getLanguage());
 		/** español*/
@@ -342,6 +352,7 @@ public class Main extends FragmentActivity {
 		}
 		btnAdd.setText(strMove);
 	}
+	/** This class ask the user if he want finalize the task and start another*/
 	class Dialogo extends DialogFragment {
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState){
@@ -353,14 +364,16 @@ public class Main extends FragmentActivity {
 				public void onClick(DialogInterface dialog, int id) {
 					Log.i("Confirmacion","Aceptada");
 					//envia listaMarcas()+id Imagen
-					
+					imagen.prepareJson();
+					JSONObject json = imagen.finalJson;
+					try{
+						makeRequest(path, params);
+					}catch(Exception e){}
 					//borra ptos y pasa a modo mover
 					vaciaCoordenadas();
 					btnFin.setText(R.string.btnFin2);
 					activaBotonesInicio(false);
 					inicio=true;
-					//descarga nueva imagen
-					//borra imagen anterior del dispositivo
 					dialog.cancel();
 				}
 			})
@@ -379,58 +392,118 @@ public class Main extends FragmentActivity {
 			return builder.create();
 		}
 	}
-	class DialogoOk extends DialogFragment {
-		private boolean boton=false;
-		@Override
-		public Dialog onCreateDialog(Bundle savedInstanceState){
-			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-			builder.setMessage("Done")
-			.setTitle("Accept")
-			.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-				
-				@Override
-				public void onClick(DialogInterface dialog, int id) {
-					
-					dialog.cancel();
-				}
-			});
-			return builder.create();
-		}
-		public boolean getBoton() {
-			return boton;
-		}
-		public void setBoton(boolean boton) {
-			this.boton = boton;
-		}
-	}
-	
-	
-	public String readODS(File file)
+	public static HttpResponse makeRequest(String path, Map params) throws Exception 
 	{
-		Sheet sheet;
-		String cadena = null;
+	    //instantiates httpclient to make request
+	    DefaultHttpClient httpclient = new DefaultHttpClient();
+	    //url with the post data
+	    HttpPost httpost = new HttpPost(path);
+	    //convert parameters into JSON object
+	    JSONObject holder = getJsonObjectFromMap(params);
+	    //passes the results to a string builder/entity
+	    StringEntity se = new StringEntity(holder.toString());
+	    //sets the post request as the resulting string
+	    httpost.setEntity(se);
+	    //sets a request header so the page receving the request
+	    //will know what to do with it
+	    httpost.setHeader("Accept", "application/json");
+	    httpost.setHeader("Content-type", "application/json");
+	    //Handles what is returned from the page 
+	    ResponseHandler responseHandler = new BasicResponseHandler();
+	    return httpclient.execute(httpost, responseHandler);
+	}
+	private static JSONObject getJsonObjectFromMap(Map params) throws JSONException {
+
+	    //all the passed parameters from the post request
+	    //iterator used to loop through all the parameters
+	    //passed in the post request
+	    Iterator iter = params.entrySet().iterator();
+
+	    //Stores JSON
+	    JSONObject holder = new JSONObject();
+
+	    //using the earlier example your first entry would get email
+	    //and the inner while would get the value which would be 'foo@bar.com' 
+	    //{ fan: { email : 'foo@bar.com' } }
+
+	    //While there is another entry
+	    while (iter.hasNext()) 
+	    {
+	        //gets an entry in the params
+	        Map.Entry pairs = (Map.Entry)iter.next();
+	        //creates a key for Map
+	        String key = (String)pairs.getKey();
+	        //Create a new map
+	        Map m = (Map)pairs.getValue();   
+	        //object for storing Json
+	        JSONObject data = new JSONObject();
+	        //gets the value
+	        Iterator iter2 = m.entrySet().iterator();
+	        while (iter2.hasNext()) 
+	        {
+	            Map.Entry pairs2 = (Map.Entry)iter2.next();
+	            data.put((String)pairs2.getKey(), (String)pairs2.getValue());
+	        }
+	        //puts email and 'foo@bar.com'  together in map
+	        holder.put(key, data);
+	    }
+	    return holder;
+	}
+	//*****************
+	/***********/
+	public static String getResponseBody(HttpResponse response) {
+		String response_text = null;
+		HttpEntity entity = null;
 		try {
-			//Getting the 0th sheet for manipulation| pass sheet name as string
-			sheet = SpreadSheet.createFromFile(file).getSheet(0);
-
-			//Get row count
-			int rowCount = sheet.getRowCount();
-
-			Log.i("Rows :"+rowCount,"Rows :"+rowCount);
-			//Iterating through each row of the selected sheet
-			MutableCell cell = null;
-			for(int row = 0; row < rowCount; row++)
-			{
-				//Iterating through each column
-				cell = sheet.getCellAt(0, row);
-				cadena = cell.getValue().toString();
-				
-				Log.i("cadena",cadena+"");
-			}
-
-		} catch (IOException e) {
+			entity = response.getEntity();
+			response_text = _getResponseBody(entity);
+		} catch (ParseException e) {
 			e.printStackTrace();
+		} catch (IOException e) {
+			if (entity != null) {
+				try {
+					entity.consumeContent();
+				} catch (IOException e1) {}
+			}
 		}
-		return cadena;
+		return response_text;
+	}
+
+	public static String _getResponseBody(final HttpEntity entity) throws IOException, ParseException {
+		if (entity == null) { throw new IllegalArgumentException("HTTP entity may not be null"); }
+		InputStream instream = entity.getContent();
+		if (instream == null) { return ""; }
+		if (entity.getContentLength() > Integer.MAX_VALUE) { throw new IllegalArgumentException(
+				"HTTP entity too large to be buffered in memory"); }
+		String charset = getContentCharSet(entity);
+		if (charset == null) {
+			charset = HTTP.DEFAULT_CONTENT_CHARSET;
+		}
+		Reader reader = new InputStreamReader(instream, charset);
+		StringBuilder buffer = new StringBuilder();
+		try {
+			char[] tmp = new char[1024];
+			int l;
+			while ((l = reader.read(tmp)) != -1) {
+				buffer.append(tmp, 0, l);
+			}
+		} finally {
+			reader.close();
+		}
+		return buffer.toString();
+	}
+	public static String getContentCharSet(final HttpEntity entity) throws ParseException {
+		if (entity == null) { throw new IllegalArgumentException("HTTP entity may not be null"); }
+		String charset = null;
+		if (entity.getContentType() != null) {
+			HeaderElement values[] = entity.getContentType().getElements();
+			if (values.length > 0) {
+				NameValuePair param = values[0].getParameterByName("charset");
+				if (param != null) {
+					charset = param.getValue();
+				}
+			}
+		}
+		return charset;
 	}
 }

@@ -7,3 +7,12 @@
 1416305799565	Rename method 'fixScaleTrans'
 1416312725413	Rename method 'changeLayoutColor'
 1416315228353	Move file
+1416399992654	Delete element
+1416403769875	Rename method 'idiomas'
+1416403780188	Rename method 'language'
+1416403898857	Delete element
+1416411079924	Rename local variable 'url'
+1416411222132	Rename local variable 'cad'
+1416412569182	Rename local variable 'coorJson'
+1416412708722	Rename local variable 'urlJson'
+1416412832069	Rename method 'creaJson'

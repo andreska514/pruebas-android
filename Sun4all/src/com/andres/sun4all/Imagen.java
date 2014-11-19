@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -41,6 +42,7 @@ public class Imagen extends ImageView {
 	PointF mid = new PointF();
 	float[]valores;
 	
+	//abs
 	int lastTouchX;
 	int lastTouchY;
 	
@@ -49,7 +51,7 @@ public class Imagen extends ImageView {
 	boolean inverted = false;
 	boolean pinta = false;
 	boolean borra = false;
-	/** absolute and relative coordinates*/
+	/** array of absolute and relative coordinates*/
 	ArrayList <Marking> listaPtos = new ArrayList<Marking>(); 
 	ArrayList <Mark> listaMarcas = new ArrayList<Mark>();
 	
@@ -61,25 +63,28 @@ public class Imagen extends ImageView {
 	Bitmap negativo;
 	Bitmap cruz = BitmapFactory.decodeResource(getResources(), R.drawable.cruz);
 	
-	Imagen _this = this;
-	
 	ProgressDialog pDialog;
+	JSONObject finalJson;
+	
 	public void init(){
 		inicial = BitmapFactory.decodeResource(getResources(), R.drawable.sol);
 		bitmap= inicial;
 		Log.d("entrada","1");
 		setOnTouchListener(clickImagen);
 	}
+	/** Constructor 1*/
 	public Imagen(Context c, AttributeSet attr) {
 		super(c, attr);
 		context=c;
 		init();
 	}
+	/** Constructor 2*/
 	public Imagen(Context c) {
 		super(c);
 		context=c;
 		init();
 	}
+	/** Draw the imageView*/
 	@Override
 	public void onDraw(Canvas c){
 		String s = getResources().getString(R.string.sunspot);
@@ -96,10 +101,6 @@ public class Imagen extends ImageView {
 				c.drawBitmap(cruz, mark.x, mark.y, new Paint());
 			}
 		}
-	}
-	@Override
-	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-	    super.onSizeChanged(w, h, oldw, oldh);
 	}
 	/** Save absolute coordinates in listaPtos*/
 	void guardaCoordenadas(int x, int y){
@@ -327,30 +328,19 @@ public class Imagen extends ImageView {
 			pDialog.show();
 		}
 		protected Bitmap doInBackground(String... args) {
-			//1 url
-			if(args.length == 1){
-				try {
-					positivo = BitmapFactory.decodeStream((InputStream)new URL(args[0]).getContent());
-					
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-			//2 url
-			else{
-				try {
-					positivo = BitmapFactory.decodeStream((InputStream)new URL(args[0]).getContent());
-					negativo = BitmapFactory.decodeStream((InputStream)new URL(args[1]).getContent());
-					postInvalidate();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+			try {
+				positivo = BitmapFactory.decodeStream((InputStream)new URL(args[0]).getContent());
+				negativo = BitmapFactory.decodeStream((InputStream)new URL(args[1]).getContent());
+				postInvalidate();
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 			return positivo;
 		}
 		protected void onPostExecute(Bitmap image) {
 			if(image != null){
 				bitmap = image;
+				
 				invalidate();
 				
 				pDialog.dismiss();
@@ -360,43 +350,31 @@ public class Imagen extends ImageView {
 				Toast.makeText(context, "Image Does Not exist or Network Error", Toast.LENGTH_SHORT).show();
 			}
 		}
-
-
-		//Imagenes para probar
-		//k1v_01_07_00_09h_35.jpg
-		//k1v_01_07_03_12h_40_E_C.jpg
-		//k1v_01_07_85_09h_34_E_C.jpg
-		//k1v_01_07_90_08h_02_E_C.jpg
-		//k1v_01_07_91_09h_05_E_C.jpg
-		//k1v_01_07_95_08h_31_E_C.jpg
-		//k1v_01_07_96_08h_28_E_C.jpg
-		//k1v_01_08_01_09h_25.jpg
-		//k1v_01_08_02_08h_27_E_C.jpg
-		//k1v_01_08_03_09h_30_E_C.jpg
 	}
-	//************************************************************
-	//************ PROBANDO COSAS A PARTIR DE AQUI ***************
-	//************************************************************
-	void creaJson(){
-		JSONObject json = new JSONObject();
-		JSONObject mJson = new JSONObject();
-		try {
-			mJson.put("name", "Jorge");
-			mJson.put("username", "myUser");
-			mJson.put("age", "54");
-			json.put("man",mJson);
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	void prepareJson(){
+		JSONArray coorJson= new JSONArray();
+		for(int x=0; x<listaPtos.size();x++){
+			Marking ptos = listaPtos.get(x);
+			JSONObject tempJson = new JSONObject();
+			try{
+				tempJson.put("x", ptos.getX());
+				tempJson.put("y", ptos.getY());
+			}catch(JSONException jEx){
+				jEx.printStackTrace();
+			}
+			coorJson.put(tempJson);
 		}
+		
+		finalJson = new JSONObject();
+		try{
+			finalJson.put("description",Main.cadUrl);
+			finalJson.put("points", coorJson);
+		}catch(JSONException jEx){
+			jEx.printStackTrace();
+		}
+		
 	}
 	
-	
-		
-	
-	//************************************************************
-	//************************************************************
-	//************************************************************
 	/** this clases save coordinates(relatives and absolutes)*/
 	class Marking{
 		int x;
@@ -441,169 +419,4 @@ public class Imagen extends ImageView {
 		}
 	}
 }
-
-	
-//PROBAR ESTO!!!
-//https://github.com/MikeOrtiz/TouchImageView/blob/master/src/com/ortiz/touch/TouchImageView.java
-//**********************************************************************
-/*
-private void fixTrans() {
-	viewWidth = this.getWidth();
-	viewHeight = this.getHeight();
-	float []m = new float[9];
-	matrix.getValues(m);
-	float transX = m[Matrix.MTRANS_X];
-	float transY = m[Matrix.MTRANS_Y];
-	float fixTransX = getFixTrans(transX, viewWidth, getImageWidth());
-	float fixTransY = getFixTrans(transY, viewHeight, getImageHeight());
-	if (fixTransX != 0 || fixTransY != 0) {
-		matrix.postTranslate(fixTransX, fixTransY);
-	}
-}
-
-private void fixScaleTrans() {
-	float []m = new float[9];
-	matrix.getValues(m);
-	fixTrans();
-	matrix.getValues(m);
-	if (getImageWidth() < viewWidth) {
-		m[Matrix.MTRANS_X] = (viewWidth - getImageWidth()) / 2;
-	}
-	if (getImageHeight() < viewHeight) {
-		m[Matrix.MTRANS_Y] = (viewHeight - getImageHeight()) / 2;
-	}
-	matrix.setValues(m);
-}
-private float getFixTrans(float trans, float viewSize, float contentSize) {
-	float minTrans, maxTrans;
-	if (contentSize <= viewSize) {
-		minTrans = 0;
-		maxTrans = viewSize - contentSize;
-	} else {
-		minTrans = viewSize - contentSize;
-		maxTrans = 0;
-	}
-	if (trans < minTrans)
-		return -trans + minTrans;
-	if (trans > maxTrans)
-		return -trans + maxTrans;
-	return 0;
-}
-private float getFixDragTrans(float delta, float viewSize, float contentSize) {
-	if (contentSize <= viewSize) {
-		return 0;
-	}
-	return delta;
-}
-*/
-//esto funciona
-/*
-public void checkZoom(){
-	float[] values = new float[9];
-    matrix.getValues(values);
-    float scaleX = values[Matrix.MSCALE_X];
-    if(scaleX > MAX_ZOOM) {
-    	setZoom(MAX_ZOOM);
-    } 
-    else if(scaleX < MIN_ZOOM) {
-    	setZoom(MIN_ZOOM);
-    }
-    fixScaleTrans();
-}
-private void fixScaleTrans() {
-	float []m = new float[9];
-	matrix.getValues(m);
-	fixTrans();
-	matrix.getValues(m);
-	if (getImageWidth() < viewWidth) {
-		m[Matrix.MTRANS_X] = (viewWidth - getImageWidth()) / 2;
-	}
-	if (getImageHeight() < viewHeight) {
-		m[Matrix.MTRANS_Y] = (viewHeight - getImageHeight()) / 2;
-	}
-	matrix.setValues(m);
-}
-
-private void fixTrans() {
-	viewWidth = this.getWidth();
-	viewHeight = this.getHeight();
-	float []m = new float[9];
-	matrix.getValues(m);
-	float transX = m[Matrix.MTRANS_X];
-	float transY = m[Matrix.MTRANS_Y];
-	float fixTransX = getFixTrans(transX, viewWidth, getImageWidth());
-	float fixTransY = getFixTrans(transY, viewHeight, getImageHeight());
-	if (fixTransX != 0 || fixTransY != 0) {
-		matrix.postTranslate(fixTransX, fixTransY);
-	}
-}
-private float getFixTrans(float trans, float viewSize, float contentSize) {
-	float minTrans, maxTrans;
-	if (contentSize <= viewSize) {
-		minTrans = 0;
-		maxTrans = viewSize - contentSize;
-	} else {
-		minTrans = viewSize - contentSize;
-		maxTrans = 0;
-	}
-	if (trans < minTrans)
-		return -trans + minTrans;
-	if (trans > maxTrans)
-		return -trans + maxTrans;
-	return 0;
-}*/
-/** Get the width of image (bitmapWidth*Zoom)*/
-/*float getImageWidth(){
-	float []m = new float[9];
-	matrix.getValues(m);
-	return m[Matrix.MSCALE_X]*bitmap.getWidth();
-}*/
-/** Get the Height of image (bitmapHeight*Zoom)*/
-/*float getImageHeight(){
-	float []m = new float[9];
-	matrix.getValues(m);
-	return m[Matrix.MSCALE_X]*bitmap.getHeight();
-}*/
-
-//Methods used but not necesary now
-/*
- * 
- *  int getBitmapWidth(Bitmap b){
-    	return b.getWidth();
-    }
-    int getBitmapHeight(Bitmap b){
-    	return b.getHeight();
-    }
-    static void logMatrix(Matrix matrix, ImageView imageView){
-		float[] values = new float[9];
-		Main.contador++;
-		matrix.getValues(values);
-		Log.i("  ",Main.contador+"-----------veces---------------- ");
-		Log.i("valores",""+values[0]+"/"+values[1]+"/"
-		+values[2]+"/"+values[3]+"/"+values[4]+"/"
-		+values[5]+"/"+values[6]+"/"
-		+values[7]+"/"+values[8]);
-		
-        float width = values[0]* imageView.getWidth();
-        float height = values[4] * imageView.getHeight();
-
-        Log.i("globalX[2]",""+values[2]);
-        Log.i("globalY[5]",""+values[5]);
-        Log.i("width[0]",""+width+"("+values[0]+" x "+imageView.getWidth()+")");
-        Log.i("height[4]",""+height+"("+values[4]+" x "+imageView.getHeight()+")");
-	}
-	
-	*/
-/*
- * void calculaCoordPantalla(MotionEvent e){
-        float[] values = new float[9];
-        matrix.getValues(values);
-        
-        float scaleX=values[0];
-        float scaleY=values[4];
-        
-        float relativeX = ((e.getX() - values[2])*scaleX) / values[0];
-        float relativeY = ((e.getY() - values[5])*scaleY) / values[4];
-	}
- */
 
