@@ -1284,7 +1284,8 @@ containing a value of this type.
         public static final int btnInv=0x7f0b0013;
         public static final int btnRes=0x7f0b0017;
         public static final int btnRmv=0x7f0b0012;
-        public static final int coordinates=0x7f0b001c;
+        public static final int downloadError=0x7f0b001d;
+        public static final int downloadOK=0x7f0b001c;
         public static final int hello_world=0x7f0b0019;
         public static final int progressBar=0x7f0b001b;
         public static final int sunspot=0x7f0b000f;

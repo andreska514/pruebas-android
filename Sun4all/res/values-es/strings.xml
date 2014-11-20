@@ -14,7 +14,8 @@
     <string name="title_activity_imagen">Imagen</string>
     <string name="title_activity_segunda">Segunda</string>
     <string name="progressBar">Descargando imagen</string>
-
-    <string name="coordinates">Touch at some point in the canvas</string>
+	<string name="downloadOK">Imagen descargada correctamente</string>
+	<string name="downloadError">Error descargando, comprueba la conexión</string>
+	
 </resources>
 <!-- Español -->

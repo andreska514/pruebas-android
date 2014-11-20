@@ -16,7 +16,8 @@
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_segunda">Segunda</string>
     <string name="progressBar">Downloading image</string>
-
-    <string name="coordinates">Touch at some point in the canvas</string>
+	<string name="downloadOK">Image Downloaded correctly</string>
+	<string name="downloadError">Image Does Not exist or Network Error</string>
+	
 </resources>
 <!-- English -->

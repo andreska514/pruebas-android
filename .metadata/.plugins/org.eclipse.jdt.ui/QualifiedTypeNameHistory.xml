@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="android.os.StrictMode.VmPolicy.Builder"/>
 <fullyQualifiedTypeName name="android.os.StrictMode.VmPolicy"/>
 <fullyQualifiedTypeName name="android.os.StrictMode"/>
-<fullyQualifiedTypeName name="com.andres.sun4all.R.string"/>
 <fullyQualifiedTypeName name="android.content.DialogInterface.OnCancelListener"/>
 <fullyQualifiedTypeName name="android.content.Context"/>
 <fullyQualifiedTypeName name="com.andres.sun4all.Main.Download"/>
@@ -60,4 +58,6 @@
 <fullyQualifiedTypeName name="java.io.Reader"/>
 <fullyQualifiedTypeName name="org.apache.http.HeaderElement"/>
 <fullyQualifiedTypeName name="org.apache.http.NameValuePair"/>
+<fullyQualifiedTypeName name="com.andres.sun4all.Main.makeRequest"/>
+<fullyQualifiedTypeName name="com.andres.sun4all.R.string"/>
 </qualifiedTypeNameHistroy>

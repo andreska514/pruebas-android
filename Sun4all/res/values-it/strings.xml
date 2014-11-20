@@ -15,8 +15,9 @@
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_segunda">Segunda</string>
     <string name="progressBar">scaricando immagine</string>
+	<string name="downloadOK">Immagine scaricata correttamente</string>
+	<string name="downloadError">Errore di rete</string>
 
-    <string name="coordinates">Touch at some point in the canvas</string>
 </resources>
 
 <!-- Italiano -->

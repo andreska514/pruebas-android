@@ -98,7 +98,10 @@ public class Imagen extends ImageView {
 		}
 		if(listaPtos!=null){
 			for(Mark mark:listaMarcas){	
-				c.drawBitmap(cruz, mark.x, mark.y, new Paint());
+				float laX = mark.x-(cruz.getWidth()/2);
+				float laY = mark.y-(cruz.getHeight()/2);
+				c.drawBitmap(cruz, laX, laY, new Paint());
+				//c.drawBitmap(cruz, mark.x, mark.y, new Paint());
 			}
 		}
 	}
@@ -196,6 +199,7 @@ public class Imagen extends ImageView {
     	values[Matrix.MSCALE_X] = zoom;
         values[Matrix.MSCALE_Y] = zoom; 
         matrix.setValues(values);
+        limitCorners();
     }
 	/**Chech the zoom for narrow limits, it starts limitCorners ()*/
     public void checkZoom(){
@@ -302,7 +306,7 @@ public class Imagen extends ImageView {
 		invalidate();
 	}
 	/** Execute new LoadImage with the String passed */
-	void preparaDescarga(String[] s){
+	void preparaDescarga(String [] s){
 		new LoadImage().execute(s);
 		//new LoadImage().execute("https://pybossa.socientize.eu/sun4all/sunimages/k1v_01_08_03_09h_30_E_C.jpg");
 	}
@@ -324,13 +328,15 @@ public class Imagen extends ImageView {
 		protected void onPreExecute() {
 			super.onPreExecute();
 			pDialog = new ProgressDialog((Main)context);
-			pDialog.setMessage("Loading Image ....");
+			pDialog.setMessage(getResources().getString(R.string.progressBar));
+			//pDialog.setMessage("Loading Image ....");
 			pDialog.show();
 		}
 		protected Bitmap doInBackground(String... args) {
 			try {
 				positivo = BitmapFactory.decodeStream((InputStream)new URL(args[0]).getContent());
 				negativo = BitmapFactory.decodeStream((InputStream)new URL(args[1]).getContent());
+				setZoom(MIN_ZOOM);
 				postInvalidate();
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -344,10 +350,12 @@ public class Imagen extends ImageView {
 				invalidate();
 				
 				pDialog.dismiss();
-				Toast.makeText(context, "Image Downloaded correctly", Toast.LENGTH_SHORT).show();
+				//Toast.makeText(context, "Image Downloaded correctly", Toast.LENGTH_SHORT).show();
+				Toast.makeText(context, getResources().getString(R.string.downloadOK), Toast.LENGTH_SHORT).show();
 			}else{
 				pDialog.dismiss();
-				Toast.makeText(context, "Image Does Not exist or Network Error", Toast.LENGTH_SHORT).show();
+				//Toast.makeText(context, "Image Does Not exist or Network Error", Toast.LENGTH_SHORT).show();
+				Toast.makeText(context, getResources().getString(R.string.downloadError), Toast.LENGTH_SHORT).show();
 			}
 		}
 	}
