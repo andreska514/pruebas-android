@@ -18,6 +18,12 @@
 	<string name="downloadOK">Immagine scaricata correttamente</string>
 	<string name="downloadError">Errore di rete</string>
 
+	<string name="dialogMessage">Hai finito questo compito e desidera trasmettere le coordinate al server?</string>
+	<string name="dialogTitle">Termina il compito</string>
+	<string name="yes">Sì</string>
+	<string name="no">No</string>
+	<string name="cancel">Cancellare</string>
+	
 </resources>
 
 <!-- Italiano -->

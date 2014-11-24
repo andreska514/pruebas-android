@@ -16,5 +16,11 @@
 	<string name="downloadOK">Image téléchargée correctement</string>
 	<string name="downloadError">Erreur réseau</string>
 	
+	<string name="dialogMessage">Avez-vous terminé cette tâche et vous voulez envoyer les coordonnées au serveur?</string>
+	<string name="dialogTitle">Terminer la tâche</string>
+	<string name="yes">Oui</string>
+	<string name="no">Non</string>
+	<string name="cancel">annuler</string>
+	
 </resources>
 <!-- Français -->

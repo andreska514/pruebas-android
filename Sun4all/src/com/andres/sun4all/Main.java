@@ -242,7 +242,7 @@ public class Main extends FragmentActivity {
 				}
 				else
 				{
-					btnRmv.setText("Remove Sunspot");
+					btnRmv.setText(getResources().getString(R.string.btnRmv));
 					activaBotonesBorrar(true);
 					imagen.borra=false;
 					if(btnAdd.isChecked())
@@ -360,9 +360,9 @@ public class Main extends FragmentActivity {
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState){
 			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-			builder.setMessage("Did you finish this task and want start another?")
-			.setTitle("Finish the task")
-			.setPositiveButton("yes", new DialogInterface.OnClickListener() {
+			builder.setMessage(getResources().getString(R.string.dialogMessage))
+			.setTitle(getResources().getString(R.string.dialogTitle))
+			.setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int id) {
 					//envia listaMarcas()+id Imagen
@@ -383,7 +383,7 @@ public class Main extends FragmentActivity {
 					dialog.cancel();
 				}
 			})
-			.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+			.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
 				
 				@Override
 				public void onClick(DialogInterface dialog, int id) {

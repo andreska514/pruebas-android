@@ -32,7 +32,7 @@ public class Imagen extends ImageView {
 	static final int PULSADO = 1;
 	static final int ZOOM = 2;
 	static final float MAX_ZOOM = 2f;
-    static final float MIN_ZOOM = 0.9f;
+    static float MIN_ZOOM = 0.9f;
     int mode = NONE;
     float oldDist = 1f;
     
@@ -66,6 +66,14 @@ public class Imagen extends ImageView {
 	ProgressDialog pDialog;
 	JSONObject finalJson;
 	
+	void setMinZoom(){
+		float imageW = getImageWidth();
+		float imageH = getImageHeight();
+		viewWidth = this.getWidth();
+		viewHeight = this.getHeight();
+		float initialZool = imageW/viewWidth;
+		
+	}
 	public void init(){
 		inicial = BitmapFactory.decodeResource(getResources(), R.drawable.sol);
 		bitmap= inicial;
@@ -88,6 +96,7 @@ public class Imagen extends ImageView {
 	@Override
 	public void onDraw(Canvas c){
 		String s = getResources().getString(R.string.sunspot);
+		limitCorners();
 		c.drawBitmap(bitmap, matrix, new Paint());
 		Main.txtCont.setText(s+listaMarcas.size());
 		if(pinta){
@@ -426,5 +435,7 @@ public class Imagen extends ImageView {
 			this.y = y;
 		}
 	}
+	
+	
 }
 
