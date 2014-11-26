@@ -1110,14 +1110,13 @@ containing a value of this type.
         public static final int action_menu_divider=0x7f060016;
         public static final int action_menu_presenter=0x7f060017;
         public static final int action_mode_close_button=0x7f060024;
-        public static final int action_settings=0x7f060048;
+        public static final int action_settings=0x7f060046;
         public static final int activity_chooser_view_content=0x7f060025;
         public static final int always=0x7f06000b;
         public static final int beginning=0x7f060011;
         public static final int btnAdd=0x7f06003f;
         public static final int btnFin=0x7f060044;
         public static final int btnInv=0x7f060041;
-        public static final int btnProgressBar=0x7f060046;
         public static final int btnRes=0x7f060045;
         public static final int btnRmv=0x7f060040;
         public static final int checkbox=0x7f06002d;
@@ -1140,7 +1139,6 @@ containing a value of this type.
         public static final int listMode=0x7f060001;
         public static final int list_item=0x7f060029;
         public static final int middle=0x7f060012;
-        public static final int my_image=0x7f060047;
         public static final int never=0x7f060009;
         public static final int none=0x7f060010;
         public static final int normal=0x7f060000;
@@ -1223,8 +1221,7 @@ containing a value of this type.
         public static final int abc_search_view=0x7f030016;
         public static final int abc_simple_decor=0x7f030017;
         public static final int activity_main=0x7f030018;
-        public static final int activity_segunda=0x7f030019;
-        public static final int support_simple_spinner_dropdown_item=0x7f03001a;
+        public static final int support_simple_spinner_dropdown_item=0x7f030019;
     }
     public static final class menu {
         public static final int imagen=0x7f0e0000;
@@ -1284,19 +1281,20 @@ containing a value of this type.
         public static final int btnInv=0x7f0b0013;
         public static final int btnRes=0x7f0b0017;
         public static final int btnRmv=0x7f0b0012;
-        public static final int cancel=0x7f0b0022;
-        public static final int dialogMessage=0x7f0b001e;
-        public static final int dialogTitle=0x7f0b001f;
-        public static final int downloadError=0x7f0b001d;
-        public static final int downloadOK=0x7f0b001c;
+        public static final int cancel=0x7f0b0023;
+        public static final int dialogMessage=0x7f0b001f;
+        public static final int dialogTitle=0x7f0b0020;
+        public static final int downloadError=0x7f0b001e;
+        public static final int downloadOK=0x7f0b001d;
         public static final int hello_world=0x7f0b0019;
-        public static final int no=0x7f0b0021;
+        public static final int no=0x7f0b0022;
         public static final int progressBar=0x7f0b001b;
+        public static final int progressData=0x7f0b001c;
         public static final int sunspot=0x7f0b000f;
         public static final int title_activity_imagen=0x7f0b0018;
         public static final int title_activity_segunda=0x7f0b001a;
         public static final int txtSpots=0x7f0b0014;
-        public static final int yes=0x7f0b0020;
+        public static final int yes=0x7f0b0021;
     }
     public static final class style {
         /** 

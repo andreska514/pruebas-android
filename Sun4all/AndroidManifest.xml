@@ -26,14 +26,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".Imagen"
-            android:label="@string/title_activity_imagen" >
-        </activity>
-        <activity
-            android:name=".Segunda"
-            android:label="@string/title_activity_segunda" >
-        </activity>
     </application>
 
 </manifest>

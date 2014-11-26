@@ -6,9 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
-import java.util.Iterator;
 import java.util.Locale;
-import java.util.Map;
 
 import android.os.AsyncTask;
 import org.apache.http.HeaderElement;
@@ -22,15 +20,14 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.HTTP;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.ParseException;
@@ -54,6 +51,8 @@ public class Main extends FragmentActivity {
 	Bitmap bitmapBase, bitmapBaseNeg;
 
 	String post = "http://sun4allmobile.socientize.eu/api/images";
+	
+	Context mainContext ;
 	
 	static String urlBase = "https://pybossa.socientize.eu/sun4all/sunimages/";
 	static String urlBaseNeg="https://pybossa.socientize.eu/sun4all/sunimages/inv/";
@@ -161,6 +160,9 @@ public class Main extends FragmentActivity {
 		layout1 = (LinearLayout)findViewById(R.id.layout1);
 		layout2 = (LinearLayout)findViewById(R.id.layour2);
 		
+		mainContext = getApplicationContext();
+		
+		
 		/** Change the button add/move depending the language*/
 		setLanguageAdd();
 		activaBotonesInicio(false);
@@ -179,7 +181,7 @@ public class Main extends FragmentActivity {
 			btnRes.setTextColor(Color.BLACK);
 			txtCont.setTextColor(Color.BLACK);
 			txtSpots.setTextColor(Color.BLACK);
-			
+			imagen.postInvalidate();
 		}
 		else
 		{
@@ -193,6 +195,7 @@ public class Main extends FragmentActivity {
 			btnRes.setTextColor(Color.WHITE);
 			txtCont.setTextColor(Color.WHITE);
 			txtSpots.setTextColor(Color.WHITE);
+			imagen.postInvalidate();
 		}
 		if(!btnAdd.isEnabled()){
 			btnAdd.setTextColor(Color.GRAY);
@@ -285,10 +288,11 @@ public class Main extends FragmentActivity {
 			imagen.postInvalidate();
 		}
 	});
+	/** clear imagen.listaPtos & imagen.listaMarcas; change btnAdd*/
 	void vaciaCoordenadas(){
-		imagen.listaPtos.clear();//vacio listaPtos
+		imagen.listaPtos.clear();
 		imagen.listaMarcas.clear();
-		cambiaAdd(false);//paso el boton add a move
+		cambiaAdd(false);
 	}
 	/** change the string of add Button*/
 	void cambiaAdd(boolean b){
@@ -381,6 +385,11 @@ public class Main extends FragmentActivity {
 					activaBotonesInicio(false);
 					inicio=true;
 					dialog.cancel();
+					imagen.inverted=false;
+					vaciaCoordenadas();
+					imagen.bitmap=imagen.inicial;
+					changeColors();
+					imagen.postInvalidate();
 				}
 			})
 			.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
@@ -398,16 +407,7 @@ public class Main extends FragmentActivity {
 	ProgressDialog pDialog;
 	
 	class makeRequest extends AsyncTask<JSONObject, Void, Void> {
-		protected void onPreExecute() {
-			super.onPreExecute();
-			//pDialog = new ProgressDialog((Main)getApplicationContext());
-			//pDialog.setMessage("Sending data ....");
-			//pDialog.show();
-		}
-		protected void onPostExecute(Bitmap image) {
-			//pDialog.dismiss();
-		}
-
+		/** doInBackground*/
 		@Override
 		protected Void doInBackground(JSONObject... params) {
 			DefaultHttpClient httpclient = new DefaultHttpClient();
@@ -424,6 +424,7 @@ public class Main extends FragmentActivity {
 		    httpost.setHeader("Content-type", "application/json");
 		    //Handles what is returned from the page 
 		    ResponseHandler responseHandler = new BasicResponseHandler();
+		    
 		    try {
 				httpclient.execute(httpost, responseHandler);
 			} catch (ClientProtocolException e) {
@@ -431,12 +432,10 @@ public class Main extends FragmentActivity {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+		    
 			return null;
 		}
 	}
-	
-	//*****************
-	/***********/
 	public static String getResponseBody(HttpResponse response) {
 		String response_text = null;
 		HttpEntity entity = null;
@@ -493,122 +492,3 @@ public class Main extends FragmentActivity {
 		return charset;
 	}
 }
-
-/*
- * public static HttpResponse makeRequest(String path, JSONObject mjson) throws Exception 
-	{
-	    //instantiates httpclient to make request
-	    DefaultHttpClient httpclient = new DefaultHttpClient();
-	    //url with the post data
-	    HttpPost httpost = new HttpPost(path);
-	    //convert parameters into JSON object
-	    JSONObject json = mjson;
-	    //passes the results to a string builder/entity
-	    StringEntity se = new StringEntity(json.toString());
-	    //sets the post request as the resulting string
-	    httpost.setEntity(se);
-	    //sets a request header so the page receving the request
-	    //will know what to do with it
-	    httpost.setHeader("Accept", "application/json");
-	    httpost.setHeader("Content-type", "application/json");
-	    //Handles what is returned from the page 
-	    ResponseHandler responseHandler = new BasicResponseHandler();
-	    return httpclient.execute(httpost, responseHandler);
-	}
-*/
-/*
-private JSONObject getJsonObjectFromMap(Map params) throws JSONException {
-
-//all the passed parameters from the post request
-//iterator used to loop through all the parameters
-//passed in the post request
-Iterator iter = params.entrySet().iterator();
-
-//Stores JSON
-JSONObject holder = new JSONObject();
-
-//using the earlier example your first entry would get email
-//and the inner while would get the value which would be 'foo@bar.com' 
-//{ fan: { email : 'foo@bar.com' } }
-
-//While there is another entry
-while (iter.hasNext()) 
-{
-    //gets an entry in the params
-    Map.Entry pairs = (Map.Entry)iter.next();
-    //creates a key for Map
-    String key = (String)pairs.getKey();
-    //Create a new map
-    Map m = (Map)pairs.getValue();   
-    //object for storing Json
-    JSONObject data = new JSONObject();
-    //gets the value
-    Iterator iter2 = m.entrySet().iterator();
-    while (iter2.hasNext()) 
-    {
-        Map.Entry pairs2 = (Map.Entry)iter2.next();
-        data.put((String)pairs2.getKey(), (String)pairs2.getValue());
-    }
-    //puts email and 'foo@bar.com'  together in map
-    holder.put(key, data);
-}
-return holder;
-}*/
-//*****************
-/***********/
-/*
-public static String getResponseBody(HttpResponse response) {
-String response_text = null;
-HttpEntity entity = null;
-try {
-	entity = response.getEntity();
-	response_text = _getResponseBody(entity);
-} catch (ParseException e) {
-	e.printStackTrace();
-} catch (IOException e) {
-	if (entity != null) {
-		try {
-			entity.consumeContent();
-		} catch (IOException e1) {}
-	}
-}
-return response_text;
-}
-
-public static String _getResponseBody(final HttpEntity entity) throws IOException, ParseException {
-if (entity == null) { throw new IllegalArgumentException("HTTP entity may not be null"); }
-InputStream instream = entity.getContent();
-if (instream == null) { return ""; }
-if (entity.getContentLength() > Integer.MAX_VALUE) { throw new IllegalArgumentException(
-		"HTTP entity too large to be buffered in memory"); }
-String charset = getContentCharSet(entity);
-if (charset == null) {
-	charset = HTTP.DEFAULT_CONTENT_CHARSET;
-}
-Reader reader = new InputStreamReader(instream, charset);
-StringBuilder buffer = new StringBuilder();
-try {
-	char[] tmp = new char[1024];
-	int l;
-	while ((l = reader.read(tmp)) != -1) {
-		buffer.append(tmp, 0, l);
-	}
-} finally {
-	reader.close();
-}
-return buffer.toString();
-}
-public static String getContentCharSet(final HttpEntity entity) throws ParseException {
-if (entity == null) { throw new IllegalArgumentException("HTTP entity may not be null"); }
-String charset = null;
-if (entity.getContentType() != null) {
-	HeaderElement values[] = entity.getContentType().getElements();
-	if (values.length > 0) {
-		NameValuePair param = values[0].getParameterByName("charset");
-		if (param != null) {
-			charset = param.getValue();
-		}
-	}
-}
-return charset;
-}*/

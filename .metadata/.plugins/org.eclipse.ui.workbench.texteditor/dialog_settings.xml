@@ -13,16 +13,16 @@
 		<item value="true" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="false" key="wholeword"/>
-		<item value="" key="selection"/>
+		<item value="getRespo" key="selection"/>
 		<list key="findhistory">
-			<item value="did you"/>
-			<item value="oast"/>
-			<item value="osat"/>
-			<item value="toast"/>
-			<item value="Progress"/>
 			<item value="getRespo"/>
-			<item value="limitC"/>
-			<item value="Log.i"/>
+			<item value="pDialog"/>
+			<item value="inicio"/>
+			<item value="preparaD"/>
+			<item value="inverted"/>
+			<item value="invertBitmap"/>
+			<item value="inver"/>
+			<item value="did you"/>
 		</list>
 		<list key="replacehistory">
 		</list>

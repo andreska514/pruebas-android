@@ -3,7 +3,6 @@
 <fullyQualifiedTypeName name="android.os.StrictMode.VmPolicy"/>
 <fullyQualifiedTypeName name="android.os.StrictMode"/>
 <fullyQualifiedTypeName name="android.content.DialogInterface.OnCancelListener"/>
-<fullyQualifiedTypeName name="android.content.Context"/>
 <fullyQualifiedTypeName name="com.andres.sun4all.Main.Download"/>
 <fullyQualifiedTypeName name="android.os.PowerManager"/>
 <fullyQualifiedTypeName name="android.os.PowerManager.WakeLock"/>
@@ -40,7 +39,6 @@
 <fullyQualifiedTypeName name="java.io.InputStreamReader"/>
 <fullyQualifiedTypeName name="java.io.BufferedReader"/>
 <fullyQualifiedTypeName name="org.json.JSONArray"/>
-<fullyQualifiedTypeName name="org.json.JSONObject"/>
 <fullyQualifiedTypeName name="java.util.Map"/>
 <fullyQualifiedTypeName name="org.apache.http.impl.client.DefaultHttpClient"/>
 <fullyQualifiedTypeName name="org.apache.http.client.methods.HttpPost"/>
@@ -60,4 +58,6 @@
 <fullyQualifiedTypeName name="android.widget.Toast"/>
 <fullyQualifiedTypeName name="com.andres.sun4all.R.id"/>
 <fullyQualifiedTypeName name="com.andres.sun4all.R.string"/>
+<fullyQualifiedTypeName name="org.json.JSONObject"/>
+<fullyQualifiedTypeName name="android.content.Context"/>
 </qualifiedTypeNameHistroy>

@@ -66,14 +66,15 @@ public class Imagen extends ImageView {
 	ProgressDialog pDialog;
 	JSONObject finalJson;
 	
-	void setMinZoom(){
+	/*void setMinZoom(){
 		float imageW = getImageWidth();
 		float imageH = getImageHeight();
 		viewWidth = this.getWidth();
 		viewHeight = this.getHeight();
 		float initialZool = imageW/viewWidth;
 		
-	}
+	}*/
+	/** Method used within Constructors*/
 	public void init(){
 		inicial = BitmapFactory.decodeResource(getResources(), R.drawable.sol);
 		bitmap= inicial;
@@ -330,6 +331,14 @@ public class Imagen extends ImageView {
 		}
 		invalidate();
 	}
+	void invertBitmap(boolean b){
+		if(b){
+			bitmap=positivo;
+		}else{
+			bitmap=negativo;
+		}
+		invalidate();
+	}
 	/** Download de 2 images passed*/
 	private class LoadImage extends AsyncTask<String, String, Bitmap> {
 		
@@ -338,7 +347,6 @@ public class Imagen extends ImageView {
 			super.onPreExecute();
 			pDialog = new ProgressDialog((Main)context);
 			pDialog.setMessage(getResources().getString(R.string.progressBar));
-			//pDialog.setMessage("Loading Image ....");
 			pDialog.show();
 		}
 		protected Bitmap doInBackground(String... args) {
@@ -368,27 +376,41 @@ public class Imagen extends ImageView {
 			}
 		}
 	}
+	
 	void prepareJson(){
-		JSONArray coorJson= new JSONArray();
-		for(int x=0; x<listaPtos.size();x++){
-			Marking ptos = listaPtos.get(x);
-			JSONObject tempJson = new JSONObject();
+		if(listaPtos.size()>0){
+			JSONArray coorJson= new JSONArray();
+			for(int x=0; x<listaPtos.size();x++){
+				Marking ptos = listaPtos.get(x);
+				JSONObject tempJson = new JSONObject();
+				try{
+					tempJson.put("x", ptos.getX());
+					tempJson.put("y", ptos.getY());
+				}catch(JSONException jEx){
+					jEx.printStackTrace();
+				}
+				coorJson.put(tempJson);
+				
+			}
+			
+			finalJson = new JSONObject();
 			try{
-				tempJson.put("x", ptos.getX());
-				tempJson.put("y", ptos.getY());
+				finalJson.put("description",Main.cadUrl);
+				finalJson.put("points", coorJson);
 			}catch(JSONException jEx){
 				jEx.printStackTrace();
 			}
-			coorJson.put(tempJson);
+		}
+		else{
+			finalJson = new JSONObject();
+			try{
+				finalJson.put("description",Main.cadUrl);
+			}catch(JSONException jEx){
+				jEx.printStackTrace();
+			}
 		}
 		
-		finalJson = new JSONObject();
-		try{
-			finalJson.put("description",Main.cadUrl);
-			finalJson.put("points", coorJson);
-		}catch(JSONException jEx){
-			jEx.printStackTrace();
-		}
+		Log.i("finalJson",""+finalJson);
 		
 	}
 	
