@@ -71,12 +71,14 @@ public class Main extends FragmentActivity {
 	Editable strMove;
 	Editable strAdd;
 
+	//hasta aqui funciona
 	static int width;
 	static int height;
 	static Drawable d;
 	static int viewWidth;
 	static int viewHeight;
 
+	//static boolean check;
 	static boolean finish;
 	Bitmap base;
 	Bitmap nega;
