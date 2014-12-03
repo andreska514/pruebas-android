@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Referidos</string>
+    <string name="action_settings">Settings</string>
+    
+    <!-- **************************
+    	 STRINGS QUE TOCAN CLIENTES
+    	 ************************** -->
+    <string name="refEstudio">* ¿A quién le quieres a regalar 
+        este estudio?</string>
+    <string name="refTrabajar">* ¿Conoces a alguien que le interese 
+        un ingreso extra sin dejar de hacer lo que hace?</string>
+    
+    <string name="refTuNombre">TU nombre</string>
+    <string name="refFecha">Fecha de hoy</string>
+    
+    <string name="refNombre">Nombre</string>
+    <string name="refParentesco">Parentesco</string>
+    	<string name="refAmigo">Amigo</string>
+    	<string name="refPareja">Pareja</string>
+    	<string name="refHermano">Hermano</string>
+    	<string name="refMadre">Madre</string>
+    	<string name="refPadre">Padre</string>
+    	<string name="refHijo">Hijo</string>
+    	<string name="refPrimo">Primo</string>
+    	<string name="refTrabajo">compañero</string>
+    	<string name="refConocido">conocido</string>
+    <string name="refTelefono">teléfono</string>
+    
+    <!-- 
+    <string name=""></string>
+     -->
+     <!-- ********************************
+    	  STRINGS QUE TOCAN DISTRIBUIDORES
+    	  ******************************** -->
+    
+
+</resources>
