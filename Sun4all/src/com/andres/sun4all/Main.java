@@ -50,7 +50,7 @@ public class Main extends FragmentActivity {
 	static boolean inicio = true;
 	Bitmap bitmapBase, bitmapBaseNeg;
 
-	String post = "http://sun4allmobile.socientize.eu/api/images";
+	String post = "http://sun4allmobile.socientize.eu/api/image";
 	
 	Context mainContext ;
 	

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Sun4all</string>
+    <string name="action_settings">Settings</string>
+    <string name="sunspot">Macchia = </string>
+    <string name="btnAdd">Aggiungi macchia solare</string>
+    <string name="btnRmv">rimuovere macchia solare</string>
+    <string name="btnInv">Immagine Inverti</string>
+    <string name="txtSpots">Spots Count: </string>
+    <string name="btnFin">Finire il compito</string>
+    <string name="btnFin2">nuova attività</string>
+    <string name="btnRes">ricominciare</string>
+    <string name="btnSq">Punto/Gruppo</string>
+    
+    <string name="title_activity_imagen">Imagen</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_segunda">Segunda</string>
+    <string name="progressBar">scaricando immagine</string>
+	<string name="downloadOK">Immagine scaricata correttamente</string>
+	<string name="downloadError">Errore di rete</string>
+
+	<string name="dialogMessage">Hai finito questo compito e desidera trasmettere le coordinate al server?</string>
+	<string name="dialogTitle">Termina il compito</string>
+	<string name="yes">Sì</string>
+	<string name="no">No</string>
+	<string name="cancel">Cancellare</string>
+	
+</resources>
+
+<!-- Italiano -->

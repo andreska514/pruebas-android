@@ -38,7 +38,6 @@
 <fullyQualifiedTypeName name="org.apache.http.NameValuePair"/>
 <fullyQualifiedTypeName name="com.andres.sun4all.Main.makeRequest"/>
 <fullyQualifiedTypeName name="android.widget.Toast"/>
-<fullyQualifiedTypeName name="com.andres.sun4all.R.id"/>
 <fullyQualifiedTypeName name="com.andres.sun4all.R.string"/>
 <fullyQualifiedTypeName name="org.json.JSONObject"/>
 <fullyQualifiedTypeName name="android.content.Context"/>
@@ -60,4 +59,5 @@
 <fullyQualifiedTypeName name="android.support.v4.app.FragmentManager"/>
 <fullyQualifiedTypeName name="android.app.FragmentManager"/>
 <fullyQualifiedTypeName name="android.app.DialogFragment"/>
+<fullyQualifiedTypeName name="com.andres.sun4all.R.id"/>
 </qualifiedTypeNameHistroy>

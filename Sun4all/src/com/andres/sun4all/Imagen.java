@@ -42,11 +42,10 @@ public class Imagen extends ImageView {
 	PointF mid = new PointF();
 	float[]valores;
 	
-	//abs
 	int lastTouchX;
 	int lastTouchY;
 	
-	int viewWidth, viewHeight;//drag
+	int viewWidth, viewHeight;
 	
 	boolean inverted = false;
 	boolean pinta = false;
@@ -66,14 +65,6 @@ public class Imagen extends ImageView {
 	ProgressDialog pDialog;
 	JSONObject finalJson;
 	
-	/*void setMinZoom(){
-		float imageW = getImageWidth();
-		float imageH = getImageHeight();
-		viewWidth = this.getWidth();
-		viewHeight = this.getHeight();
-		float initialZool = imageW/viewWidth;
-		
-	}*/
 	/** Method used within Constructors*/
 	public void init(){
 		inicial = BitmapFactory.decodeResource(getResources(), R.drawable.sol);
