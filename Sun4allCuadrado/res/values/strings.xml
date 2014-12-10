@@ -13,6 +13,7 @@
     <string name="btnFin2">New Task</string>
     <string name="btnRes">Start Over</string>
     <string name="btnSq">Point/Group</string>
+    <string name="btnSq2">Point/Group</string>
     
     <string name="title_activity_imagen">Imagen</string>
     <string name="hello_world">Hello world!</string>

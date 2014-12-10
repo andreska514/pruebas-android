@@ -52,11 +52,11 @@
        android:orientation="horizontal"  
        android:layout_weight = "2">
          	
-         	<toggleButton android:id="@+id/btnSq"
+         	<ToggleButton android:id="@+id/btnSq"
          	    android:layout_width="match_parent"
 	     		android:layout_height="match_parent"
 	     		android:textOn="@string/btnSq" 
-				android:textOff="@string/btnSq"	    
+				android:textOff="@string/btnSq2"	    
 	     		android:layout_weight = "2" />
          	<Button android:id="@+id/btnInv"
 	         	android:layout_width="match_parent"

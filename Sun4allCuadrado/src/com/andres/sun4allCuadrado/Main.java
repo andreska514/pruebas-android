@@ -49,7 +49,7 @@ import android.widget.ToggleButton;
 
 public class Main extends FragmentActivity {
 	
-	static boolean inicio = true;
+	//static boolean inicio = true;
 	Bitmap bitmapBase, bitmapBaseNeg;
 
 	String post = "http://sun4allmobile.socientize.eu/api/image";
@@ -62,10 +62,15 @@ public class Main extends FragmentActivity {
 	static public int contador = 0;
 	static TextView txtCont;
 	TextView txtSpots;
-	//variables
+	
 	Imagen imagen;
-	Button btnInv, btnFin, btnRes;
-	ToggleButton btnAdd, btnRmv, btnSq;
+	
+	Button btnInv;
+	Button btnFin;
+	Button btnRes;
+	ToggleButton btnAdd;  
+	ToggleButton btnRmv;
+	ToggleButton btnSq;
 
 	LinearLayout layout1, layout2;
 	String cadena;
@@ -138,7 +143,7 @@ public class Main extends FragmentActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		inicio=true;
+		//inicio=true;
 		imagen = (Imagen) findViewById(R.id.ImgFoto);
 		
 		txtCont = (TextView) findViewById(R.id.txtCont);
@@ -164,10 +169,11 @@ public class Main extends FragmentActivity {
 		
 		mainContext = getApplicationContext();
 		
+		nuevaImagen();
 		
 		/** Change the button add/move depending the language*/
 		setLanguageAdd();
-		activaBotonesInicio(false);
+		//activaBotonesInicio(false);
 		changeColors();
 	}
 	/** Change to white if true/ black if false*/
@@ -206,7 +212,7 @@ public class Main extends FragmentActivity {
 			btnAdd.setTextColor(Color.GRAY);
 		}
 		if(!btnSq.isEnabled()){
-			btnAdd.setTextColor(Color.GRAY);
+			btnSq.setTextColor(Color.GRAY);
 		}
 		if(!btnRmv.isEnabled()){
 			btnRmv.setTextColor(Color.GRAY);
@@ -229,7 +235,7 @@ public class Main extends FragmentActivity {
 		public void onClick(View v) {
 			switch(v.getId()){
 			case R.id.btnAdd:
-				imagen.borra=false;
+				imagen.borra=false; 
 				if(btnAdd.isChecked())//add sunspot
 				{
 					btnAdd.setText(strAdd);
@@ -283,8 +289,10 @@ public class Main extends FragmentActivity {
 		@Override
 		public void onClick(View v) {
 			switch(v.getId()){
-			case R.id.btnFin:
-				if(inicio){
+			case R.id.btnFin:				
+				Dialogo dialogo = new Dialogo();
+				dialogo.show(getSupportFragmentManager(), "tagAlerta");
+				/*if(inicio){
 					String [] cadenas = getRandomUrl();
 					imagen.preparaDescarga(cadenas);
 					imagen.postInvalidate();
@@ -294,7 +302,7 @@ public class Main extends FragmentActivity {
 				}else{
 					Dialogo dialogo = new Dialogo();
 					dialogo.show(getSupportFragmentManager(), "tagAlerta");
-				}
+				}*/
 				break;
 			/** invert image*/
 			case R.id.btnInv:
@@ -308,6 +316,11 @@ public class Main extends FragmentActivity {
 			imagen.postInvalidate();
 		}
 	});
+	void nuevaImagen(){
+		String [] cadenas = getRandomUrl();
+		imagen.preparaDescarga(cadenas);
+		imagen.postInvalidate();
+	}
 	/** clear imagen.listaPtos & imagen.listaMarcas; change btnAdd*/
 	void vaciaCoordenadas(){
 		imagen.listaPtos.clear();
@@ -331,15 +344,19 @@ public class Main extends FragmentActivity {
 		btnInv.setEnabled(b);
 		btnFin.setEnabled(b);
 		btnRes.setEnabled(b);
+		if(!btnAdd.isChecked())
+			btnSq.setEnabled(false);
 	}
 	/** Enable or disable buttons depending if the task is started*/
-	void activaBotonesInicio(boolean b){
+	/*void activaBotonesInicio(boolean b){
 		btnAdd.setEnabled(b);
 		btnSq.setEnabled(b);
 		btnRmv.setEnabled(b);
 		btnInv.setEnabled(b);
 		btnRes.setEnabled(b);
-	}
+		if(!btnAdd.isChecked())
+			btnSq.setEnabled(false);
+	}*/
 	/** Show a toast with the message passed on 's' and 'ms' milliseconds*/
 	void toast(String s, int ms){
 		Toast.makeText(getApplicationContext(), s, ms).show();
@@ -404,12 +421,13 @@ public class Main extends FragmentActivity {
 					//borra ptos y pasa a modo mover
 					vaciaCoordenadas();
 					btnFin.setText(R.string.btnFin2);
-					activaBotonesInicio(false);
-					inicio=true;
+					//activaBotonesInicio(false);
+					//inicio=true;
 					dialog.cancel();
 					imagen.inverted=false;
 					vaciaCoordenadas();
-					imagen.bitmap=imagen.inicial;
+					nuevaImagen();
+					//imagen.bitmap=imagen.inicial;
 					changeColors();
 					imagen.postInvalidate();
 				}

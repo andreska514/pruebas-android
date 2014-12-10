@@ -12,6 +12,7 @@
     <string name="btnFin2">Nueva tarea</string>
     <string name="btnRes">Reiniciar</string>
     <string name="btnSq">Punto/Grupo</string>
+    <string name="btnSq2">Punto/Grupo</string>
     
     <string name="title_activity_imagen">Imagen</string>
     <string name="title_activity_segunda">Segunda</string>

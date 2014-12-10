@@ -125,7 +125,7 @@ public class Imagen extends ImageView {
 		for (int i=listaPtos.size()-1; i>=0; i--){
 			if(Math.sqrt(
 			Math.pow((event.getX()-listaMarcas.get(i).x), 2)
-			+Math.pow((event.getY()-listaMarcas.get(i).y), 2)) < 50){
+			+Math.pow((event.getY()-listaMarcas.get(i).y), 2)) < 20){
 				listaMarcas.remove(i);
 				listaPtos.remove(i);
 			}
