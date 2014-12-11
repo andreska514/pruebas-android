@@ -47,11 +47,18 @@ public class Imagen extends ImageView {
 	int lastTouchX;
 	int lastTouchY;
 	
+	int inicioX;
+	int inicioY;
+	int finalX;
+	int finalY;
+	
 	int viewWidth, viewHeight;
 	
 	boolean inverted = false;
 	boolean pinta = false;
 	boolean borra = false;
+	
+	boolean point=true;
 	/** array of absolute and relative coordinates*/
 	ArrayList <Marking> listaPtos = new ArrayList<Marking>(); 
 	ArrayList <Mark> listaMarcas = new ArrayList<Mark>();
@@ -70,9 +77,10 @@ public class Imagen extends ImageView {
 	/** Method used within Constructors*/
 	public void init(){
 		inicial = BitmapFactory.decodeResource(getResources(), R.drawable.sol);
-		bitmap= inicial;
+		//bitmap= inicial;
 		Log.d("entrada","1");
 		setOnTouchListener(clickImagen);
+		resetSquareCoordinates();
 	}
 	/** Constructor 1*/
 	public Imagen(Context c, AttributeSet attr) {
@@ -90,8 +98,10 @@ public class Imagen extends ImageView {
 	@Override
 	public void onDraw(Canvas c){
 		String s = getResources().getString(R.string.sunspot);
-		limitCorners();
-		c.drawBitmap(bitmap, matrix, new Paint());
+		if(bitmap!=null){
+			limitCorners();
+			c.drawBitmap(bitmap, matrix, new Paint());
+		}
 		Main.txtCont.setText(s+listaMarcas.size());
 		if(pinta){
 			this.setOnTouchListener(clickPinta);
@@ -181,7 +191,7 @@ public class Imagen extends ImageView {
 	View.OnTouchListener clickPinta = new View.OnTouchListener() {
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
-			if(event.getAction()==MotionEvent.ACTION_UP){
+			if(event.getAction()==MotionEvent.ACTION_DOWN){
 				calculaCoordenadasImagen(event);
 				if(!borra){
 					saveCoordinates(event.getX(),event.getY());
@@ -195,6 +205,38 @@ public class Imagen extends ImageView {
 			return true;
 		}//end onTouch
 	};//end onTouchListener
+
+	/** enable paint Squares touching the screen*/
+	View.OnTouchListener clickCuadrado = new View.OnTouchListener() {
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
+			if(inicioX==-1){
+				if(event.getAction()==MotionEvent.ACTION_DOWN){
+					calculaCoordenadasImagen(event);
+					inicioX=lastTouchX;
+					inicioY=lastTouchY;
+				} 
+			}
+			else{
+				if(event.getAction()==MotionEvent.ACTION_UP){
+					calculaCoordenadasImagen(event);
+					finalX=lastTouchX;
+					finalY=lastTouchY;
+					saveSquare(inicioX,inicioY,finalX,finalY);
+				}
+			}
+			return false;
+		}//end OnTouch
+	};//end OnTouchListener
+	void resetSquareCoordinates(){
+		inicioX=-1;
+		inicioY=-1;
+		finalX=-1;
+		finalY=-1;
+	}
+	void saveSquare(int iniX, int iniY, int finX, int finY){
+		
+	}
 	/** Set the new zoom of matrix*/
 	void setZoom(float zoom){
     	float[] values = new float[9];
@@ -338,6 +380,9 @@ public class Imagen extends ImageView {
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
+			bitmap=null;
+			positivo=null;
+			negativo=null;
 			pDialog = new ProgressDialog((Main)context);
 			pDialog.setMessage(getResources().getString(R.string.progressBar));
 			pDialog.show();
@@ -356,15 +401,12 @@ public class Imagen extends ImageView {
 		protected void onPostExecute(Bitmap image) {
 			if(image != null){
 				bitmap = image;
-				
 				invalidate();
-				
 				pDialog.dismiss();
-				//Toast.makeText(context, "Image Downloaded correctly", Toast.LENGTH_SHORT).show();
 				Toast.makeText(context, getResources().getString(R.string.downloadOK), Toast.LENGTH_SHORT).show();
-			}else{
+			}
+			else{
 				pDialog.dismiss();
-				//Toast.makeText(context, "Image Does Not exist or Network Error", Toast.LENGTH_SHORT).show();
 				Toast.makeText(context, getResources().getString(R.string.downloadError), Toast.LENGTH_SHORT).show();
 			}
 		}

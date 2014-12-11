@@ -1283,20 +1283,22 @@ containing a value of this type.
         public static final int btnRmv=0x7f0b0012;
         public static final int btnSq=0x7f0b0018;
         public static final int btnSq2=0x7f0b0019;
-        public static final int cancel=0x7f0b0025;
+        public static final int cancel=0x7f0b0027;
+        public static final int dialogInternet=0x7f0b0023;
         public static final int dialogMessage=0x7f0b0021;
         public static final int dialogTitle=0x7f0b0022;
+        public static final int dialogTitleInternet=0x7f0b0024;
         public static final int downloadError=0x7f0b0020;
         public static final int downloadOK=0x7f0b001f;
         public static final int hello_world=0x7f0b001b;
-        public static final int no=0x7f0b0024;
+        public static final int no=0x7f0b0026;
         public static final int progressBar=0x7f0b001d;
         public static final int progressData=0x7f0b001e;
         public static final int sunspot=0x7f0b000f;
         public static final int title_activity_imagen=0x7f0b001a;
         public static final int title_activity_segunda=0x7f0b001c;
         public static final int txtSpots=0x7f0b0014;
-        public static final int yes=0x7f0b0023;
+        public static final int yes=0x7f0b0025;
     }
     public static final class style {
         /** 
