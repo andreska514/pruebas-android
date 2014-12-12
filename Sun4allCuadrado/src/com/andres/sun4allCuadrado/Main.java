@@ -182,7 +182,6 @@ public class Main extends FragmentActivity {
 	}
 	/** Change to white if true/ black if false*/
 	void changeColors(){
-		Log.i("changeColors","imagen.inverted = "+imagen.inverted);
 		if(!imagen.inverted){
 			layout1.setBackgroundColor(Color.WHITE);
 			layout2.setBackgroundColor(Color.WHITE);
@@ -233,7 +232,7 @@ public class Main extends FragmentActivity {
 	}
 
 	//Retocar -----------------------------------------------------------------------------------------------------------------------------
-	/**Clicks on toggleButtons(add, Rmv*/
+	/**Clicks on toggleButtons(add,square, Rmv*/
 	View.OnClickListener clickToggle = (new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
@@ -245,7 +244,6 @@ public class Main extends FragmentActivity {
 				{
 					btnAdd.setText(strAdd);
 					imagen.pinta = true;
-					Log.d("btnAdd.isChecked()",""+imagen.pinta);
 					btnSq.setChecked(false);//add point
 					btnSq.setEnabled(true);
 					btnSq.setText(strPoint);
@@ -254,19 +252,21 @@ public class Main extends FragmentActivity {
 				{
 					btnAdd.setText(strMove);
 					imagen.pinta = false;
-					Log.d("btnAdd.isChecked()",""+imagen.pinta);
 					btnSq.setChecked(false);
 					btnSq.setEnabled(false);
 					btnSq.setText(strPoint);
+					imagen.square = false;
 				}
 				break;//fin case btnAdd
 	//btnSq -------------------------------------------------------
 			case R.id.btnSq:
 				if(btnSq.isChecked()){
 					btnSq.setText(strSquare);
+					imagen.square = true;
 				}
 				else{
 					btnSq.setText(strPoint);
+					imagen.square = false;
 				}
 				break;
 	//btnRmv ------------------------------------------------------
@@ -277,16 +277,23 @@ public class Main extends FragmentActivity {
 					activaBotonesBorrar(false);
 					imagen.borra=true;
 					imagen.pinta = true;
+					imagen.square = false;
+					btnSq.setChecked(false);
+					btnSq.setEnabled(false);
+					btnSq.setText(strPoint);
 				}
 				else
 				{
 					btnRmv.setText(getResources().getString(R.string.btnRmv));
 					activaBotonesBorrar(true);
 					imagen.borra=false;
-					if(btnAdd.isChecked())
+					if(btnAdd.isChecked()){
 						imagen.pinta=true;
-					else
+						btnSq.setEnabled(true);
+					}
+					else{
 						imagen.pinta=false;
+					}
 				}
 				break;
 			
@@ -351,7 +358,6 @@ public class Main extends FragmentActivity {
 			btnAdd.setText(strAdd);
 		else
 			btnAdd.setText(strMove);
-		Log.d("btnAdd.isChecked()",""+imagen.pinta);
 	}
 	/** Enable or disable buttons depending delete Button*/
 	void activaBotonesBorrar(boolean b){

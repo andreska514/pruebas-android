@@ -1,2 +1,6 @@
 1418127383862	Delete element
 1418293990940	Rename type 'Dialogo'
+1418379053136	Rename type 'Square'
+1418381995974	Rename field 'listaSquare'
+1418382061299	Rename local variable 'lastSquare'
+1418388407316	Rename method 'borraCoordenadas'

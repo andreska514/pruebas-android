@@ -12,17 +12,17 @@
 		<item value="true" key="casesensitive"/>
 		<item value="false" key="isRegEx"/>
 		<item value="false" key="incremental"/>
-		<item value="true" key="wholeword"/>
-		<item value="btnSq" key="selection"/>
+		<item value="false" key="wholeword"/>
+		<item value="delC" key="selection"/>
 		<list key="findhistory">
-			<item value="btnSq"/>
-			<item value="btnSq.setT"/>
-			<item value="strAdd"/>
-			<item value="Toast"/>
-			<item value="toast"/>
-			<item value="imagen descargada"/>
-			<item value="limitCorners"/>
-			<item value="getImageWidth"/>
+			<item value="delC"/>
+			<item value="saveSquare"/>
+			<item value="Log.i"/>
+			<item value="mueveCoor"/>
+			<item value="listaMarcas"/>
+			<item value="guardaCoord"/>
+			<item value="guardaCoorde"/>
+			<item value="Log"/>
 		</list>
 		<list key="replacehistory">
 		</list>
