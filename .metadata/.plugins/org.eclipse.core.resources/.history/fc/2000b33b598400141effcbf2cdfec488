@@ -133,6 +133,7 @@ public class Imagen extends ImageView {
 			}
 		}
 		if(listaRelativeSquare.size()>0){
+			//Log.i("----------------","-----------------------");
 			for (RelativeSquare sq:listaRelativeSquare){
 				float laX = sq.iniX;
 				float laY = sq.iniY;
@@ -177,6 +178,8 @@ public class Imagen extends ImageView {
 		
 		float lado;
 		for(int i=0;i<listaRelativeSquare.size(); i++){
+		//for(int i=sizeSquare-1; i>=0; i--){
+			Log.i("0 squares","squares = "+listaRelativeSquare.size());
 			RelativeSquare r1 = listaRelativeSquare.get(i);
 			lado = r1.finX - r1.iniX;
 			float difIniX = Math.abs(evX-r1.iniX);
@@ -209,6 +212,7 @@ public class Imagen extends ImageView {
 			}
 			else{
 				
+				//Log.i("fallo","posicion erronea");
 			}
 			
 		}
@@ -290,6 +294,7 @@ public class Imagen extends ImageView {
 						calculaCoordenadasImagen(event);
 						absInicioX = lastTouchX;
 						absInicioY = lastTouchY;
+						Log.i("absInicioX=lastTouchX",""+absInicioX);
 					}
 					break;
 				case MotionEvent.ACTION_UP:
@@ -298,6 +303,7 @@ public class Imagen extends ImageView {
 					calculaCoordenadasImagen(event);
 					absFinalX = lastTouchX;
 					absFinalY = lastTouchY;
+					Log.i("absFinalX=lastTouchX",""+absFinalX);
 					saveSquare(inicioX,inicioY,finalX,finalY);
 					break;
 			}
@@ -438,18 +444,21 @@ public class Imagen extends ImageView {
 			float[]coorIni = new float[2];
 			coorIni[0]=absSq.iniX;
 			coorIni[1]=absSq.iniY;
-
+			//Log.i("coorIni antes",coorIni[0]+"-"+coorIni[1]);
 			matrix.mapPoints(coorIni);
 			relSq.iniX = coorIni[0];
 			relSq.iniY = coorIni[1];
-
+			//Log.i("coorIni despues",coorIni[0]+"/"+coorIni[1]);
+			
 			//coord finales
 			float[]coorFin = new float[2];
 			coorFin[0]=absSq.finX;
 			coorFin[1]=absSq.finY;
+			//Log.i("coorFin antes",coorFin[0]+"/"+coorFin[1]);
 			matrix.mapPoints(coorFin);
 			relSq.finX = coorFin[0];
 			relSq.finY = coorFin[1];
+			//Log.i("coorFin despues",coorFin[0]+"/"+coorFin[1]);
 			listaRelativeSquare.set(i, relSq);
 		}
 	}
@@ -567,7 +576,7 @@ public class Imagen extends ImageView {
 			}
 		}
 		
-		Log.d("finalJson",""+finalJson);
+		Log.i("finalJson",""+finalJson);
 		
 	}
 	
