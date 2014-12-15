@@ -10,6 +10,9 @@
     <string name="btnFin">terminer la tâche</string>
     <string name="btnFin2">nouvelle tâche</string>
     <string name="btnRes">recommencer</string>
+    <string name="btnSq">Point/Groupe</string>
+    <string name="btnSq2">Point/Groupe</string>
+    
     <string name="title_activity_imagen">Imagen</string>
     <string name="title_activity_segunda">Segunda</string>
     <string name="progressBar">télécharge l\'image</string>

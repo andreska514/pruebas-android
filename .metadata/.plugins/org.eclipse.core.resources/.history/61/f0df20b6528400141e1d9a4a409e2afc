@@ -37,16 +37,19 @@ import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.style.StyleSpan;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 public class Main extends FragmentActivity {
 	
-	//static boolean inicio = true;
+	static boolean inicio = true;
 	Bitmap bitmapBase, bitmapBaseNeg;
+
 	String post = "http://sun4allmobile.socientize.eu/api/image";
 	
 	Context mainContext ;
@@ -57,23 +60,16 @@ public class Main extends FragmentActivity {
 	static public int contador = 0;
 	static TextView txtCont;
 	TextView txtSpots;
-	
+	//variables
 	Imagen imagen;
-	
-	Button btnInv;
-	Button btnFin;
-	Button btnRes;
-	ToggleButton btnAdd;  
-	ToggleButton btnRmv;
-	ToggleButton btnSq;
+	Button btnInv, btnFin, btnRes;
+	ToggleButton btnAdd, btnRmv;
 
 	LinearLayout layout1, layout2;
 	String cadena;
 	static String cadUrl;
 	Editable strMove;
 	Editable strAdd;
-	Editable strPoint;
-	Editable strSquare;
 
 	static int width;
 	static int height;
@@ -140,7 +136,7 @@ public class Main extends FragmentActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		//inicio=true;
+		inicio=true;
 		imagen = (Imagen) findViewById(R.id.ImgFoto);
 		
 		txtCont = (TextView) findViewById(R.id.txtCont);
@@ -149,40 +145,34 @@ public class Main extends FragmentActivity {
 		
 		btnAdd =(ToggleButton)findViewById(R.id.btnAdd);
 		btnRmv =(ToggleButton)findViewById(R.id.btnRmv);
-		btnSq = (ToggleButton)findViewById(R.id.btnSq);
 		btnFin =(Button)findViewById(R.id.btnFin);
 		btnInv =(Button)findViewById(R.id.btnInv);
 		btnRes =(Button)findViewById(R.id.btnRes);
 
 		btnAdd.setOnClickListener(clickToggle);
 		btnRmv.setOnClickListener(clickToggle);
-		btnSq.setOnClickListener(clickToggle);
 		btnFin.setOnClickListener(clickBoton);
 		btnInv.setOnClickListener(clickBoton);
 		btnRes.setOnClickListener(clickBoton);
-		
-		btnSq.setEnabled(false);
 
 		layout1 = (LinearLayout)findViewById(R.id.layout1);
 		layout2 = (LinearLayout)findViewById(R.id.layour2);
 		
 		mainContext = getApplicationContext();
 		
-		nuevaImagen();
 		
 		/** Change the button add/move depending the language*/
 		setLanguageAdd();
-		setLanguageSquare();
-		//activaBotonesInicio(false);
+		activaBotonesInicio(false);
 		changeColors();
 	}
 	/** Change to white if true/ black if false*/
 	void changeColors(){
+		Log.i("changeColors","imagen.inverted = "+imagen.inverted);
 		if(!imagen.inverted){
 			layout1.setBackgroundColor(Color.WHITE);
 			layout2.setBackgroundColor(Color.WHITE);
 			btnAdd.setTextColor(Color.BLACK);
-			btnSq.setTextColor(Color.BLACK);
 			btnRmv.setTextColor(Color.BLACK);
 			btnInv.setTextColor(Color.BLACK);
 			btnFin.setTextColor(Color.BLACK);
@@ -197,21 +187,16 @@ public class Main extends FragmentActivity {
 			layout2.setBackgroundColor(Color.BLACK);
 			
 			btnAdd.setTextColor(Color.WHITE);
-			btnSq.setTextColor(Color.WHITE);
 			btnRmv.setTextColor(Color.WHITE);
 			btnInv.setTextColor(Color.WHITE);
 			btnFin.setTextColor(Color.WHITE);
 			btnRes.setTextColor(Color.WHITE);
-			
 			txtCont.setTextColor(Color.WHITE);
 			txtSpots.setTextColor(Color.WHITE);
 			imagen.postInvalidate();
 		}
 		if(!btnAdd.isEnabled()){
 			btnAdd.setTextColor(Color.GRAY);
-		}
-		if(!btnSq.isEnabled()){
-			btnSq.setTextColor(Color.GRAY);
 		}
 		if(!btnRmv.isEnabled()){
 			btnRmv.setTextColor(Color.GRAY);
@@ -226,44 +211,28 @@ public class Main extends FragmentActivity {
 			btnRes.setTextColor(Color.GRAY);
 		}
 	}
-	/**Clicks on toggleButtons(add,square, Rmv*/
+
+	/**Clicks on toggleButtons(add, Rmv*/
 	View.OnClickListener clickToggle = (new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
 			switch(v.getId()){
-	//btnAdd -----------------------------------------------------
 			case R.id.btnAdd:
-				imagen.borra=false; 
+				imagen.borra=false;
 				if(btnAdd.isChecked())//add sunspot
 				{
 					btnAdd.setText(strAdd);
 					imagen.pinta = true;
-					btnSq.setChecked(false);//add point
-					btnSq.setEnabled(true);
-					btnSq.setText(strPoint);
+					Log.d("btnAdd.isChecked()",""+imagen.pinta);
 				}
 				else//move
 				{
 					btnAdd.setText(strMove);
 					imagen.pinta = false;
-					btnSq.setChecked(false);
-					btnSq.setEnabled(false);
-					btnSq.setText(strPoint);
-					imagen.square = false;
+					Log.d("btnAdd.isChecked()",""+imagen.pinta);
 				}
 				break;//fin case btnAdd
-	//btnSq -------------------------------------------------------
-			case R.id.btnSq:
-				if(btnSq.isChecked()){ 
-					btnSq.setText(strSquare);
-					imagen.square = true;
-				}
-				else{
-					btnSq.setText(strPoint);
-					imagen.square = false;
-				}
-				break;
-	//btnRmv ------------------------------------------------------
+
 			case R.id.btnRmv:
 				if(btnRmv.isChecked())
 				{
@@ -271,26 +240,18 @@ public class Main extends FragmentActivity {
 					activaBotonesBorrar(false);
 					imagen.borra=true;
 					imagen.pinta = true;
-					imagen.square = false;
-					btnSq.setChecked(false);
-					btnSq.setEnabled(false);
-					btnSq.setText(strPoint);
 				}
 				else
 				{
 					btnRmv.setText(getResources().getString(R.string.btnRmv));
 					activaBotonesBorrar(true);
 					imagen.borra=false;
-					if(btnAdd.isChecked()){
+					if(btnAdd.isChecked())
 						imagen.pinta=true;
-						btnSq.setEnabled(true);
-					}
-					else{
+					else
 						imagen.pinta=false;
-					}
 				}
 				break;
-			
 			}
 			changeColors();
 		}
@@ -300,13 +261,16 @@ public class Main extends FragmentActivity {
 		@Override
 		public void onClick(View v) {
 			switch(v.getId()){
-			case R.id.btnFin:	
-				if(imagen.bitmap==null){
-					DialogoNoInternet dialogo = new DialogoNoInternet();
-					dialogo.show(getSupportFragmentManager(), "tagAlerta");
-				}
-				else{
-					DialogoFinalizar dialogo = new DialogoFinalizar();
+			case R.id.btnFin:
+				if(inicio){
+					String [] cadenas = getRandomUrl();
+					imagen.preparaDescarga(cadenas);
+					imagen.postInvalidate();
+					btnFin.setText(R.string.btnFin);
+					activaBotonesInicio(true);
+					inicio=false;
+				}else{
+					Dialogo dialogo = new Dialogo();
 					dialogo.show(getSupportFragmentManager(), "tagAlerta");
 				}
 				break;
@@ -322,18 +286,10 @@ public class Main extends FragmentActivity {
 			imagen.postInvalidate();
 		}
 	});
-	void nuevaImagen(){
-		String [] cadenas = getRandomUrl();
-		imagen.preparaDescarga(cadenas);
-		imagen.postInvalidate();
-	}
 	/** clear imagen.listaPtos & imagen.listaMarcas; change btnAdd*/
 	void vaciaCoordenadas(){
 		imagen.listaPtos.clear();
 		imagen.listaMarcas.clear();
-		imagen.listaAbsoluteSquare.clear();
-		imagen.listaRelativeSquare.clear();
-		imagen.square=false;
 		cambiaAdd(false);
 	}
 	/** change the string of add Button*/
@@ -344,28 +300,26 @@ public class Main extends FragmentActivity {
 			btnAdd.setText(strAdd);
 		else
 			btnAdd.setText(strMove);
+		Log.d("btnAdd.isChecked()",""+imagen.pinta);
 	}
 	/** Enable or disable buttons depending delete Button*/
 	void activaBotonesBorrar(boolean b){
 		btnAdd.setEnabled(b);
-		btnSq.setEnabled(b);
 		btnInv.setEnabled(b);
 		btnFin.setEnabled(b);
 		btnRes.setEnabled(b);
-		if(!btnAdd.isChecked())
-			btnSq.setEnabled(false);
 	}
 	/** Enable or disable buttons depending if the task is started*/
-	/*void activaBotonesInicio(boolean b){
+	void activaBotonesInicio(boolean b){
 		btnAdd.setEnabled(b);
-		btnSq.setEnabled(b);
 		btnRmv.setEnabled(b);
 		btnInv.setEnabled(b);
 		btnRes.setEnabled(b);
-		if(!btnAdd.isChecked())
-			btnSq.setEnabled(false);
-	}*/
-
+	}
+	/** Show a toast with the message passed on 's' and 'ms' milliseconds*/
+	void toast(String s, int ms){
+		Toast.makeText(getApplicationContext(), s, ms).show();
+	}
 	/** Set the String and font of btnAdd depending user language*/
 	void setLanguageAdd(){
 		Locale current = getResources().getConfiguration().locale;
@@ -403,81 +357,8 @@ public class Main extends FragmentActivity {
 		}
 		btnAdd.setText(strMove);
 	}
-	
-	void setLanguageSquare(){
-		Locale current = getResources().getConfiguration().locale;
-		/** español*/
-		if (current.getLanguage().equals("es")){
-			//cadena = "Mover imagen/añadir mancha";
-			cadena = "Punto/Grupo";
-			strPoint = Editable.Factory.getInstance().newEditable(cadena);
-			strSquare = Editable.Factory.getInstance().newEditable(cadena);
-			strPoint.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),0,5,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-			strSquare.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),6,11,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-		}
-		/** italiano*/
-		else if(current.getLanguage().equals("it")){
-			//cadena = "Spostare l'immagine/Aggiungi macchia solare";
-			cadena = "Punto/Gruppo";
-			strPoint = Editable.Factory.getInstance().newEditable(cadena);
-			strSquare = Editable.Factory.getInstance().newEditable(cadena);
-			strPoint.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),0,5,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-			strSquare.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),6,12,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-		}
-		/** français*/
-		else if(current.getLanguage().equals("fr")){
-			//cadena = "Déplacez l'image/Ajouter taches solaires";
-			cadena = "Point/Groupe";
-			strPoint = Editable.Factory.getInstance().newEditable(cadena);
-			strSquare = Editable.Factory.getInstance().newEditable(cadena);
-			strPoint.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),0,5,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-			strSquare.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),6,12,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-		}
-		/** english(default)*/
-		else{
-			//cadena = "Move image/Add Sunspot";
-			cadena = "Point/Group";
-			strPoint = Editable.Factory.getInstance().newEditable(cadena);
-			strSquare = Editable.Factory.getInstance().newEditable(cadena);
-			strPoint.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),0,5,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-			strSquare.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),6,11,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-		}
-		btnSq.setText(strPoint);
-	}
-	/** This class ask the user if he want try the download again*/
-	class DialogoNoInternet extends DialogFragment{
-		@Override
-		public Dialog onCreateDialog(Bundle savedInstanceState){
-			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-			builder.setMessage(getResources().getString(R.string.dialogInternet))
-			.setTitle(getResources().getString(R.string.dialogTitleInternet))
-			.setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int id) {
-					
-					//borra ptos y pasa a modo mover
-					vaciaCoordenadas();
-					btnFin.setText(R.string.btnFin2);
-					dialog.cancel();
-					imagen.inverted=false;
-					vaciaCoordenadas();
-					nuevaImagen();
-					changeColors();
-					imagen.postInvalidate();
-				}
-			})
-			.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
-				
-				@Override
-				public void onClick(DialogInterface dialog, int id) {
-					dialog.cancel();	
-				}
-			});
-			return builder.create();
-		}
-	}
 	/** This class ask the user if he want finalize the task and start another*/
-	class DialogoFinalizar extends DialogFragment {
+	class Dialogo extends DialogFragment {
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState){
 			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -486,24 +367,25 @@ public class Main extends FragmentActivity {
 			.setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int id) {
-					
-					if(imagen.bitmap!=null){
-						imagen.prepareJson();//envia listaMarcas()+id Imagen
-						JSONObject json = imagen.finalJson;
-						try{
-							new makeRequest().execute(json);
-						}catch(Exception e){
-							e.printStackTrace();
-						}
+					//envia listaMarcas()+id Imagen
+					imagen.prepareJson();
+					JSONObject json = imagen.finalJson;
+					try{
+						//HttpResponse htRes = makeRequest(post, json);
+						new makeRequest().execute(json);
+						
+					}catch(Exception e){
+						e.printStackTrace();
 					}
 					//borra ptos y pasa a modo mover
 					vaciaCoordenadas();
 					btnFin.setText(R.string.btnFin2);
+					activaBotonesInicio(false);
+					inicio=true;
 					dialog.cancel();
 					imagen.inverted=false;
 					vaciaCoordenadas();
-					imagen.bitmap= null;
-					nuevaImagen();
+					imagen.bitmap=imagen.inicial;
 					changeColors();
 					imagen.postInvalidate();
 				}

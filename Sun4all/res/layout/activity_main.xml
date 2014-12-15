@@ -44,11 +44,26 @@
 				android:textOff="@string/btnRmv"
      			android:layout_weight = "2" />
      	</LinearLayout>
-     	<Button android:id="@+id/btnInv"
-         	android:layout_width="match_parent"
-     		android:layout_height="match_parent"
-     		android:text="@string/btnInv"
-     		android:layout_weight = "2" />
+     	
+     	
+     	<LinearLayout
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       android:orientation="horizontal"  
+       android:layout_weight = "2">
+         	
+         	<ToggleButton android:id="@+id/btnSq"
+         	    android:layout_width="match_parent"
+	     		android:layout_height="match_parent"
+	     		android:textOn="@string/btnSq" 
+				android:textOff="@string/btnSq2"	    
+	     		android:layout_weight = "2" />
+         	<Button android:id="@+id/btnInv"
+	         	android:layout_width="match_parent"
+	     		android:layout_height="match_parent"
+	     		android:text="@string/btnInv"
+	     		android:layout_weight = "2" />
+     	</LinearLayout>
      	
      </LinearLayout>
      <!-- parte dcha-->

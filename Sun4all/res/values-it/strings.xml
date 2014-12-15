@@ -11,6 +11,9 @@
     <string name="btnFin">Finire il compito</string>
     <string name="btnFin2">nuova attività</string>
     <string name="btnRes">ricominciare</string>
+    <string name="btnSq">Punto/Gruppo</string>
+    <string name="btnSq2">Punto/Gruppo</string>
+    
     <string name="title_activity_imagen">Imagen</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_segunda">Segunda</string>

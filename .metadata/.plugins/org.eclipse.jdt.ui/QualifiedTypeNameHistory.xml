@@ -30,7 +30,6 @@
 <fullyQualifiedTypeName name="com.andres.sun4all.Main.makeRequest"/>
 <fullyQualifiedTypeName name="android.widget.Toast"/>
 <fullyQualifiedTypeName name="com.andres.sun4all.R.string"/>
-<fullyQualifiedTypeName name="org.json.JSONObject"/>
 <fullyQualifiedTypeName name="android.content.Context"/>
 <fullyQualifiedTypeName name="com.example.orientacion.R.id"/>
 <fullyQualifiedTypeName name="android.widget.Spinner"/>
@@ -58,6 +57,7 @@
 <fullyQualifiedTypeName name="android.graphics.Color"/>
 <fullyQualifiedTypeName name="com.andres.sun4allCuadrado.Imagen.Square"/>
 <fullyQualifiedTypeName name="android.graphics.Paint.Style"/>
-<fullyQualifiedTypeName name="com.andres.sun4allCuadrado.Imagen.AbsoluteSquare"/>
 <fullyQualifiedTypeName name="com.andres.sun4allCuadrado.Imagen.RelativeSquare"/>
+<fullyQualifiedTypeName name="com.andres.sun4allCuadrado.Imagen.AbsoluteSquare"/>
+<fullyQualifiedTypeName name="org.json.JSONObject"/>
 </qualifiedTypeNameHistroy>

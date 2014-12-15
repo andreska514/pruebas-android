@@ -13,16 +13,16 @@
 		<item value="false" key="isRegEx"/>
 		<item value="false" key="incremental"/>
 		<item value="false" key="wholeword"/>
-		<item value="delC" key="selection"/>
+		<item value="sun4all" key="selection"/>
 		<list key="findhistory">
+			<item value="sun4all"/>
+			<item value="Sun4all"/>
+			<item value="clickCu"/>
+			<item value="lax"/>
+			<item value="laX"/>
+			<item value="abs"/>
 			<item value="delC"/>
 			<item value="saveSquare"/>
-			<item value="Log.i"/>
-			<item value="mueveCoor"/>
-			<item value="listaMarcas"/>
-			<item value="guardaCoord"/>
-			<item value="guardaCoorde"/>
-			<item value="Log"/>
 		</list>
 		<list key="replacehistory">
 		</list>

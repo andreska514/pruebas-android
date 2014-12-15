@@ -8,7 +8,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
 import android.os.AsyncTask;
 import android.util.AttributeSet;
 import android.util.FloatMath;
@@ -19,10 +18,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.Paint.Style;
 import android.graphics.PointF;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -48,31 +45,14 @@ public class Imagen extends ImageView {
 	int lastTouchX;
 	int lastTouchY;
 	
-	float inicioX;
-	float inicioY;
-	float finalX;
-	float finalY;
-	
-	int absInicioX;
-	int absInicioY;
-	int absFinalX;
-	int absFinalY;
-	
 	int viewWidth, viewHeight;
 	
 	boolean inverted = false;
 	boolean pinta = false;
 	boolean borra = false;
-	boolean square = false;
-	
-	boolean point=true;
-	/** array of absolute coordinates*/
+	/** array of absolute and relative coordinates*/
 	ArrayList <Marking> listaPtos = new ArrayList<Marking>(); 
-	/** array of relative coordinates*/
 	ArrayList <Mark> listaMarcas = new ArrayList<Mark>();
-	
-	ArrayList <RelativeSquare> listaRelativeSquare = new ArrayList<RelativeSquare>();
-	ArrayList <AbsoluteSquare> listaAbsoluteSquare = new ArrayList<AbsoluteSquare>();
 	
 	MotionEvent lastEvent;
 	Context context;
@@ -81,7 +61,6 @@ public class Imagen extends ImageView {
 	Bitmap positivo;
 	Bitmap negativo;
 	Bitmap cruz = BitmapFactory.decodeResource(getResources(), R.drawable.cruz);
-	Paint pincelSquare = new Paint();
 	
 	ProgressDialog pDialog;
 	JSONObject finalJson;
@@ -89,11 +68,9 @@ public class Imagen extends ImageView {
 	/** Method used within Constructors*/
 	public void init(){
 		inicial = BitmapFactory.decodeResource(getResources(), R.drawable.sol);
+		bitmap= inicial;
+		Log.d("entrada","1");
 		setOnTouchListener(clickImagen);
-		resetSquareCoordinates();
-		pincelSquare.setColor(Color.BLUE);
-		pincelSquare.setStyle(Style.STROKE);
-		pincelSquare.setStrokeWidth(3);
 	}
 	/** Constructor 1*/
 	public Imagen(Context c, AttributeSet attr) {
@@ -111,110 +88,45 @@ public class Imagen extends ImageView {
 	@Override
 	public void onDraw(Canvas c){
 		String s = getResources().getString(R.string.sunspot);
-		if(bitmap!=null){
-			limitCorners();
-			c.drawBitmap(bitmap, matrix, new Paint());
-		}
+		limitCorners();
+		c.drawBitmap(bitmap, matrix, new Paint());
 		Main.txtCont.setText(s+listaMarcas.size());
 		if(pinta){
-			if(!square)
-				this.setOnTouchListener(clickPinta);
-			else
-				this.setOnTouchListener(clickCuadrado);
+			this.setOnTouchListener(clickPinta);
 		}
 		else{
 			this.setOnTouchListener(clickImagen);
 		}
-		if(listaPtos.size()>0){
+		if(listaPtos!=null){
 			for(Mark mark:listaMarcas){	
 				float laX = mark.x-(cruz.getWidth()/2);
 				float laY = mark.y-(cruz.getHeight()/2);
 				c.drawBitmap(cruz, laX, laY, new Paint());
-			}
-		}
-		if(listaRelativeSquare.size()>0){
-			//Log.i("----------------","-----------------------");
-			for (RelativeSquare sq:listaRelativeSquare){
-				float laX = sq.iniX;
-				float laY = sq.iniY;
-				float lado = sq.finX-sq.iniX;
-				c.drawRect(laX, laY, laX+lado, laY+lado, pincelSquare);
+				//c.drawBitmap(cruz, mark.x, mark.y, new Paint());
 			}
 		}
 	}
-	/** Save relative and absolute coordinates in listaMarcas/listaPtos*/
+	/** Save absolute coordinates in listaPtos*/
+	void guardaCoordenadas(int x, int y){
+		Marking m = new Marking(x,y);
+		listaPtos.add(m);
+	}
+	/** Save relative coordinates in listaMarcas*/
 	void saveCoordinates(float x, float y){
-		//relative coordinates
-		Mark mark = new Mark(x,y);
-		listaMarcas.add(mark);
+		Mark m = new Mark(x,y);
+		listaMarcas.add(m);
 		Main.txtCont.setText(x+"-"+y);
-		
-		//absolute coordinates
-		Marking marking = new Marking(lastTouchX,lastTouchY);
-		listaPtos.add(marking);
+		guardaCoordenadas(lastTouchX,lastTouchY);
 	}
 	/** Delete coordinates near touch event(less than 50px)*/
-	void delCoordinates(View v, MotionEvent event){
-		float evX = event.getX();
-		float evY = event.getY();
-		for (int i=0; i<listaPtos.size(); i++){
-		//for (int i=listaPtos.size()-1; i>=0; i--){
-			/*if(Math.sqrt(
+	void borraCoordenadas(View v, MotionEvent event){
+		for (int i=listaPtos.size()-1; i>=0; i--){
+			if(Math.sqrt(
 			Math.pow((event.getX()-listaMarcas.get(i).x), 2)
-			+Math.pow((event.getY()-listaMarcas.get(i).y), 2)) < 20)
-			{
-				listaMarcas.remove(i);
-				listaPtos.remove(i);
-			}*/
-			Mark m = listaMarcas.get(i);
-			float marX = m.x;
-			float marY = m.y;
-			if(Math.abs(evX-marX)+Math.abs(evY-marY)<50){
+			+Math.pow((event.getY()-listaMarcas.get(i).y), 2)) < 50){
 				listaMarcas.remove(i);
 				listaPtos.remove(i);
 			}
-		}
-		//hasta aqui no tocar
-		
-		float lado;
-		for(int i=0;i<listaRelativeSquare.size(); i++){
-		//for(int i=sizeSquare-1; i>=0; i--){
-			Log.i("0 squares","squares = "+listaRelativeSquare.size());
-			RelativeSquare r1 = listaRelativeSquare.get(i);
-			lado = r1.finX - r1.iniX;
-			float difIniX = Math.abs(evX-r1.iniX);
-			float difIniY = Math.abs(evY-r1.iniY);
-			float difFinX = Math.abs(evX-r1.finX);
-			float difFinY = Math.abs(evY-r1.finY);
-			if((difIniX)<25){
-				if (evY>=r1.iniY && evY<=r1.iniY+lado){
-					listaRelativeSquare.remove(i);
-					listaAbsoluteSquare.remove(i);
-				}
-			}
-			else if((difIniY)<25){
-				if (evX>=r1.iniX && evX<=r1.iniX+lado){
-					listaRelativeSquare.remove(i);
-					listaAbsoluteSquare.remove(i);
-				}
-			}
-			else if((difFinX)<25){
-				if (evY<=r1.finY && evY>=r1.finY-lado){
-					listaRelativeSquare.remove(i);
-					listaAbsoluteSquare.remove(i);
-				}
-			}
-			else if((difFinY)<25){
-				if (evX<=r1.finX && evX>=r1.finX-lado){
-					listaRelativeSquare.remove(i);
-					listaAbsoluteSquare.remove(i);
-				}
-			}
-			else{
-				
-				//Log.i("fallo","posicion erronea");
-			}
-			
 		}
 	}
 	/** Enable move mode when touch the imageView*/
@@ -258,8 +170,7 @@ public class Imagen extends ImageView {
 			        limitCorners();
 			        break;
 		    }//end switch
-		    mueveCoordenadas();
-		    mueveCuadrados();
+		    mueveCoordenadas(event);
 		    invalidate();
 		    return true;
 		}//end OnTouch
@@ -268,65 +179,20 @@ public class Imagen extends ImageView {
 	View.OnTouchListener clickPinta = new View.OnTouchListener() {
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
-			if(event.getAction()==MotionEvent.ACTION_DOWN){
+			if(event.getAction()==MotionEvent.ACTION_UP){
 				calculaCoordenadasImagen(event);
-				if(!borra){ 
+				if(!borra){
 					saveCoordinates(event.getX(),event.getY());
 					Main.txtCont.setText("getX"+event.getX() +" getX"+event.getY());
 				}
 				else{
-					delCoordinates(v, event);
+					borraCoordenadas(v, event);
 				}
 			}
 			invalidate();
 			return true;
 		}//end onTouch
 	};//end onTouchListener
-	/** enable paint Squares touching the screen*/
-	View.OnTouchListener clickCuadrado = new View.OnTouchListener() {
-		@Override
-		public boolean onTouch(View v, MotionEvent event) {
-			switch(event.getAction() & MotionEvent.ACTION_MASK){
-				case MotionEvent.ACTION_DOWN:
-					if(inicioX==-1){
-						inicioX= event.getX();
-						inicioY= event.getY();
-						calculaCoordenadasImagen(event);
-						absInicioX = lastTouchX;
-						absInicioY = lastTouchY;
-						Log.i("absInicioX=lastTouchX",""+absInicioX);
-					}
-					break;
-				case MotionEvent.ACTION_UP:
-					finalX = event.getX();
-					finalY = event.getY();
-					calculaCoordenadasImagen(event);
-					absFinalX = lastTouchX;
-					absFinalY = lastTouchY;
-					Log.i("absFinalX=lastTouchX",""+absFinalX);
-					saveSquare(inicioX,inicioY,finalX,finalY);
-					break;
-			}
-			invalidate();
-			return true;
-		}//end OnTouch
-	};//end OnTouchListener
-	void resetSquareCoordinates(){
-		inicioX=-1;
-		inicioY=-1;
-		finalX=-1;
-		finalY=-1;
-	}
-	void saveSquare(float iniX, float iniY, float finX, float finY){
-		//relative
-		RelativeSquare relSquare = new RelativeSquare(iniX, iniY, finX, finY);
-		listaRelativeSquare.add(relSquare);
-		//absolute
-		AbsoluteSquare absSquare = new AbsoluteSquare(absInicioX, absInicioY, absFinalX, absFinalY);
-		listaAbsoluteSquare.add(absSquare);
-		//reiniciamos
-		resetSquareCoordinates();
-	}
 	/** Set the new zoom of matrix*/
 	void setZoom(float zoom){
     	float[] values = new float[9];
@@ -422,7 +288,7 @@ public class Imagen extends ImageView {
 		lastTouchY = Math.abs((int) ((e.getY() + transY) / scaleY));
 	}
 	/** Move the relative coordinates when the image was moved*/
-	void mueveCoordenadas(){
+	void mueveCoordenadas(MotionEvent event){
 		for (int i=0; i<listaPtos.size();i++){
 			Marking pto = listaPtos.get(i);
 			Mark mark = listaMarcas.get(i);
@@ -433,33 +299,6 @@ public class Imagen extends ImageView {
 			mark.setX(coor[0]);
 			mark.setY(coor[1]);
 			listaMarcas.set(i, mark);
-		}
-	}
-	void mueveCuadrados(){
-		for(int i=0; i<listaAbsoluteSquare.size(); i++){
-			AbsoluteSquare absSq = listaAbsoluteSquare.get(i);
-			RelativeSquare relSq = listaRelativeSquare.get(i);
-			
-			//coord iniciales
-			float[]coorIni = new float[2];
-			coorIni[0]=absSq.iniX;
-			coorIni[1]=absSq.iniY;
-			//Log.i("coorIni antes",coorIni[0]+"-"+coorIni[1]);
-			matrix.mapPoints(coorIni);
-			relSq.iniX = coorIni[0];
-			relSq.iniY = coorIni[1];
-			//Log.i("coorIni despues",coorIni[0]+"/"+coorIni[1]);
-			
-			//coord finales
-			float[]coorFin = new float[2];
-			coorFin[0]=absSq.finX;
-			coorFin[1]=absSq.finY;
-			//Log.i("coorFin antes",coorFin[0]+"/"+coorFin[1]);
-			matrix.mapPoints(coorFin);
-			relSq.finX = coorFin[0];
-			relSq.finY = coorFin[1];
-			//Log.i("coorFin despues",coorFin[0]+"/"+coorFin[1]);
-			listaRelativeSquare.set(i, relSq);
 		}
 	}
 	/** Change the bitmap(take the source)*/
@@ -497,9 +336,6 @@ public class Imagen extends ImageView {
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
-			bitmap=null;
-			positivo=null;
-			negativo=null;
 			pDialog = new ProgressDialog((Main)context);
 			pDialog.setMessage(getResources().getString(R.string.progressBar));
 			pDialog.show();
@@ -518,12 +354,15 @@ public class Imagen extends ImageView {
 		protected void onPostExecute(Bitmap image) {
 			if(image != null){
 				bitmap = image;
+				
 				invalidate();
+				
 				pDialog.dismiss();
+				//Toast.makeText(context, "Image Downloaded correctly", Toast.LENGTH_SHORT).show();
 				Toast.makeText(context, getResources().getString(R.string.downloadOK), Toast.LENGTH_SHORT).show();
-			}
-			else{
+			}else{
 				pDialog.dismiss();
+				//Toast.makeText(context, "Image Does Not exist or Network Error", Toast.LENGTH_SHORT).show();
 				Toast.makeText(context, getResources().getString(R.string.downloadError), Toast.LENGTH_SHORT).show();
 			}
 		}
@@ -532,31 +371,17 @@ public class Imagen extends ImageView {
 	void prepareJson(){
 		if(listaPtos.size()>0){
 			JSONArray coorJson= new JSONArray();
-			
 			for(int x=0; x<listaPtos.size();x++){
 				Marking ptos = listaPtos.get(x);
 				JSONObject tempJson = new JSONObject();
 				try{
 					tempJson.put("x", ptos.getX());
 					tempJson.put("y", ptos.getY());
-					tempJson.put("width", 0);
 				}catch(JSONException jEx){
 					jEx.printStackTrace();
 				}
 				coorJson.put(tempJson);
-			}
-			
-			for(int x=0; x< listaAbsoluteSquare.size();x++){
-				AbsoluteSquare as = listaAbsoluteSquare.get(x);
-				JSONObject tempJson = new JSONObject();
-				try{
-					tempJson.put("x", as.iniX);
-					tempJson.put("y", as.iniY);
-					tempJson.put("width", as.finX-as.iniX);
-				}catch(JSONException jEx){
-					jEx.printStackTrace();
-				}
-				coorJson.put(tempJson);
+				
 			}
 			
 			finalJson = new JSONObject();
@@ -580,7 +405,7 @@ public class Imagen extends ImageView {
 		
 	}
 	
-	/** absolute coordinates*/
+	/** this clases save coordinates(relatives and absolutes)*/
 	class Marking{
 		int x;
 		int y;
@@ -602,7 +427,6 @@ public class Imagen extends ImageView {
 			this.y = y;
 		}
 	}
-	/** relative coordinates*/
 	class Mark{
 		float x;
 		float y;
@@ -625,24 +449,6 @@ public class Imagen extends ImageView {
 		}
 	}
 	
-	class AbsoluteSquare{
-		int iniX,iniY,finX,finY;
-		AbsoluteSquare(int inX, int inY, int fiX, int fiY){
-			iniX=inX;
-			iniY=inY;
-			finX=fiX;
-			finY=fiY;
-		}
-	
-	}
-	class RelativeSquare{
-		float iniX,iniY,finX,finY;
-		RelativeSquare(float inX, float inY, float fiX, float fiY){
-			iniX=inX;
-			iniY=inY;
-			finX=fiX;
-			finY=fiY;
-		}
-	}
 	
 }
+
