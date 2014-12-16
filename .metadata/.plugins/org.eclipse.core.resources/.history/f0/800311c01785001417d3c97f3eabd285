@@ -29,6 +29,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.ParseException;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
