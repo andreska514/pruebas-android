@@ -460,7 +460,7 @@ public class Main extends FragmentActivity {
 					
 					//borra ptos y pasa a modo mover
 					vaciaCoordenadas();
-					//btnFin.setText(R.string.btnFin2);
+					btnFin.setText(R.string.btnFin2);
 					dialog.cancel();
 					imagen.inverted=false;
 					vaciaCoordenadas();
@@ -501,7 +501,7 @@ public class Main extends FragmentActivity {
 					}
 					//borra ptos y pasa a modo mover
 					vaciaCoordenadas();
-					//btnFin.setText(R.string.btnFin2);
+					btnFin.setText(R.string.btnFin2);
 					dialog.cancel();
 					imagen.inverted=false;
 					vaciaCoordenadas();
