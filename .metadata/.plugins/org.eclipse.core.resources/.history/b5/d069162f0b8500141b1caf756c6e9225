@@ -286,7 +286,7 @@ public class Main extends FragmentActivity {
 						btnSq.setEnabled(true);
 					}
 					else{
-						imagen.pinta=false; 
+						imagen.pinta=false;
 					}
 				}
 				break;
@@ -311,15 +311,12 @@ public class Main extends FragmentActivity {
 				}
 				break;
 			/** invert image*/
-			case R.id.btnInv: 
+			case R.id.btnInv:
 				imagen.invertBitmap();
 				break;
 			case R.id.btnRes://reinicia imagen sin sunspots(start over)
 				vaciaCoordenadas();
 				imagen.setZoom(imagen.MIN_ZOOM);
-				btnSq.setChecked(false);
-				btnSq.setEnabled(false);
-				btnSq.setText(strPoint);
 			}
 			changeColors();
 			imagen.postInvalidate();

@@ -4,7 +4,6 @@ INDEX VERSION 1.126+/home/andres/Documentos/pruebas/.metadata/.plugins/org.eclip
 1377251446.index
 1270315800.index
 2854500906.index
-2988151771.index
 763124456.index
 2444545758.index
 3752989027.index
