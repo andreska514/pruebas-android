@@ -604,7 +604,7 @@ public class Imagen extends ImageView {
 			this.y = y;
 		}
 	}
-	/** Coordinates from absolute square*/
+	
 	class AbsoluteSquare{
 		int iniX,iniY,finX,finY;
 		AbsoluteSquare(int inX, int inY, int fiX, int fiY){
@@ -615,7 +615,6 @@ public class Imagen extends ImageView {
 		}
 	
 	}
-	/** Coordinates from relative square*/
 	class RelativeSquare{
 		float iniX,iniY,finX,finY;
 		RelativeSquare(float inX, float inY, float fiX, float fiY){

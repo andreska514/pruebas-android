@@ -156,7 +156,6 @@ public class Imagen extends ImageView {
 	void delCoordinates(View v, MotionEvent event){
 		float evX = event.getX();
 		float evY = event.getY();
-		float lado;
 		for (int i=0; i<listaPtos.size(); i++){
 			Mark m = listaMarcas.get(i);
 			float marX = m.x;
@@ -166,6 +165,9 @@ public class Imagen extends ImageView {
 				listaPtos.remove(i);
 			}
 		}
+		//hasta aqui no tocar
+		
+		float lado;
 		for(int i=0;i<listaRelativeSquare.size(); i++){
 			RelativeSquare r1 = listaRelativeSquare.get(i);
 			lado = r1.finX - r1.iniX;
@@ -245,7 +247,7 @@ public class Imagen extends ImageView {
 			        break;
 		    }//end switch
 		    mueveCoordenadas();
-		    moveSquares();
+		    mueveCuadrados();
 		    invalidate();
 		    return true;
 		}//end OnTouch
@@ -419,12 +421,12 @@ public class Imagen extends ImageView {
 			listaMarcas.set(i, mark);
 		}
 	}
-	void moveSquares(){
+	void mueveCuadrados(){
 		for(int i=0; i<listaAbsoluteSquare.size(); i++){
 			AbsoluteSquare absSq = listaAbsoluteSquare.get(i);
 			RelativeSquare relSq = listaRelativeSquare.get(i);
 			
-			/** ini coords*/
+			//coord iniciales
 			float[]coorIni = new float[2];
 			coorIni[0]=absSq.iniX;
 			coorIni[1]=absSq.iniY;
@@ -433,7 +435,7 @@ public class Imagen extends ImageView {
 			relSq.iniX = coorIni[0];
 			relSq.iniY = coorIni[1];
 
-			/** finals coords*/
+			//coord finales
 			float[]coorFin = new float[2];
 			coorFin[0]=absSq.finX;
 			coorFin[1]=absSq.finY;
@@ -451,6 +453,7 @@ public class Imagen extends ImageView {
 	/** Execute new LoadImage with the String passed */
 	void preparaDescarga(String [] s){
 		new LoadImage().execute(s);
+		//new LoadImage().execute("https://pybossa.socientize.eu/sun4all/sunimages/k1v_01_08_03_09h_30_E_C.jpg");
 	}
 	/** Invert the image(black-white)*/
 	void invertBitmap(){
@@ -604,7 +607,7 @@ public class Imagen extends ImageView {
 			this.y = y;
 		}
 	}
-	/** Coordinates from absolute square*/
+	
 	class AbsoluteSquare{
 		int iniX,iniY,finX,finY;
 		AbsoluteSquare(int inX, int inY, int fiX, int fiY){
@@ -615,7 +618,6 @@ public class Imagen extends ImageView {
 		}
 	
 	}
-	/** Coordinates from relative square*/
 	class RelativeSquare{
 		float iniX,iniY,finX,finY;
 		RelativeSquare(float inX, float inY, float fiX, float fiY){

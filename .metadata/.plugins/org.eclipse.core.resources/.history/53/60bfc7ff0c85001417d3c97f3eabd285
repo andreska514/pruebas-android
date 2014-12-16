@@ -45,6 +45,7 @@ import android.widget.ToggleButton;
 
 public class Main extends FragmentActivity {
 	
+	//static boolean inicio = true;
 	Bitmap bitmapBase, bitmapBaseNeg;
 	String post = "http://sun4allmobile.socientize.eu/api/image";
 	
@@ -74,6 +75,13 @@ public class Main extends FragmentActivity {
 	Editable strPoint;
 	Editable strSquare;
 
+	static int width;
+	static int height;
+	static Drawable d;
+	static int viewWidth;
+	static int viewHeight;
+
+	static boolean finish;
 	Bitmap base;
 	Bitmap nega;
 	ProgressDialog mProgressDialog;
@@ -132,6 +140,7 @@ public class Main extends FragmentActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		//inicio=true;
 		imagen = (Imagen) findViewById(R.id.ImgFoto);
 		
 		txtCont = (TextView) findViewById(R.id.txtCont);
@@ -159,11 +168,12 @@ public class Main extends FragmentActivity {
 		
 		mainContext = getApplicationContext();
 		
-		newImage();
+		nuevaImagen();
 		
 		/** Change the button add/move depending the language*/
 		setLanguageAdd();
 		setLanguageSquare();
+		//activaBotonesInicio(false);
 		changeColors();
 	}
 	/** Change to white if true/ black if false*/
@@ -258,7 +268,7 @@ public class Main extends FragmentActivity {
 				if(btnRmv.isChecked())
 				{
 					btnRmv.setText("OK");
-					enableDeleteButtons(false);
+					activaBotonesBorrar(false);
 					imagen.borra=true;
 					imagen.pinta = true;
 					imagen.square = false;
@@ -269,7 +279,7 @@ public class Main extends FragmentActivity {
 				else
 				{
 					btnRmv.setText(getResources().getString(R.string.btnRmv));
-					enableDeleteButtons(true);
+					activaBotonesBorrar(true);
 					imagen.borra=false;
 					if(btnAdd.isChecked()){
 						imagen.pinta=true;
@@ -305,7 +315,7 @@ public class Main extends FragmentActivity {
 				imagen.invertBitmap();
 				break;
 			case R.id.btnRes://reinicia imagen sin sunspots(start over)
-				clearCoordinates();
+				vaciaCoordenadas();
 				imagen.setZoom(Imagen.MIN_ZOOM);
 				btnSq.setChecked(false);
 				btnSq.setEnabled(false);
@@ -315,22 +325,22 @@ public class Main extends FragmentActivity {
 			imagen.postInvalidate();
 		}
 	});
-	void newImage(){
+	void nuevaImagen(){
 		String [] cadenas = getRandomUrl();
 		imagen.preparaDescarga(cadenas);
 		imagen.postInvalidate();
 	}
 	/** clear imagen.listaPtos & imagen.listaMarcas; change btnAdd*/
-	void clearCoordinates(){
+	void vaciaCoordenadas(){
 		imagen.listaPtos.clear();
 		imagen.listaMarcas.clear();
 		imagen.listaAbsoluteSquare.clear();
 		imagen.listaRelativeSquare.clear();
 		imagen.square=false;
-		changeAdd(false);
+		cambiaAdd(false);
 	}
 	/** change the string of add Button*/
-	void changeAdd(boolean b){
+	void cambiaAdd(boolean b){
 		btnAdd.setChecked(b);
 		imagen.pinta=b;
 		if(b)
@@ -339,7 +349,7 @@ public class Main extends FragmentActivity {
 			btnAdd.setText(strMove);
 	}
 	/** Enable or disable buttons depending delete Button*/
-	void enableDeleteButtons(boolean b){
+	void activaBotonesBorrar(boolean b){
 		btnAdd.setEnabled(b);
 		btnSq.setEnabled(b);
 		btnInv.setEnabled(b);
@@ -348,6 +358,16 @@ public class Main extends FragmentActivity {
 		if(!btnAdd.isChecked())
 			btnSq.setEnabled(false);
 	}
+	/** Enable or disable buttons depending if the task is started*/
+	/*void activaBotonesInicio(boolean b){
+		btnAdd.setEnabled(b);
+		btnSq.setEnabled(b);
+		btnRmv.setEnabled(b);
+		btnInv.setEnabled(b);
+		btnRes.setEnabled(b);
+		if(!btnAdd.isChecked())
+			btnSq.setEnabled(false);
+	}*/
 
 	/** Set the String and font of btnAdd depending user language*/
 	void setLanguageAdd(){
@@ -438,11 +458,13 @@ public class Main extends FragmentActivity {
 				@Override
 				public void onClick(DialogInterface dialog, int id) {
 					
-					clearCoordinates();
+					//borra ptos y pasa a modo mover
+					vaciaCoordenadas();
+					//btnFin.setText(R.string.btnFin2);
 					dialog.cancel();
 					imagen.inverted=false;
-					clearCoordinates();
-					newImage();
+					vaciaCoordenadas();
+					nuevaImagen();
 					changeColors();
 					imagen.postInvalidate();
 				}
@@ -478,12 +500,13 @@ public class Main extends FragmentActivity {
 						}
 					}
 					//borra ptos y pasa a modo mover
-					clearCoordinates();
+					vaciaCoordenadas();
+					//btnFin.setText(R.string.btnFin2);
 					dialog.cancel();
 					imagen.inverted=false;
-					clearCoordinates();
+					vaciaCoordenadas();
 					imagen.bitmap= null;
-					newImage();
+					nuevaImagen();
 					changeColors();
 					imagen.postInvalidate();
 				}
@@ -518,8 +541,7 @@ public class Main extends FragmentActivity {
 		    httpost.setHeader("Accept", "application/json");
 		    httpost.setHeader("Content-type", "application/json");
 		    //Handles what is returned from the page 
-		    @SuppressWarnings("rawtypes")
-			ResponseHandler responseHandler = new BasicResponseHandler();
+		    ResponseHandler responseHandler = new BasicResponseHandler();
 		    
 		    try {
 				httpclient.execute(httpost, responseHandler);
