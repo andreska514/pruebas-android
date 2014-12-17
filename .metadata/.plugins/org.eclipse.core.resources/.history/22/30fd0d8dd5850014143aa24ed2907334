@@ -510,9 +510,7 @@ public class Imagen extends ImageView {
 	}
 	
 	void prepareJson(){
-		
-		
-		if(listaPtos.size()>0 || listaAbsoluteSquare.size()>0){
+		if(listaPtos.size()>0){
 			JSONArray coorJson= new JSONArray();
 			
 			for(int x=0; x<listaPtos.size();x++){
@@ -557,7 +555,9 @@ public class Imagen extends ImageView {
 				jEx.printStackTrace();
 			}
 		}
+		
 		Log.d("finalJson",""+finalJson);
+		
 	}
 	
 	/** absolute coordinates*/

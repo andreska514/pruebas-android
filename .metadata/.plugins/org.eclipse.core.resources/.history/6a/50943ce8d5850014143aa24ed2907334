@@ -557,7 +557,9 @@ public class Imagen extends ImageView {
 				jEx.printStackTrace();
 			}
 		}
+		
 		Log.d("finalJson",""+finalJson);
+		
 	}
 	
 	/** absolute coordinates*/

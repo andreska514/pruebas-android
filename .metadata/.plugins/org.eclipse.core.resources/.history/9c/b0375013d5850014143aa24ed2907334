@@ -263,7 +263,7 @@ public class Main extends FragmentActivity {
 					imagen.square = false;
 					btnSq.setChecked(false);
 					btnSq.setEnabled(false);
-					btnSq.setText(strPoint); 
+					btnSq.setText(strPoint);
 				}
 				else
 				{
@@ -484,9 +484,6 @@ public class Main extends FragmentActivity {
 					imagen.bitmap= null;
 					newImage();
 					changeColors();
-					btnSq.setChecked(false);
-					btnSq.setEnabled(false);
-					btnSq.setText(strPoint); 
 					imagen.postInvalidate();
 				}
 			})
